@@ -255,4 +255,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
     }
   }
 
+  @override
+  listSuccess(List<BaseUser> list) { }
+
 }

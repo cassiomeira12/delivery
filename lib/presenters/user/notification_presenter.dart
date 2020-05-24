@@ -38,7 +38,7 @@ class NotificationPresenter extends NotificationContractPresenter {
   Future<List<UserNotification>> list() async {
     await service.list().then((value) {
       if (view != null) {
-        view.listNotifications(value);
+        view.listSuccess(value);
       }
     }).catchError((error) {
       if (view != null) {

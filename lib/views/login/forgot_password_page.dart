@@ -162,4 +162,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> implements ForgotPa
     ScaffoldSnackBar.success(context, _scaffoldKey, result);
   }
 
+  @override
+  listSuccess(List<String> list) { }
+
 }

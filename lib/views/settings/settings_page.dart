@@ -46,7 +46,7 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
     return Scaffold(
       //key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(SETTINGS, style: TextStyle(color: Colors.white),),
+        title: Text(TAB4, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(
@@ -206,7 +206,7 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
               ),
               Expanded(
                 child: Text(
-                  NOTIFICATIONS,
+                  TAB2,
                   style: Theme.of(context).textTheme.body2,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,

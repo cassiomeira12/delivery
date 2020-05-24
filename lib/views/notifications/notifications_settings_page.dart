@@ -29,7 +29,7 @@ class _NotificationsSettingsState extends State<NotificationsSettingsPage> imple
     return Scaffold(
       //key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(NOTIFICATIONS, style: TextStyle(color: Colors.white),),
+        title: Text(TAB2, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: SingleChildScrollView(

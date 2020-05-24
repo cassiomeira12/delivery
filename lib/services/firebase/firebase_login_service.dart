@@ -37,7 +37,17 @@ class FirebaseLoginService extends LoginContractService {
       }
 
     }).catchError((error) {
-      presenter.onFailure(error.toString());
+      Log.e(error);
+      switch (error.code) {
+        case "ERROR_USER_NOT_FOUND":
+          presenter.onFailure(USUARIO_NAO_ENCONTRADO);
+          break;
+        case "ERROR_WRONG_PASSWORD":
+          presenter.onFailure(SENHA_INVALIDA);
+          break;
+        default:
+          presenter.onFailure(error.message);
+      }
     });
   }
 

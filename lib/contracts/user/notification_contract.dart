@@ -3,7 +3,7 @@ import '../../models/user_notification.dart';
 import '../crud.dart';
 
 abstract class NotificationContractView implements BaseResultContract<UserNotification> {
-  listNotifications(List<UserNotification> list);
+
 }
 
 abstract class NotificationContractPresenter extends Crud<UserNotification> {

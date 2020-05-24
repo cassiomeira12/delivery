@@ -38,7 +38,7 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
   }
 
   @override
-  listNotifications(List<UserNotification> list) {
+  listSuccess(List<UserNotification> list) {
     setState(() {
       notificationsList = list;
     });
@@ -59,7 +59,7 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
     return Scaffold(
       //key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(NOTIFICATIONS, style: TextStyle(color: Colors.white),),
+        title: Text(TAB2, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
         actions: <Widget>[
           MaterialButton(
