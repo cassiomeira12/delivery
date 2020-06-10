@@ -43,6 +43,8 @@ class _AreaInputFieldState extends State<AreaInputField> {
       textCapitalization: widget.textCapitalization,
       maxLength: 25 * widget.maxLines,
       maxLines: widget.maxLines,
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       decoration: InputDecoration(
         labelText: widget.labelText,
         alignLabelWithHint: true,

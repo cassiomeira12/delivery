@@ -39,6 +39,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> implements ForgotPa
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar( iconTheme: IconThemeData(color: Colors.white), elevation: 0,),
       body: SingleChildScrollView(
         child: Stack(

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesUtil {
@@ -5,6 +7,7 @@ class PreferencesUtil {
   static String _NOTIFICATION_TOKEN = "notification_token";
   static String _LAST_CHECK_UPDATE = "last_check_update";
   static String _INTRO_DONE = "intro_done";
+  static String _USER_DATA = "user_data";
 
   static Future<SharedPreferences> getInstance() {
     return SharedPreferences.getInstance();
@@ -50,6 +53,17 @@ class PreferencesUtil {
   static Future<bool> getIntroDone() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_INTRO_DONE);
+  }
+
+  static void setUserData(Map<dynamic, dynamic> value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_USER_DATA, value == null ? null : json.encode(value));
+  }
+
+  static Future<dynamic> getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var result = prefs.getString(_USER_DATA);
+    return result == null ? null : json.decode(result);
   }
 
 }

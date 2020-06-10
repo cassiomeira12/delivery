@@ -1,3 +1,5 @@
+import 'package:delivery/utils/preferences_util.dart';
+
 import '../../contracts/login/login_contract.dart';
 import '../../models/base_user.dart';
 import '../../services/firebase/firebase_user_service.dart';
@@ -30,6 +32,7 @@ class FirebaseLoginService extends LoginContractService {
           user.emailVerified = result.user.isEmailVerified; // Atualizando caso o email ja foi validado
           crud.update(user); // Atualizando a base de dados
         }
+        PreferencesUtil.setUserData(user.toMap());
         presenter.onSuccess(user);
       } else if (list.length == 0) {
         _firebaseAuth.signOut();

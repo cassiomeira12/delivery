@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ImageViewPage extends StatefulWidget {
-  final String imgURL;
+  static var HERO_TAG = "ImageViewPage";
+  final String networkImage;
+  final String assetsImage;
 
   const ImageViewPage({
-    @required this.imgURL,
+    this.assetsImage,
+    this.networkImage,
   });
 
   @override
@@ -16,9 +19,15 @@ class _ImageViewPageState extends State<ImageViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        child: PhotoView(
-          imageProvider: NetworkImage(widget.imgURL),
+      body: Hero(
+        tag: ImageViewPage.HERO_TAG,
+        child: Container(
+          child: PhotoView(
+            imageProvider: widget.assetsImage == null ?
+            NetworkImage(widget.networkImage)
+                :
+            ExactAssetImage(widget.assetsImage),
+          ),
         ),
       ),
     );

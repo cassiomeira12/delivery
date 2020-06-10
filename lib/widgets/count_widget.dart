@@ -2,21 +2,29 @@ import 'package:flutter/material.dart';
 
 class CountWidget extends StatefulWidget {
   final ValueChanged<int> changedCount;
+  final double size;
 
-  const CountWidget({this.changedCount});
+  int initialValue, minValue, maxValue;
+
+  CountWidget({
+    @required this.changedCount,
+    this.size = 35,
+    this.initialValue = 1,
+    this.minValue,
+    this.maxValue,
+  }): assert(size >= 25);
 
   @override
   _CountWidgetState createState() => _CountWidgetState();
 }
 
 class _CountWidgetState extends State<CountWidget> {
-
-  int count = 1;
-  double size = 40;
-
+  int _count;
+  
   @override
   void initState() {
     super.initState();
+    _count = widget.initialValue;
   }
 
   @override
@@ -30,10 +38,32 @@ class _CountWidgetState extends State<CountWidget> {
     );
   }
 
+  void increment() {
+    if (widget.maxValue != null) {
+      if (_count < widget.maxValue) {
+        setState(() {
+          _count++;
+          widget.changedCount(_count);
+        });
+      }
+    }
+  }
+
+  void decrement() {
+    if (widget.minValue != null) {
+      if (_count > widget.minValue) {
+        setState(() {
+          _count--;
+          widget.changedCount(_count);
+        });
+      }
+    }
+  }
+
   Widget botaoMenos(){
     return Container(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.redAccent,
@@ -46,10 +76,7 @@ class _CountWidgetState extends State<CountWidget> {
           ),
         ),
         onTap: () {
-          setState(() {
-            count--;
-          });
-          widget.changedCount(count);
+          decrement();
         }
       ),
     );
@@ -57,14 +84,14 @@ class _CountWidgetState extends State<CountWidget> {
 
   Widget quantidade(){
     return Container(
-      margin: EdgeInsets.fromLTRB(15, 0, 15, 0),
+      margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: Text(
-        count.toString(),
+        _count.toString(),
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 25,
           color: Colors.black45,
-          fontWeight: FontWeight.bold,
+          //fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -72,8 +99,8 @@ class _CountWidgetState extends State<CountWidget> {
 
   Widget botaoMais(){
     return Container(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         color: Colors.green,
@@ -86,10 +113,7 @@ class _CountWidgetState extends State<CountWidget> {
           ),
         ),
         onTap: () {
-          setState(() {
-            count++;
-          });
-          widget.changedCount(count);
+          increment();
         },
       ),
     );

@@ -1,23 +1,38 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:delivery/contracts/menu/menu_contract.dart';
+import 'package:delivery/models/menu/additional.dart';
+import 'package:delivery/models/menu/category.dart';
+import 'package:delivery/models/menu/choice.dart';
 import 'package:delivery/models/menu/item.dart';
+import 'package:delivery/models/menu/product.dart';
 import 'package:delivery/models/menu/menu.dart';
+import 'package:delivery/models/singleton/order_singleton.dart';
 import 'package:delivery/presenters/menu/menu_presenter.dart';
-import 'package:delivery/views/home/item_widget.dart';
+import 'package:delivery/views/home/order_slidding_widget.dart';
+import 'package:delivery/views/home/product_widget.dart';
 import 'package:delivery/widgets/empty_list_widget.dart';
-import 'package:delivery/widgets/logading_widget.dart';
+import 'package:delivery/widgets/image_network_widget.dart';
+import 'package:delivery/widgets/loading_shimmer_list.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 import '../../models/company/company.dart';
 import '../../models/singleton/singleton_user.dart';
 import 'package:flutter/material.dart';
+import '../../strings.dart';
 import '../../widgets/background_card.dart';
 import '../page_router.dart';
-import 'item_page.dart';
+import 'product_page.dart';
 
 class CompanyPage extends StatefulWidget {
+  final VoidCallback orderCallback;
   Company company;
 
-  CompanyPage(this.company);
+  CompanyPage({
+    @required this.company,
+    @required this.orderCallback,
+  });
 
   @override
   State<StatefulWidget> createState() => _CompanyPageState();
@@ -28,23 +43,63 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   MenuContractPresenter presenter;
 
-  Menu menus;
+  Menu menu;
 
   String logoURL;
   String bannerURL;
   bool favotito = false;
 
-  var menu = ['Remover'];
+  //var menu = ['Remover'];
 
-  List<Item> list;
+  List<Product> list;
+
+  PanelController _pc = new PanelController();
+
+  bool orderSelected = false;
+  int orderItens = 0;
+
+  OrderSliddingWidget sliddingPage;
 
   @override
   void initState() {
     super.initState();
+    logoURL = widget.company.logoURL;
+    bannerURL = widget.company.bannerURL;
+    sliddingPage = OrderSliddingWidget(orderCallback: widget.orderCallback, updateOrders: updateOrders,);
     presenter = MenuPresenter(this);
-    menus = Menu()
-      ..id = widget.company.idMenu;
-    presenter.read(menus);
+    menu = Menu()..id = widget.company.idMenu;
+    //menu = Menu()..id = "1";
+    presenter.read(menu);
+    updateOrders();
+  }
+
+  void updateOrders() async {
+//    final database = LocalDB.MemoryDatabaseAdapter().database();
+//    final query = LocalDB.Query(
+//      filter: NotFilter(ValueFilter('example')),
+//      skip: 0, // Start from the first result item
+//      take: 10, // Return 10 result items
+//    );
+//    var result = await database.collection("asdf").search(query: query, reach: LocalDB.Reach.local);
+//    print(result.count);
+//    result.items.forEach((element) {
+//      print(element.data);
+//    });
+    setState(() {
+      orderSelected = OrderSingleton.instance.id != null;
+    });
+    if (orderSelected) {
+      OrderSingleton.instance.companyId = widget.company.id;
+      OrderSingleton.instance.companyName = widget.company.name;
+
+      OrderSingleton.instance.company = widget.company;
+
+      sliddingPage.listItens();
+    }
+    orderItens = 0;
+    OrderSingleton.instance.items.forEach((element) {
+      orderItens += element.amount;
+    });
   }
 
   @override
@@ -55,29 +110,108 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.company.name),
-        actions: <Widget>[
-          PopupMenuButton(
-            onSelected: (value) {
-              setState(() {
-                //SingletonCompany.instance.clean();
-              });
-            },
-            itemBuilder: (BuildContext context) {
-              return menu.map((String choice) {
-                return PopupMenuItem(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
-        ],
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.company.name),
+        ),
+        body: orderSelected ? bodySliding() : nestedScrollView(),
       ),
-      body: nestedScrollView(),
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    if (orderSelected && _pc.isPanelOpen) {
+      _pc.close();
+    } else {
+      if (OrderSingleton.instance.id != null) {
+        showDialog();
+      } else {
+        PageRouter.pop(context);
+      }
+    }
+  }
+
+  Widget bodySliding() {
+    return SlidingUpPanel(
+      controller: _pc,
+      backdropEnabled: true,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(20),
+        topRight: Radius.circular(20),
+      ),
+      panel: sliddingPage,
+      collapsed: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).primaryColor,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        child: GestureDetector(
+          child: Container(
+            margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
+            child: Row(
+              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    FaIcon(FontAwesomeIcons.shoppingCart, color: Theme.of(context).backgroundColor),
+                    SizedBox(width: 10,),
+                    Text(
+                      "Pedidos selecionados",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                Flexible(
+                  flex: 1,
+                  child: Container(
+                    color: Theme.of(context).primaryColor,
+                    height: MediaQuery.of(context).size.height,
+                  ),
+                ),
+                notificationCount(orderItens),
+              ],
+            ),
+          ),
+          onTap: () {
+            _pc.open();
+          },
+        ),
+      ),
+      body: Center(
+        child: nestedScrollView(),
+      ),
+    );
+  }
+
+  Widget notificationCount(int notifications) {
+    return notifications > 0 ?
+    Align(
+      //alignment: Alignment.topCenter,
+      child: ClipOval(
+        child: Container(
+          height: 40, width: 40,
+          color: Colors.white,
+          alignment: Alignment.center,
+          child: Text(
+            notifications.toString(),
+            style: TextStyle(
+              color: Colors.red,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ),
+    ) : Container();
   }
 
   Widget nestedScrollView() {
@@ -95,22 +229,26 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
                       Stack(
                         alignment: Alignment.topCenter,
                         children: <Widget>[
-                          BackgroundCard(height: 100,),
+                          Column(
+                            children: [
+                              BackgroundCard(height: 100,),
+                              infoCompanyWidget(),
+                            ],
+                          ),
                           bannerURL == null ?
-                          Container()
+                            Container()
                               :
-                          Container(
-                            height: 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              image: DecorationImage(
-                                fit: BoxFit.fitWidth,
-                                image: NetworkImage(bannerURL),
+                            Container(
+                              height: 100,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.rectangle,
+                                image: DecorationImage(
+                                  fit: BoxFit.fitWidth,
+                                  image: NetworkImage(bannerURL),
+                                ),
                               ),
                             ),
-                          ),
-                          imageUser(SingletonUser.instance.avatarURL),
-                          infoCompanyWidget(),
+                          imageUser(logoURL),
                         ],
                       ),
                     ],
@@ -129,83 +267,181 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     return RefreshIndicator(
       key: _refreshIndicatorKey,
-      onRefresh: () {
-        return presenter.list();
-      },
+      onRefresh: () => presenter.read(menu),
       child: Center(
         child: list == null ?
-        LoadingWidget() :
-        list.isEmpty ?
-        EmptyListWidget(
-          message: "Nenhum item foi encontrado",
-          //assetsImage: "assets/notification.png",
-        )
-          :
-        listView(),
+          LoadingShimmerList()
+            :
+          list.isEmpty ?
+            Stack(
+              children: [
+                EmptyListWidget(
+                  message: "Nenhum item foi encontrado",
+                  //assetsImage: "assets/notification.png",
+                ),
+                listView(),
+              ],
+            )
+              :
+            listView(),
       ),
     );
   }
 
   Widget listView() {
-    return CustomScrollView(
-      slivers: <Widget>[
-        SliverList(
-          delegate: SliverChildListDelegate(
-              list.map<Widget>((item) {
-                return listItem(item);
-              }).toList()
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, orderSelected ? 180 : 0),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverList(
+            delegate: SliverChildListDelegate(
+                list.map<Widget>((item) {
+                  return listItem(item);
+                }).toList()
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget listItem(item) {
     return Padding(
-      padding: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.only(bottom: 10),
       child: Slidable(
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
-        child: ItemWidget(
+        child: ProductWidget(
           item: item,
-          onPressed: (value) {
-            PageRouter.push(context, ItemPage());
+          onPressed: (value) async {
+            var result = await PageRouter.push(context, ProductPage(item: item,));
+            if (result != null) {
+              updateOrders();
+            }
           },
         ),
       ),
     );
   }
 
+  @override
+  listSuccess(List<Menu> list) {
+    list.forEach((element) {
+      print(element.toMap());
+    });
+  }
+
+  @override
+  onFailure(String error)  {
+    print(error);
+    setState(() {
+      list = [];
+      menu.id = widget.company.idMenu;
+    });
+  }
+
+  @override
+  onSuccess(Menu menu) {
+    List<Product> temp = List();
+
+//    if (menu.categories.isEmpty) {
+//      menu.categories.add(adicionar());
+//      presenter.update(menu);
+//    }
+
+    menu.categories.forEach((product) {
+      temp.addAll(product.products);
+    });
+
+//    if (temp.length == 2) {
+//      var p = adicionar();
+//      menu.categories[0].products.add(p);
+//      presenter.update(menu);
+//    }
+
+    setState(() {
+      menu = menu;
+      list = temp;
+    });
+
+  }
+
+  Product adicionar() {
+
+    var item = Item()
+      ..name = "100ml"
+      ..description = "asdf"
+      ..cost = 10.5;
+
+    var item2 = Item()
+      ..name = "200ml"
+      ..description = "asdf"
+      ..cost = 12.5;
+
+    var choice = Choice()
+      ..name = "Tamanho"
+      ..description = "escolha um tamanho"
+      ..required = true
+      ..maxQuantity = 1
+      ..minQuantity = 1
+      ..itens = [item, item2];
+
+    var additional1 = Additional()
+      ..name = "Blend"
+      ..description = "Carne bolvina 120g"
+      ..maxQuantity = 3
+      ..cost = 4.0;
+
+    var additional2 = Additional()
+      ..name = "Bacon"
+      //..description = "Carne bolvina 120g"
+      ..maxQuantity = 5
+      ..cost = 1.0;
+
+    var product = Product()
+      ..id = "0"
+      ..name = "Hamburger Super Cheddar"
+      ..description = "Pão de hamnúguer, blend bolvino 120g, fatia de cheddar e creme de cheddar."
+      ..cost = 12.0
+      ..discount = 0
+      ..choices = []
+      ..additional = [additional1];
 
 
+    var categoria = Category()
+      ..id = "2"
+      ..name = "Hamburger"
+      ..products = [product];
 
+//    print(product.toMap());
+//
+//    setState(() {
+//      list.add(product);
+//    });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return product;
+  }
 
   Widget infoCompanyWidget() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, 105, 0, 5),
+      padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
-          Expanded(
+          Flexible(
+            flex: 3,
             child: openingCompanyWidget(),
           ),
-          Expanded(
-            child: avaliationCompanyWidget(),
+          Flexible(
+            flex: 2,
+            child: Container(),
           ),
+          Flexible(
+            flex: 3,
+            child: deliveryCostCompanyWidget(),
+          ),
+          //openingCompanyWidget(),
+          //deliveryCostCompanyWidget(),
         ],
       ),
     );
@@ -213,81 +449,61 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   Widget openingCompanyWidget() {
     return Container(
-      alignment: Alignment.bottomLeft,
-      padding: EdgeInsets.fromLTRB(15, 0, 0, 0),
-      child: Column(
-        children: <Widget>[
-          Text(
-            "Fechado",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).errorColor,
-            ),
-          ),
-          Text(
-            "abre às 17h",
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey,
-            ),
-          ),
-        ],
+      //color: Colors.red,
+      alignment: Alignment.center,
+      child: Text(
+        widget.company.getOpenTime(DateTime.now().weekday),
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).errorColor,
+        ),
       ),
     );
   }
 
-  Widget avaliationCompanyWidget() {
+  Widget deliveryCostCompanyWidget() {
     return Container(
-      //color: Colors.black12,
-      alignment: Alignment.bottomRight,
-      padding: EdgeInsets.fromLTRB(0, 0, 15, 0),
-      child: Container(
-        width: 100,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.fromLTRB(7, 0, 5, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  GestureDetector(
-                    child: Container(
-                      width: 27,
-                      height: 27,
-                      child: Image.asset("assets/logo_app.png"),
-                    ),
-                    onTap: () {
-                      print("1");
-                    },
-                  ),
-                  GestureDetector(
-                    child: favotito ?
-                    Icon(
-                      Icons.favorite,
-                      color: Colors.redAccent,
-                      size: 30,
-                    ) :
-                    Icon(
-                      Icons.favorite_border,
-                      color: Colors.grey,
-                      size: 30,
-                    ),
-                    onTap: () {
-                      setState(() {
-                        favotito = !favotito;
-                      });
-                    },
-                  ),
-                ],
+      //color: Colors.green,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+
+          widget.company.delivery.pickup ?
+            Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(20),
               ),
+              child: FaIcon(FontAwesomeIcons.running, size: 16, color: Theme.of(context).errorColor,),
+            ) : Container(),
+
+          SizedBox(width: 5,),
+
+          Container(
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.grey[300],
+              borderRadius: BorderRadius.circular(20),
             ),
-            SizedBox(height: 2,),
-            estrelasWidget(5),
-          ],
-        ),
+            child: Row(
+              children: [
+                FaIcon(FontAwesomeIcons.motorcycle, size: 16, color: Theme.of(context).errorColor,),
+                SizedBox(width: 5,),
+                Text(
+                  widget.company.delivery.cost == 0 ? "Grátis" : "R\$ ${(widget.company.delivery.cost/100).toStringAsFixed(2)}",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).errorColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+        ],
       ),
     );
   }
@@ -323,73 +539,27 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   Widget imageNetworkURL(String url) {
     return Container(
-      width: 98,
-      height: 98,
       margin: EdgeInsets.only(top: 40),
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(url),
-        ),
-      ),
+      child: ImageNetworkWidget(url: url, size: 98,),
     );
   }
 
-  Widget estrelasWidget(int stars){
-    final maxStars = 5;
-    int starBorder = maxStars - stars;
-    final listaEstrelas = <Widget>[];
-    for (var i=0; i<maxStars && i<stars; i++) {
-      listaEstrelas.add(Icon(Icons.star, color: Colors.amber,size: 20,));
-    }
-    if (starBorder > 0) {
-      for (var i=0; i<starBorder; i++) {
-        listaEstrelas.add(Icon(Icons.star_border, color: Colors.amber,size: 20,));
-      }
-    }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: listaEstrelas,
+  void showDialog() async {
+    final result = await showOkCancelAlertDialog(
+      context: context,
+      title: "Você tem peidos selecionados",
+      okLabel: "Limpar",
+      cancelLabel: CANCELAR,
+      message: "Deseja realmente limpar os pedidos selecionados de ${widget.company.name} ?",
     );
-  }
-
-  @override
-  listSuccess(List<Menu> list) {
-    list.forEach((element) {
-      print(element.toMap());
-    });
-  }
-
-  @override
-  onFailure(String error)  {
-    print(error);
-  }
-
-  @override
-  onSuccess(Menu item) {
-    List<Item> temp = List();
-
-    item.categories.forEach((element) {
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-      temp.addAll(element.itens);
-    });
-
-    setState(() {
-      menus = item;
-      list = temp;
-    });
+    switch(result) {
+      case OkCancelResult.ok:
+        OrderSingleton.instance.clear();
+        PageRouter.pop(context);
+        break;
+      case OkCancelResult.cancel:
+        break;
+    }
   }
 
 }

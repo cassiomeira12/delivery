@@ -1,27 +1,32 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:delivery/widgets/image_network_widget.dart';
 import 'package:flutter/material.dart';
-import '../../models/menu/item.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../models/menu/product.dart';
 
-class ItemWidget extends StatefulWidget {
+class ProductWidget extends StatefulWidget {
   final dynamic item;
-  final ValueChanged<Item> onPressed;
+  final ValueChanged<Product> onPressed;
 
-  const ItemWidget({
+  const ProductWidget({
     this.item,
     this.onPressed,
   });
 
   @override
-  _ItemWidgetState createState() => _ItemWidgetState();
+  _ProductWidgetState createState() => _ProductWidgetState();
 }
 
-class _ItemWidgetState extends State<ItemWidget> {
+class _ProductWidgetState extends State<ProductWidget> {
+  Product product;
 
-  Item item;
+  String imageProduct;
 
   @override
   void initState() {
     super.initState();
-    item = widget.item as Item;
+    product = widget.item as Product;
+    imageProduct = product.images.isEmpty ? null : product.images[0];
   }
 
   @override
@@ -29,49 +34,29 @@ class _ItemWidgetState extends State<ItemWidget> {
     return Container(
       child: RaisedButton(
         padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
-        elevation: 0,
+        elevation: 1,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0),),
         color: true ? Theme.of(context).backgroundColor : Theme.of(context).primaryColorLight,
         child: Row(
           children: [
-            imageNetworkURL("https://lh3.googleusercontent.com/a-/AOh14GinABYyLb06MGSzuEsE2tuNDmgyMSuFsWjE7DITKg=s96-c"),
+            ImageNetworkWidget(url: imageProduct, size: 72,),
             Expanded(
               child: Column(
-                //mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  titleTextWidget("Hamburguer"),
-                  descriptionTextWidget("Generosa camadas de creme suíço, creme de chocolate e creme de ninho creme de chocolate e creme de ninho"),
-                  costTextWidget(13.0),
+                  titleTextWidget(product.name),
+                  product.description == null ? Container() :
+                  descriptionTextWidget(product.description),
+                  costTextWidget(product.cost),
                 ],
               ),
             ),
+            FaIcon(FontAwesomeIcons.angleRight, color: Theme.of(context).iconTheme.color,),
           ],
         ),
         onPressed: () {
-          widget.onPressed(item);
+          widget.onPressed(product);
         }
-      ),
-    );
-  }
-
-  Widget imageNetworkURL(String url) {
-    return Container(
-      width: 72,
-      height: 72,
-      margin: EdgeInsets.only(top: 2, right: 4),
-      decoration: BoxDecoration(
-        shape: BoxShape.rectangle,
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(
-          width: 1,
-          color: Theme.of(context).hintColor,
-        ),
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(url),
-        ),
       ),
     );
   }
@@ -111,7 +96,7 @@ class _ItemWidgetState extends State<ItemWidget> {
     return Padding(
       padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
       child: Text(
-        "R\$ ${cost}",
+        "R\$ ${cost.toStringAsFixed(2)}",
         style: TextStyle(
           fontSize: 20,
           color: Colors.green,

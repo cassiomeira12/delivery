@@ -1,12 +1,16 @@
 import 'package:delivery/contracts/company/company_contract.dart';
 import 'package:delivery/models/company/company.dart';
+import 'package:delivery/models/company/opening_hour.dart';
+import 'package:delivery/models/company/type_payment.dart';
 import 'package:delivery/presenters/company/company_presenter.dart';
 import 'package:delivery/views/home/company_widget.dart';
 import 'package:delivery/widgets/empty_list_widget.dart';
 import 'package:delivery/widgets/list_view_body.dart';
-import 'package:delivery/widgets/logading_widget.dart';
+import 'package:delivery/widgets/loading_shimmer_list.dart';
+import 'package:delivery/widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../strings.dart';
 import '../../widgets/background_card.dart';
 
@@ -15,6 +19,11 @@ import 'company_page.dart';
 import 'search_page.dart';
 
 class HomePage extends StatefulWidget {
+  final VoidCallback orderCallback;
+
+  HomePage({
+    @required this.orderCallback
+  });
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -117,8 +126,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   @override
   onFailure(String error) {
-    // TODO: implement onFailure
-    throw UnimplementedError();
+    print(error);
   }
 
   @override
@@ -131,23 +139,26 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     setState(() {
       this.list = [];
       this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
-      this.list.addAll(list);
     });
+
+
+//    TypePayment p = TypePayment();
+//    p.name = "Dinheiro";
+//    p.type = Type.MONEY;
+//
+//    list[0].typePayments.add(p);
+//    for (int i=0; i<7; i++) {
+//      OpeningHour h = OpeningHour();
+//      h.weekDay = i;
+//      h.openHour = 18;
+//      h.openMinute = 0;
+//      h.closeHour = 0;
+//      h.closeMinute = 0;
+//      list[0].openHours.add(h);
+//    }
+
+    //presenter.update(list[0]);
   }
-
-
 
   Widget body() {
     final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
@@ -158,7 +169,8 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
       },
       child: Center(
         child: list == null ?
-          LoadingWidget() :
+          LoadingShimmerList()
+            :
           list.isEmpty ?
             EmptyListWidget(
               message: "Nenhuma empresa foi encontrada",
@@ -186,14 +198,14 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   Widget listItem(item) {
     return Padding(
-      padding: EdgeInsets.only(top: 10),
+      padding: EdgeInsets.only(bottom: 10),
       child: Slidable(
         actionPane: SlidableDrawerActionPane(),
         actionExtentRatio: 0.25,
         child: CompanyWidget(
           item: item,
           onPressed: (value) {
-            PageRouter.push(context, CompanyPage(item));
+            PageRouter.push(context, CompanyPage(company: item, orderCallback: widget.orderCallback,));
           },
         ),
       ),

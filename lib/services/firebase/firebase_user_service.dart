@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:delivery/utils/preferences_util.dart';
+
 import '../../utils/log_util.dart';
 import 'package:path/path.dart' as Path;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -69,7 +71,18 @@ class FirebaseUserService implements UserContractService {
   }
 
   Future<BaseUser> findUserByEmail(String email) async {
-    List<BaseUser> list =  await findBy("email", email);
+    List<BaseUser> list;
+    await findBy("email", email).then((value) {
+      if (value.length == 1) {
+        PreferencesUtil.setUserData(value[0].toMap());
+      }
+      list = value;
+    }).catchError((error) async {
+      print(error.toString());
+      dynamic result = await PreferencesUtil.getUserData();
+      list = List();
+      list.add(BaseUser.fromMap(result));
+    });
 
     if (list == null) return null;
 
@@ -139,6 +152,7 @@ class FirebaseUserService implements UserContractService {
 
   @override
   Future<void> signOut() async {
+    PreferencesUtil.setUserData(null);
     return await FirebaseAuth.instance.signOut();
   }
 

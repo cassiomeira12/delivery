@@ -8,18 +8,18 @@ class OpeningHour extends BaseModel<OpeningHour> {
   OpeningHour();
 
   OpeningHour.fromMap(Map<dynamic, dynamic>  map) {
-    id = map["id"];
-    weekDay = map["weekDay"] as int;
-    openHour = map["openHour"] as int;
-    openMinute = map["openMinute"] as int;
-    closeHour = map["closeHour"] as int;
-    closeMinute = map["closeMinute"] as int;
+    //id = map["id"];
+    weekDay = (map["weekDay"] as num).toInt();
+    openHour = (map["openHour"] as num).toInt();
+    openMinute = (map["openMinute"] as num).toInt();
+    closeHour = (map["closeHour"] as num).toInt();
+    closeMinute = (map["closeMinute"] as num).toInt();
   }
 
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["id"] = id;
+    //map["id"] = id;
     map["weekDay"] = weekDay;
     map["openHour"] = openHour;
     map["openMinute"] = openMinute;
@@ -30,7 +30,7 @@ class OpeningHour extends BaseModel<OpeningHour> {
 
   @override
   update(OpeningHour item) {
-    id = item.id;
+    //id = item.id;
     weekDay = item.weekDay;
     openHour = item.openHour;
     openMinute = item.openMinute;

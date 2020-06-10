@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 class RoundedShape extends StatelessWidget {
   final Widget child;
   final EdgeInsets padding;
+  final Color color;
 
   const RoundedShape({
     this.padding,
     @required this.child,
+    this.color,
   });
 
   @override
@@ -15,7 +17,7 @@ class RoundedShape extends StatelessWidget {
       width: double.infinity,
       padding: padding == null ? EdgeInsets.fromLTRB(0, 0, 0, 0) : padding,
       decoration: BoxDecoration(
-        color: Theme.of(context).backgroundColor,
+        color: color == null ? Theme.of(context).backgroundColor : color,
         border: Border.all(
           width: 1,
           color: Theme.of(context).hintColor,

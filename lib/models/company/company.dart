@@ -3,6 +3,7 @@ import 'package:delivery/models/company/opening_hour.dart';
 import 'package:delivery/models/company/type_payment.dart';
 
 import '../base_model.dart';
+import 'delivery.dart';
 
 class Company extends BaseModel<Company> {
   String topic;
@@ -14,8 +15,12 @@ class Company extends BaseModel<Company> {
   Address address;
   String idMenu;
   List<TypePayment> typePayments;
+  Delivery delivery;
 
-  Company();
+  Company() {
+    openHours = List();
+    typePayments = List();
+  }
 
   Company.fromMap(Map<dynamic, dynamic>  map) {
     id = map["id"];
@@ -24,10 +29,15 @@ class Company extends BaseModel<Company> {
     cnpj = map["cnpj"];
     logoURL = map["logoURL"];
     bannerURL = map["bannerURL"];
-    //openHours = List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
+    openHours = map["openHours"] == null ?
+      List() :
+      List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
     address = Address.fromMap(map["address"]);
     idMenu = map["idMenu"];
-    //typePayments = List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
+    typePayments = map["typePayments"] == null ?
+      List() :
+      List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
+    delivery = map["delivery"] == null ? null : Delivery.fromMap(map["delivery"]);
   }
 
   @override
@@ -39,10 +49,11 @@ class Company extends BaseModel<Company> {
     map["cnpj"] = cnpj;
     map["logoURL"] = logoURL;
     map["bannerURL"] = bannerURL;
-    //map["openHours"] = openHours.map<Map>((e) => e.toMap()).toList();
+    map["openHours"] = openHours.map<Map>((e) => e.toMap()).toList();
     map["address"] = address.toMap();
     map["idMenu"] = idMenu;
-    //map["typePayments"] = typePayments.map<Map>((e) => e.toMap()).toList();
+    map["typePayments"] = typePayments.map<Map>((e) => e.toMap()).toList();
+    map["delivery"] = delivery == null ? null : delivery.toMap();
     return map;
   }
 
@@ -54,10 +65,27 @@ class Company extends BaseModel<Company> {
     cnpj = item.cnpj;
     logoURL = item.logoURL;
     bannerURL = item.bannerURL;
-    //openHours = item.openHours;
-    //address = item.address;
+    openHours = item.openHours;
+    address = item.address;
     idMenu = item.idMenu;
-    //typePayments = item.typePayments;
+    typePayments = item.typePayments;
+    delivery = item.delivery;
+  }
+
+  String getOpenTime(int weekDay) {
+    OpeningHour openingHourToday;
+    openHours.forEach((element) {
+      if (element.weekDay == weekDay) {
+        openingHourToday = element;
+        return;
+      }
+    });
+    if (openingHourToday == null) {
+      return "Fechado";
+    }
+    String hora = openingHourToday.openHour < 10 ? "0${openingHourToday.openHour}" : openingHourToday.openHour.toString();
+    String minutos = openingHourToday.openMinute < 10 ? "0${openingHourToday.openMinute}" : openingHourToday.openMinute.toString();
+    return "Abre às $hora:$minutos";
   }
 
 }

@@ -31,7 +31,7 @@ class MenuPresenter implements MenuContractPresenter {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      _view.onFailure(error.toString());
       return null;
     });
   }
@@ -42,7 +42,7 @@ class MenuPresenter implements MenuContractPresenter {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      _view.onFailure(error.toString());
       return null;
     });
   }

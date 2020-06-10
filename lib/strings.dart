@@ -1,8 +1,8 @@
-const APP_NAME = "Default App Flutter";
+const APP_NAME = "Delivery App";
 
 const TAB1 = "Delivery";
 const TAB2 = "Notificações";
-const TAB3 = "Meu Pedido";
+const TAB3 = "Histórico de pedidos";
 const TAB4 = "Ajustes";
 
 const EMAIL = "Email";

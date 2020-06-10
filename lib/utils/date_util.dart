@@ -2,7 +2,9 @@
 class DateUtil {
 
   static String formatDateCalendar(DateTime date) {// [dd/MM/yyyy]
-    return "${date.day}/${date.month}/${date.year}";
+    return (date.day < 10 ? "0${date.day}" : date.day.toString()) + "/" +
+        (date.month < 10 ? "0${date.month}" : date.month.toString()) + "/" +
+        date.year.toString();
   }
 
   static String formatDateMonth(DateTime date) {// [10 de jan]
@@ -50,6 +52,11 @@ class DateUtil {
 
   static String formatDateMouthHour(DateTime date) {// [10 de jan às 20:05]
     return "${formatDateMonth(date)} às ${date.hour}:${date.minute}";
+  }
+
+  static String formatHourMinute(DateTime date) {// [20:05]
+    return (date.hour < 10 ? "0${date.hour}:" : "${date.hour}:") +
+        (date.minute < 10 ? "0${date.minute}" : "${date.minute}");
   }
 
 }

@@ -1,3 +1,6 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import '../../views/image_view_page.dart';
+import '../../widgets/image_network_widget.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
 import '../../models/singleton/singleton_user.dart';
@@ -76,12 +79,12 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
             alignment: Alignment.bottomRight,
             width: 120,
             child: Hero(
-              tag: 'imgUser',
+              tag: ImageViewPage.HERO_TAG,
               child: GestureDetector(
                 child: Stack(
                   children: <Widget>[
                     defaultImageUser(),
-                    userPhoto == null ? Container() : imageUserURL()
+                    userPhoto == null ? Container() : ImageNetworkWidget(url: userPhoto, size: 120,),//imageUserURL()
                   ],
                 ),
                 onTap: () {
@@ -427,7 +430,7 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
               Expanded(
                 child: Text(
                   SIGNOUT,
-                  style: TextStyle(fontSize: 18.0, color: Theme.of(context).errorColor),
+                  style: Theme.of(context).textTheme.body2,
                 ),
               ),
               Container(
@@ -443,33 +446,23 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
     );
   }
 
-  void showDialogLogOut() {
-    showDialog(
+  void showDialogLogOut() async {
+    final result = await showOkCancelAlertDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(SIGNOUT),
-          content: Text("Deseja sair do ${APP_NAME} ?"),
-          actions: <Widget>[
-            FlatButton(
-              child: Text(CANCELAR),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text(SIGNOUT),
-              onPressed: () {
-                PageRouter.pop(context);
-                presenter.signOut().whenComplete(() {
-                  widget.logoutCallback();
-                });
-              },
-            ),
-          ],
-        );
-      },
+      title: SIGNOUT,
+      okLabel: SIGNOUT,
+      cancelLabel: CANCELAR,
+      message: "Deseja sair do $APP_NAME ?",
     );
+    switch(result) {
+      case OkCancelResult.ok:
+        presenter.signOut().whenComplete(() {
+          widget.logoutCallback();
+        });
+        break;
+      case OkCancelResult.cancel:
+        break;
+    }
   }
 
   @override

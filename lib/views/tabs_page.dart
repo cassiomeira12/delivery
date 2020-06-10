@@ -1,11 +1,17 @@
+import 'dart:io';
+
+import 'package:delivery/contracts/order/order_contract.dart';
+import 'package:delivery/models/singleton/order_singleton.dart';
+import 'package:delivery/presenters/order/order_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/tabs.dart';
 import '../views/comanda/comanda_page.dart';
-import '../views/historico/historico_page.dart';
+import '../views/historico/historic_page.dart';
 import '../views/home/home_page.dart';
 import '../views/notifications/notifications_page.dart';
 import '../views/settings/settings_page.dart';
+import 'page_router.dart';
 
 
 class TabsPage extends StatefulWidget {
@@ -25,46 +31,62 @@ class _TabsPageState extends State<TabsPage> {
   int currentTab = 0;
   List<Widget> screens;
 
+  int orderCount = 0;
+  OrderContractPresenter presenter;
+
   @override
   void initState() {
     super.initState();
     screens = [
-      HomePage(),
+      HomePage(orderCallback: orderCallback,),
       NotificationsPage(),
       ComandaPage(),
-      HistoricoPage(),
+      HistoricPage(),
       SettingsPage(logoutCallback: widget.logoutCallback,),
     ];
     tabsView = TabsView(currentTab: currentTab, screens: screens,);
+    presenter = OrdersPresenter(null);
+    listOrders();
+  }
+
+  void listOrders() async {
+    var result = await presenter.list();
+//    var temp = 0;
+//    result.forEach((element) {
+//
+//    });
+//    setState(() {
+//      orderCount = result.length;
+//    });
+  }
+
+  void orderCallback() {
+    setState(() {
+      currentTab = 3;
+      tabsView.setPage(currentTab);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: tabsView,
-//      floatingActionButton: FloatingActionButton(
-//        backgroundColor: Theme.of(context).backgroundColor,
-//        splashColor: Theme.of(context).backgroundColor,
-//        onPressed: () {
-//          setState(() {
-//            currentTab = 2;
-//            tabsView.setPage(currentTab);
-//          });
-//        },
-//        child: Stack(
-//          alignment: Alignment.center,
-//          children: <Widget>[
-//            FaIcon(FontAwesomeIcons.shoppingCart, color: currentTab == 2 ? Theme.of(context).primaryColorLight : Colors.grey,),
-//            Padding(
-//              padding: EdgeInsets.fromLTRB(20, 5, 0, 0),
-//              child: notificationCount(0),
-//            ),
-//          ],
-//        ),
-//      ),
-      //floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      bottomNavigationBar: customBottomNavigationBar(),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        body: tabsView,
+        bottomNavigationBar: customBottomNavigationBar(),
+      )
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    if (currentTab == 0) {
+      exit(0);
+    } else {
+      setState(() {
+        currentTab = 0;
+        tabsView.setPage(currentTab);
+      });
+    }
   }
 
   Widget customBottomNavigationBar() {
@@ -169,7 +191,7 @@ class _TabsPageState extends State<TabsPage> {
                       FaIcon(FontAwesomeIcons.shoppingCart, color: currentTab == 3 ? Theme.of(context).backgroundColor : Colors.grey,),
                       Padding(
                         padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
-                        child: notificationCount(1),
+                        child: notificationCount( OrderSingleton.instance.id == null ? orderCount : OrderSingleton.instance.items.length ),
                       ),
                     ],
                   ),

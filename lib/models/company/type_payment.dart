@@ -10,22 +10,31 @@ class TypePayment extends BaseModel<TypePayment> {
   double taxa;// 0.0 - 1.0
   int maxInstallments;//Max prestação
 
-  TypePayment();
+  TypePayment() {
+    taxa = 0;
+    maxInstallments = 1;
+  }
 
   TypePayment.fromMap(Map<dynamic, dynamic>  map) {
-    id = map["id"];
+    //id = map["id"];
     name = map["name"];
-    //type = map["idState"];
-    taxa = map["taxa"] as double;
+    var typeTemp = map["type"];
+    Type.values.forEach((element) {
+      if (element.toString().split('.').last == typeTemp) {
+        type = element;
+        return;
+      }
+    });
+    taxa = (map["taxa"] as num).toDouble();
     maxInstallments = map["maxInstallments"] as int;
   }
 
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["id"] = id;
+    //map["id"] = id;
     map["name"] = name;
-    //map["type"] = type;
+    map["type"] = type.toString().split('.').last;
     map["taxa"] = taxa;
     map["maxInstallments"] = maxInstallments;
     return map;
@@ -35,12 +44,12 @@ class TypePayment extends BaseModel<TypePayment> {
   update(TypePayment item) {
     id = item.id;
     name = item.name;
-    //type = item.type;
+    type = item.type;
     taxa = item.taxa;
     maxInstallments = item.maxInstallments;
   }
 
-  static String getType(Type type) {
+  String getType() {
     switch (type) {
       case Type.CARD:
         return "Cartão";

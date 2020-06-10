@@ -1,3 +1,5 @@
+import 'package:delivery/strings.dart';
+
 import '../../contracts/login/forgot_password_contract.dart';
 import '../../services/firebase/firebase_forgot_password_service.dart';
 
@@ -14,7 +16,13 @@ class ForgotPasswordPresenter extends ForgotPasswordContractPresenter {
       view.onSuccess("Email enviado com sucesso!");
     }).catchError((error) {
       view.hideProgress();
-      view.onFailure(error.toString());
+      switch(error.code) {
+        case "ERROR_USER_NOT_FOUND":
+          view.onFailure(USUARIO_NAO_ENCONTRADO);
+          break;
+        default:
+          view.onFailure(error.toString());
+      }
     });
   }
 

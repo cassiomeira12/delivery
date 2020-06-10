@@ -20,7 +20,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      _view.onFailure(error);
       return null;
     });
   }
@@ -31,7 +31,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      _view.onFailure(error);
       return null;
     });
   }
@@ -42,7 +42,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      _view.onFailure(error);
       return null;
     });
   }
@@ -53,7 +53,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      _view.onFailure(error);
       return null;
     });
   }
@@ -64,7 +64,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      _view.onFailure(error);
       return null;
     });
   }
@@ -75,7 +75,8 @@ class CompanyPresenter implements CompanyContractPresenter {
       _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      print(error);
+      _view.onFailure(error);
       return null;
     });
   }

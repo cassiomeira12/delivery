@@ -36,4 +36,9 @@ class City extends BaseModel<City> {
     codeState = item.codeState;
   }
 
+  @override
+  String toString() {
+    return "$name - $codeState";
+  }
+
 }

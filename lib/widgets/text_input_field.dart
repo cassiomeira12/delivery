@@ -40,6 +40,8 @@ class _TextInputFieldState extends State<TextInputField> {
       textAlign: TextAlign.center,
       obscureText: widget.obscureText,
       textCapitalization: widget.textCapitalization,
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       decoration: InputDecoration(
         labelText: widget.labelText,
         labelStyle: Theme.of(context).textTheme.body2,

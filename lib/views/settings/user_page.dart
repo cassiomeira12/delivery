@@ -1,3 +1,5 @@
+import 'package:delivery/widgets/image_network_widget.dart';
+
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
 import '../../models/singleton/singleton_user.dart';
@@ -132,7 +134,7 @@ class _UserState extends State<UserPage> implements UserContractView {
       padding: EdgeInsets.fromLTRB(0, 8, 0, 0),
       child: Center(
         child: Hero(
-          tag: 'imgUser',
+          tag: ImageViewPage.HERO_TAG,
           child: Padding(
             padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: ClipOval(
@@ -168,20 +170,10 @@ class _UserState extends State<UserPage> implements UserContractView {
 
   Widget imageUserURL() {
     return Container(
-      width: 160,
-      height: 160,
       child: GestureDetector(
-        child: Container(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(userPhoto),
-            ),
-          ),
-        ),
+        child: ImageNetworkWidget(url: userPhoto, size: 160,),
         onTap: () {
-          PageRouter.push(context, ImageViewPage(imgURL: userPhoto,));
+          PageRouter.push(context, ImageViewPage(networkImage: userPhoto,));
         },
       ),
     );

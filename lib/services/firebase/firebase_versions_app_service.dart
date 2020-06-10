@@ -6,8 +6,9 @@ class FirebaseVersionsAppService {
   CollectionReference _collection = Firestore.instance.collection("versions");
 
   Future<VersionApp> checkCurrentVersion(String packageName) {
-    return _collection.document(packageName).get().timeout(Duration(seconds: 5)).then((result) {
+    return _collection.document(packageName).get(source: Source.serverAndCache).timeout(Duration(seconds: 5)).then((result) {
       if (!result.exists) {
+        print("Version App [$packageName] existe false");
         return null;
       }
       return VersionApp.fromMap(result.data);

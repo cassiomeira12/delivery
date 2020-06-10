@@ -17,17 +17,17 @@ class BaseFirebaseService {
         .timeout(Duration(seconds: _TIMEOUT))
         .then((response) {
           return item.toMap();
-    });
+        });
   }
 
   Future<Map<String, dynamic>> read(BaseModel item) {
     if (item.id == null) return null;
     return collection.document(item.id)
-        .get()
+        .get(source: Source.serverAndCache)
         .timeout(Duration(seconds: _TIMEOUT))
         .then((response) {
-      return response.data;
-    });
+          return response.data;
+        });
   }
 
   Future<Map<String, dynamic>> update(BaseModel item) {
@@ -36,8 +36,8 @@ class BaseFirebaseService {
         .updateData(item.toMap())
         .timeout(Duration(seconds: _TIMEOUT))
         .then((response) {
-      return item.toMap();
-    });
+          return item.toMap();
+        });
   }
 
   Future<Map<String, dynamic>> delete(BaseModel item) async {
@@ -49,24 +49,25 @@ class BaseFirebaseService {
         .timeout(Duration(seconds: _TIMEOUT))
         .then((response) {
           return data;
-    });
+        });
   }
 
   Future<List<Map<String, dynamic>>> findBy(String field, value) {
     return collection.where(field, isEqualTo: value)
-        .getDocuments()
+        .getDocuments(source: Source.serverAndCache)
         .timeout(Duration(seconds: _TIMEOUT))
         .then((snapshot) {
           return snapshot.documents.map<Map<String, dynamic>>((item) => item.data).toList();
-    });
+        });
   }
 
   Future<List<Map<String, dynamic>>> list() {
-    return collection.getDocuments()
+    return collection
+        .getDocuments(source: Source.serverAndCache)
         .timeout(Duration(seconds: _TIMEOUT))
         .then((snapshot) {
           return snapshot.documents.map<Map<String, dynamic>>((item) => item.data).toList();
-    });
+        });
   }
 
 }

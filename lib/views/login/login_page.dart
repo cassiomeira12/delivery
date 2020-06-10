@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:keyboard_dismisser/keyboard_dismisser.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import '../../widgets/text_input_field.dart';
 import '../../contracts/login/login_contract.dart';
@@ -35,6 +37,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
   String _email;
   String _password;
 
+  bool _loading = false;
   ProgressDialog pr;
 
   @override
@@ -52,12 +55,14 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   @override
   hideProgress() {
-    pr.hide();
+    //pr.hide();
+    setState(() => _loading = false);
   }
 
   @override
   showProgress() {
-    pr.show();
+    //pr.show();
+    setState(() => _loading = true);
   }
 
   @override
@@ -76,13 +81,35 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-            BackgroundCard(),
-            bodyAppScrollView(),
-          ],
+      body: ModalProgressHUD(
+        inAsyncCall: _loading,
+        progressIndicator: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),
+          child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(),),
         ),
+        child: keyboardDismisser(),
+      ),
+    );
+  }
+
+  Widget keyboardDismisser() {
+    return KeyboardDismisser(
+      gestures: [
+        GestureType.onTap,
+        GestureType.onVerticalDragDown
+      ],
+      child: body(),
+    );
+  }
+
+  Widget body() {
+    return SingleChildScrollView(
+      child: Stack(
+        children: <Widget>[
+          BackgroundCard(),
+          bodyAppScrollView(),
+        ],
       ),
     );
   }
@@ -203,7 +230,6 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
         child: Row(
           children: <Widget>[
             Flexible(
-              flex: 1,
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Image.asset(
@@ -213,11 +239,17 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
               ),
             ),
             Flexible(
-              flex: 3,
-              child: Text(
-                LOGAR_COM_GOOGLE,
-                style: Theme.of(context).textTheme.body2,
+              flex: 5,
+              child: Container(
+                alignment: Alignment.center,
+                child: Text(
+                  LOGAR_COM_GOOGLE,
+                  style: Theme.of(context).textTheme.body2,
+                ),
               ),
+            ),
+            Expanded(
+              child: Container(),
             ),
           ],
         ),
