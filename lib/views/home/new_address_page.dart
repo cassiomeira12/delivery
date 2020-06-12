@@ -1,13 +1,13 @@
-import 'package:delivery/contracts/address/address_contract.dart';
-import 'package:delivery/models/address/address.dart';
-import 'package:delivery/models/address/city.dart';
-import 'package:delivery/models/address/small_town.dart';
-import 'package:delivery/models/singleton/singleton_user.dart';
-import 'package:delivery/presenters/address/address_presenter.dart';
-import 'package:delivery/strings.dart';
-import 'package:delivery/widgets/primary_button.dart';
-import 'package:delivery/widgets/scaffold_snackbar.dart';
-import 'package:delivery/widgets/text_input_field.dart';
+import '../../contracts/address/address_contract.dart';
+import '../../models/address/address.dart';
+import '../../models/address/city.dart';
+import '../../models/address/small_town.dart';
+import '../../models/singleton/singleton_user.dart';
+import '../../presenters/address/address_presenter.dart';
+import '../../strings.dart';
+import '../../widgets/primary_button.dart';
+import '../../widgets/scaffold_snackbar.dart';
+import '../../widgets/text_input_field.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 

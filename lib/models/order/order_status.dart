@@ -33,6 +33,14 @@ class OrderStatus extends BaseModel<OrderStatus> {
     values = item.values;
   }
 
+  bool isFirst() {
+    return current.name == values.first.name;
+  }
+
+  bool isLast() {
+    return current.name == values.last.name;
+  }
+
 }
 
 class Status {

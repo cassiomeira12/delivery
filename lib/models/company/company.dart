@@ -1,7 +1,6 @@
-import 'package:delivery/models/address/address.dart';
-import 'package:delivery/models/company/opening_hour.dart';
-import 'package:delivery/models/company/type_payment.dart';
-
+import '../../models/address/address.dart';
+import '../../models/company/opening_hour.dart';
+import '../../models/company/type_payment.dart';
 import '../base_model.dart';
 import 'delivery.dart';
 

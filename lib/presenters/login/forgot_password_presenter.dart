@@ -1,5 +1,4 @@
-import 'package:delivery/strings.dart';
-
+import '../../strings.dart';
 import '../../contracts/login/forgot_password_contract.dart';
 import '../../services/firebase/firebase_forgot_password_service.dart';
 

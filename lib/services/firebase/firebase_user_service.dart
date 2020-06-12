@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'package:delivery/utils/preferences_util.dart';
-
+import '../../utils/preferences_util.dart';
 import '../../utils/log_util.dart';
 import 'package:path/path.dart' as Path;
 import 'package:cloud_firestore/cloud_firestore.dart';

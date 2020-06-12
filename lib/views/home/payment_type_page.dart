@@ -1,7 +1,6 @@
-import 'package:delivery/models/company/type_payment.dart';
+import '../../models/company/type_payment.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../widgets/background_card.dart';
 import '../page_router.dart';
 
 class PaymentTypePage extends StatefulWidget {

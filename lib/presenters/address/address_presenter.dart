@@ -1,5 +1,4 @@
-import 'package:delivery/models/singleton/singleton_user.dart';
-
+import '../../models/singleton/singleton_user.dart';
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
 import '../../services/firebase/firebase_address_service.dart';

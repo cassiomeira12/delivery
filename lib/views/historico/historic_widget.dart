@@ -1,8 +1,7 @@
-import 'package:delivery/models/order/order.dart';
-import 'package:delivery/utils/date_util.dart';
-import 'package:delivery/widgets/stars_widget.dart';
+import '../../models/order/order.dart';
+import '../../utils/date_util.dart';
+import '../../widgets/stars_widget.dart';
 import 'package:flutter/material.dart';
-
 import '../page_router.dart';
 import 'historic_order_page.dart';
 
@@ -38,9 +37,9 @@ class _HistoricWidgetState extends State<HistoricWidget> {
     return Card(
       margin: EdgeInsets.fromLTRB(5, 5, 5, 10),
       elevation: 5,
-      shadowColor: Colors.green,
+      shadowColor: order.status.isFirst() ? Colors.green : Colors.white,
+      color: order.status.isFirst() ? Colors.green[50] : Colors.white,
       borderOnForeground: true,
-      color: Colors.green[50],
       child: FlatButton(
         padding: EdgeInsets.all(0),
         child: Container(
@@ -58,7 +57,10 @@ class _HistoricWidgetState extends State<HistoricWidget> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  StarsWidget(maxStarts: 5, stars: 3, size: 30,),
+                  order.evaluation == null ?
+                    Text(order.status.current.name, style: Theme.of(context).textTheme.body2,)
+                      :
+                    StarsWidget(stars: order.evaluation.stars, size: 30,),
                   costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
                 ],
               ),

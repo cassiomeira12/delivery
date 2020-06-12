@@ -1,5 +1,5 @@
-import 'package:delivery/models/menu/additional.dart';
-import 'package:delivery/widgets/count_widget.dart';
+import '../../models/menu/additional.dart';
+import '../../widgets/count_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:sticky_headers/sticky_headers/widget.dart';
 

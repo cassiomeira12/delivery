@@ -1,8 +1,4 @@
-import 'package:delivery/views/home/company_widget.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-
-import '../strings.dart';
 
 class ListViewBody<T> extends StatefulWidget {
   List<T> list;

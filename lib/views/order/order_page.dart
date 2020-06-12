@@ -1,8 +1,5 @@
-import 'package:delivery/widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
-import '../../widgets/empty_list_widget.dart';
-import '../../strings.dart';
 
 class OrderPage extends StatefulWidget {
 

@@ -1,5 +1,5 @@
-import 'package:delivery/models/menu/additional.dart';
-import 'package:delivery/models/menu/choice.dart';
+import '../../models/menu/additional.dart';
+import '../../models/menu/choice.dart';
 
 import '../base_model.dart';
 import 'item.dart';
@@ -63,6 +63,37 @@ class Product extends BaseModel<Product> {
     images = item.images;
     choices = item.choices;
     additional = item.additional;
+  }
+
+}
+
+class PreparationTime extends BaseModel<PreparationTime> {
+  int hour, minute;
+
+  PreparationTime();
+
+  PreparationTime.fromMap(Map<dynamic, dynamic>  map) {
+    hour = map["hour"];
+    minute = map["minute"];
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    var map = Map<String, dynamic>();
+    map["hour"] = hour;
+    map["minute"] = minute;
+    return map;
+  }
+
+  @override
+  update(PreparationTime item) {
+    hour = item.hour;
+    minute = item.minute;
+  }
+
+  @override
+  String toString() {
+    return hour == 0 ? "$minute min" : "${hour}h ${minute}min";
   }
 
 }

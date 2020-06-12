@@ -1,12 +1,10 @@
-import 'package:delivery/utils/preferences_util.dart';
-
+import '../../utils/preferences_util.dart';
 import '../../contracts/login/login_contract.dart';
 import '../../models/base_user.dart';
 import '../../services/firebase/firebase_user_service.dart';
 import '../../utils/log_util.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-
 import '../../strings.dart';
 import '../../contracts/crud.dart';
 

@@ -1,7 +1,7 @@
-import 'package:delivery/models/order/order_item.dart';
-import 'package:delivery/models/singleton/order_singleton.dart';
-import 'package:delivery/views/home/confirm_order_page.dart';
-import 'package:delivery/widgets/primary_button.dart';
+import '../../models/order/order_item.dart';
+import '../../models/singleton/order_singleton.dart';
+import '../../views/home/confirm_order_page.dart';
+import '../../widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 

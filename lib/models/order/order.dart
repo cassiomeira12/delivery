@@ -1,6 +1,7 @@
-import 'package:delivery/models/company/company.dart';
-import 'package:delivery/models/order/order_item.dart';
+import 'package:delivery/models/menu/product.dart';
 
+import '../../models/company/company.dart';
+import '../../models/order/order_item.dart';
 import '../../models/address/address.dart';
 import '../../models/company/type_payment.dart';
 import '../../models/order/evaluation.dart';
@@ -22,6 +23,8 @@ class Order extends BaseModel<Order> {
   List<OrderItem> items;
   OrderStatus status;
   String changeMoney;
+  DeliveryForecast deliveryForecast;
+  PreparationTime preparationTime;
 
   Company company;
 
@@ -46,6 +49,8 @@ class Order extends BaseModel<Order> {
     items = List.from(map["items"]).map<OrderItem>((e) => OrderItem.fromMap(e)).toList();
     status = OrderStatus.fromMap(map["status"]);
     changeMoney = map["changeMoney"];
+    deliveryForecast = map["deliveryForecast"] == null ? null : DeliveryForecast.fromMap(map["deliveryForecast"]);
+    preparationTime = map["preparationTime"] == null ? null : PreparationTime.fromMap(map["preparationTime"]);
   }
 
   @override
@@ -66,6 +71,8 @@ class Order extends BaseModel<Order> {
     map["items"] = items.map<Map>((e) => e.toMap()).toList();
     map["status"] = status.toMap();
     map["changeMoney"] = changeMoney;
+    map["deliveryForecast"] = deliveryForecast == null ? null : deliveryForecast.toMap();
+    map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
     return map;
   }
 
@@ -86,6 +93,8 @@ class Order extends BaseModel<Order> {
     items = item.items;
     status = item.status;
     changeMoney = item.changeMoney;
+    deliveryForecast = item.deliveryForecast;
+    preparationTime = item.preparationTime;
   }
 
   clear() {
@@ -104,8 +113,41 @@ class Order extends BaseModel<Order> {
     items = List();
     status = OrderStatus();
     changeMoney = null;
+    deliveryForecast = null;
+    preparationTime = null;
 
     company = null;
+  }
+
+}
+
+class DeliveryForecast extends BaseModel<DeliveryForecast> {
+  int hour, minute;
+
+  DeliveryForecast();
+
+  DeliveryForecast.fromMap(Map<dynamic, dynamic>  map) {
+    hour = map["hour"];
+    minute = map["minute"];
+  }
+
+  @override
+  Map<String, dynamic> toMap() {
+    var map = Map<String, dynamic>();
+    map["hour"] = hour;
+    map["minute"] = minute;
+    return map;
+  }
+
+  @override
+  update(DeliveryForecast item) {
+    hour = item.hour;
+    minute = item.minute;
+  }
+
+  @override
+  String toString() {
+    return "${hour}:${minute}h";
   }
 
 }

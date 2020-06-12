@@ -4,12 +4,14 @@ class StarsWidget extends StatefulWidget {
   int stars;
   final int maxStarts;
   final double size;
+  final bool press;
 
   StarsWidget({
     this.stars,
     this.maxStarts = 5,
     this.size = 20,
-  });
+    this.press = false,
+  }) : assert(stars <= maxStarts);
 
   @override
   _StarsWidgetState createState() => _StarsWidgetState();
@@ -37,15 +39,8 @@ class _StarsWidgetState extends State<StarsWidget> {
     starBorder = widget.maxStarts - widget.stars;
     listaEstrelas.clear();
     setState(() {
-      for (var i = 0; i < widget.maxStarts && i < widget.stars; i++) {
-        //listaEstrelas.add(startItem(i));
-        listaEstrelas.insert(i, startItem(i));
-      }
-      if (starBorder > 0) {
-        for (var i = 0; i < starBorder; i++) {
-          //listaEstrelas.add(startItem(i));
-          listaEstrelas.insert(i, startItem(i));
-        }
+      for (int i = 1; i <= widget.maxStarts; i++) {
+        listaEstrelas.add(startItem(i));
       }
     });
   }
@@ -53,16 +48,18 @@ class _StarsWidgetState extends State<StarsWidget> {
   Widget startItem(int index) {
     return GestureDetector(
       child: Icon(
-        widget.stars <= index ? Icons.star : Icons.star_border,
+        index <= widget.stars ? Icons.star : Icons.star_border,
         color: Colors.amber,
         size: widget.size,
       ),
       onTap: () {
-        setState(() {
-          print(index);
-          widget.stars = index;
-          buildStarList();
-        });
+        if (widget.press) {
+          setState(() {
+            print(index);
+            widget.stars = index;
+            buildStarList();
+          });
+        }
       },
     );
   }

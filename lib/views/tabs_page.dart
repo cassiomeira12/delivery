@@ -1,8 +1,7 @@
 import 'dart:io';
-
-import 'package:delivery/contracts/order/order_contract.dart';
-import 'package:delivery/models/singleton/order_singleton.dart';
-import 'package:delivery/presenters/order/order_presenter.dart';
+import '../contracts/order/order_contract.dart';
+import '../models/singleton/order_singleton.dart';
+import '../presenters/order/order_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/tabs.dart';
@@ -11,8 +10,6 @@ import '../views/historico/historic_page.dart';
 import '../views/home/home_page.dart';
 import '../views/notifications/notifications_page.dart';
 import '../views/settings/settings_page.dart';
-import 'page_router.dart';
-
 
 class TabsPage extends StatefulWidget {
   TabsPage({this.logoutCallback});

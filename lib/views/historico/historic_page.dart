@@ -1,16 +1,13 @@
-import 'package:delivery/contracts/order/order_contract.dart';
-import 'package:delivery/models/order/order.dart';
-import 'package:delivery/models/singleton/order_singleton.dart';
-import 'package:delivery/presenters/order/order_presenter.dart';
-import 'package:delivery/views/historico/historic_order_page.dart';
-import 'package:delivery/views/historico/historic_widget.dart';
-import 'package:delivery/widgets/empty_list_widget.dart';
-import 'package:delivery/widgets/loading_widget.dart';
-
+import '../../widgets/loading_widget.dart';
+import '../../contracts/order/order_contract.dart';
+import '../../models/order/order.dart';
+import '../../models/singleton/order_singleton.dart';
+import '../../presenters/order/order_presenter.dart';
+import '../../views/historico/historic_order_page.dart';
+import '../../views/historico/historic_widget.dart';
+import '../../widgets/empty_list_widget.dart';
 import '../../strings.dart';
-import '../../widgets/primary_button.dart';
 import 'package:flutter/material.dart';
-
 import '../page_router.dart';
 
 class HistoricPage extends StatefulWidget {

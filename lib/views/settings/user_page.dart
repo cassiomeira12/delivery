@@ -1,5 +1,4 @@
-import 'package:delivery/widgets/image_network_widget.dart';
-
+import '../../widgets/image_network_widget.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
 import '../../models/singleton/singleton_user.dart';
@@ -11,7 +10,6 @@ import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/shape_round.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../image_view_page.dart';
 import '../page_router.dart';
 import 'change_password_page.dart';

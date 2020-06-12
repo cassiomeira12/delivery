@@ -1,12 +1,11 @@
-import 'package:delivery/contracts/order/order_contract.dart';
-import 'package:delivery/models/address/address.dart';
-import 'package:delivery/models/order/order.dart';
-import 'package:delivery/models/order/order_item.dart';
-import 'package:delivery/models/order/order_status.dart';
-import 'package:delivery/presenters/order/order_presenter.dart';
-import 'package:delivery/utils/date_util.dart';
-import 'package:delivery/widgets/stars_widget.dart';
-
+import '../../contracts/order/order_contract.dart';
+import '../../models/address/address.dart';
+import '../../models/order/order.dart';
+import '../../models/order/order_item.dart';
+import '../../models/order/order_status.dart';
+import '../../presenters/order/order_presenter.dart';
+import '../../utils/date_util.dart';
+import '../../widgets/stars_widget.dart';
 import 'package:flutter/material.dart';
 
 class HistoricOrderPage extends StatefulWidget {
@@ -51,7 +50,9 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       }
       index++;
     });
-    print(currentStatusIndex);
+    if (order.status.isLast() && order.evaluation == null) {
+      print("Avaliar pedido");
+    }
   }
 
   @override
@@ -144,13 +145,13 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               ],
             ),
             addressDataWidget(order.deliveryAddress),
-            order.status.current.name == order.status.values.last.name ?
-            Column(
-              children: [
-                avaliationTextWidget(),
-                StarsWidget(stars: 5, size: 40,),
-              ],
-            ) : Container(),
+            order.status.isLast() && order.evaluation != null ?
+              Column(
+                children: [
+                  avaliationTextWidget(),
+                  StarsWidget(stars: 5, size: 40,),
+                ],
+              ) : Container(),
             deliveryCurrentStatus(),
           ],
         ),
@@ -176,24 +177,25 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 ),
               ),
               SizedBox(height: 10,),
-              Text(
-                "Aguarde seu pedido ser confirmado",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black45,
+              order.status.isFirst() ?
+                Text(
+                  "Aguarde seu pedido ser confirmado",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black45,
+                  ),
+                )
+                  :
+                Text(
+                  order.deliveryForecast.toString(),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 35,
+                    color: Theme.of(context).primaryColor,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              SizedBox(height: 10,),
-              Text(
-                "19:30h",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 35,
-                  color: Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
             ],
           ),
 

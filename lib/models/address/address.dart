@@ -1,5 +1,4 @@
-import 'package:delivery/models/address/small_town.dart';
-
+import '../../models/address/small_town.dart';
 import '../base_model.dart';
 import 'city.dart';
 

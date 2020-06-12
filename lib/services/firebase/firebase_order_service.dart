@@ -62,4 +62,14 @@ class FirebaseOrderService implements OrderContractService {
     });
   }
 
+  @override
+  listUserOrders(String userId) {
+    return _collection.where("userId", isEqualTo: userId)
+        .orderBy("createdAt", descending: true)
+        .getDocuments(source: Source.serverAndCache)
+        .then((snapshot) {
+          return snapshot.documents.map<Order>((item) => Order.fromMap(item.data)).toList();
+        });
+  }
+
 }

@@ -1,7 +1,4 @@
-import 'package:delivery/models/menu/additional.dart';
-import 'package:delivery/models/menu/choice.dart';
-import 'package:delivery/models/menu/product.dart';
-
+import '../../models/menu/additional.dart';
 import '../base_model.dart';
 
 class OrderItem extends BaseModel<OrderItem> {

@@ -12,5 +12,5 @@ abstract class OrderContractPresenter extends Crud<Order> {
 }
 
 abstract class OrderContractService extends Crud<Order> {
-
+  listUserOrders(String userId);
 }

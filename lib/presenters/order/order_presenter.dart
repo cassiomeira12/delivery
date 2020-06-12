@@ -1,5 +1,4 @@
-import 'package:delivery/models/singleton/singleton_user.dart';
-
+import '../../models/singleton/singleton_user.dart';
 import '../../services/firebase/firebase_order_service.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
@@ -84,7 +83,7 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   listUserOrders() async {
-    return await service.findBy("userId", SingletonUser.instance.id).then((value) {
+    return await service.listUserOrders(SingletonUser.instance.id).then((value) {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {

@@ -1,13 +1,12 @@
-import 'package:delivery/contracts/address/address_contract.dart';
-import 'package:delivery/models/address/address.dart';
-import 'package:delivery/models/company/type_payment.dart';
-import 'package:delivery/presenters/address/address_presenter.dart';
-import 'package:delivery/views/home/new_address_page.dart';
-import 'package:delivery/widgets/empty_list_widget.dart';
-import 'package:delivery/widgets/loading_widget.dart';
+import '../../contracts/address/address_contract.dart';
+import '../../models/address/address.dart';
+import '../../models/company/type_payment.dart';
+import '../../presenters/address/address_presenter.dart';
+import '../../views/home/new_address_page.dart';
+import '../../widgets/empty_list_widget.dart';
+import '../../widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../widgets/background_card.dart';
 import '../page_router.dart';
 
 class DeliveryAddressPage extends StatefulWidget {
