@@ -46,17 +46,25 @@ class _TabsPageState extends State<TabsPage> {
     listOrders();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    presenter.dispose();
+  }
+
   void listOrders() async {
     var result = await presenter.listUserOrders();
-    var temp = 0;
-    result.forEach((element) {
-      if (!element.status.isLast()) {
-        temp++;
-      }
-    });
-    setState(() {
-      orderCount = temp;
-    });
+    if (result != null) {
+      var temp = 0;
+      result.forEach((element) {
+        if (!element.status.isLast()) {
+          temp++;
+        }
+      });
+      setState(() {
+        orderCount = temp;
+      });
+    }
   }
 
   void orderCallback() {

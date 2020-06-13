@@ -1,4 +1,4 @@
-const APP_NAME = "Delivery App Admin";
+const APP_NAME = "Delivery App";
 
 const TAB1 = "Delivery";
 const TAB2 = "Notificações";

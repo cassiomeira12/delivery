@@ -51,7 +51,7 @@ class AddressPresenter implements AddressContractPresenter {
 
   @override
   Future<Address> delete(Address item) async {
-    return await service.create(item).then((value) {
+    return await service.delete(item).then((value) {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {

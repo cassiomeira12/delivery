@@ -38,41 +38,30 @@ class _HistoricWidgetState extends State<HistoricWidget> {
       shadowColor: order.status.isLast() ? order.evaluation == null ? Colors.amber : Colors.white : Colors.green,
       color: order.status.isLast() ? order.evaluation == null ? Colors.amber[100] : Colors.white : Colors.green[50],
       borderOnForeground: true,
-      child: FlatButton(
-        padding: EdgeInsets.all(0),
-        child: Container(
-          padding: EdgeInsets.all(10),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  titleTextWidget(order.companyName),
-                  dateTextWidget(DateUtil.formatDateCalendar(order.createdAt)),
-                ],
-              ),
-              SizedBox(height: 10,),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  order.evaluation == null ?
-                    Text(order.status.current.name, style: Theme.of(context).textTheme.body2,)
-                      :
-                    StarsWidget(initialStar: order.evaluation.stars, size: 30,),
-                  costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
-                ],
-              ),
-            ],
-          ),
+      child: Container(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                titleTextWidget(order.companyName),
+                dateTextWidget(DateUtil.formatDateCalendar(order.createdAt)),
+              ],
+            ),
+            SizedBox(height: 10,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                order.evaluation == null ?
+                Text(order.status.current.name, style: Theme.of(context).textTheme.body2,)
+                    :
+                StarsWidget(initialStar: order.evaluation.stars, size: 30,),
+                costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
+              ],
+            ),
+          ],
         ),
-        onPressed: () async {
-          var result = await PageRouter.push(context, HistoricOrderPage(item: order,));
-          if (result != null) {
-            setState(() {
-              order = result;
-            });
-          }
-        },
       ),
     );
   }

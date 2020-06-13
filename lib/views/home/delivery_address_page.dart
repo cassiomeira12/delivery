@@ -1,7 +1,10 @@
+import 'package:flutter_slidable/flutter_slidable.dart';
+
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/company/type_payment.dart';
 import '../../presenters/address/address_presenter.dart';
+import '../../strings.dart';
 import '../../views/home/new_address_page.dart';
 import '../../widgets/empty_list_widget.dart';
 import '../../widgets/loading_widget.dart';
@@ -168,7 +171,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
             SliverList(
               delegate: SliverChildListDelegate(
                 addressList.map((e) {
-                  return addressListItem(e);
+                  return Padding(
+                    padding: EdgeInsets.only(left: 10, bottom: 10, right: 10),
+                    child: listItem(e),
+                  );
                 }).toList(),
               ),
             ),
@@ -177,8 +183,29 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
     );
   }
 
+  Widget listItem(Address address) {
+    return Slidable(
+      actionPane: SlidableDrawerActionPane(),
+      actionExtentRatio: 0.25,
+      child: addressListItem(address),
+      secondaryActions: <Widget>[
+        IconSlideAction(
+          caption: DELETAR,
+          color: Colors.red,
+          icon: Icons.delete,
+          onTap: () {
+            setState(() {
+              presenter.delete(address);
+            });
+          },
+        ),
+      ],
+    );
+  }
+
   Widget addressListItem(Address address) {
     return Card(
+      margin: EdgeInsets.all(0),
       child: FlatButton(
         child: Container(
           padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
@@ -294,7 +321,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
 
   @override
   onSuccess(Address result) {
-
+    setState(() {
+      addressList.remove(result);
+    });
   }
 
 }

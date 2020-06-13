@@ -1,3 +1,5 @@
+import 'package:delivery/widgets/area_input_field.dart';
+
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/address/city.dart';
@@ -106,7 +108,10 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
         key: _formKey,
         child: Column(
           children: <Widget>[
-            textSmallAddress(),
+            //textSmallAddress(),
+            textInputStreet(),
+            textInputNumber(),
+            textInputReference(),
           ],
         ),
       ),
@@ -146,7 +151,6 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: TextInputField(
         labelText: "Bairro",
-        //inputType: TextInputType.emailAddress,
         textCapitalization: TextCapitalization.sentences,
         onSaved: (value) => bairro = value.trim(),
       ),
@@ -158,7 +162,6 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: TextInputField(
         labelText: "Rua",
-        //inputType: TextInputType.emailAddress,
         textCapitalization: TextCapitalization.sentences,
         onSaved: (value) => rua = value.trim(),
       ),
@@ -170,7 +173,6 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: TextInputField(
         labelText: "Número",
-        //inputType: TextInputType.emailAddress,
         textCapitalization: TextCapitalization.sentences,
         onSaved: (value) => numero = value.trim(),
       ),
@@ -180,10 +182,10 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
   Widget textInputReference() {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-      child: TextInputField(
+      child: AreaInputField(
         labelText: "Referência",
-        //inputType: TextInputType.emailAddress,
         textCapitalization: TextCapitalization.sentences,
+        maxLines: 3,
         onSaved: (value) => referencia = value.trim(),
       ),
     );
@@ -194,7 +196,6 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
       padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: TextInputField(
         labelText: "Endereço",
-        //inputType: TextInputType.emailAddress,
         textCapitalization: TextCapitalization.sentences,
         onSaved: (value) => rua = value.trim(),
       ),

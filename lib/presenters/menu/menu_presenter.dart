@@ -49,7 +49,7 @@ class MenuPresenter implements MenuContractPresenter {
 
   @override
   Future<Menu> delete(Menu item) async {
-    return await service.create(item).then((value) {
+    return await service.delete(item).then((value) {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {

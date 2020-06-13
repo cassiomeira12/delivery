@@ -1,6 +1,4 @@
 import 'package:delivery/views/historico/evalutation_dialog.dart';
-import 'package:sembast/sembast.dart';
-
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/order/order.dart';
@@ -14,7 +12,7 @@ import 'package:flutter/material.dart';
 import '../page_router.dart';
 
 class HistoricOrderPage extends StatefulWidget {
-  final dynamic item;
+  final Order item;
 
   HistoricOrderPage({
     this.item,
@@ -28,7 +26,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  OrderContractPresenter presenter;
+  OrdersPresenter presenter;
 
   Order order;
   double total = 0;
@@ -41,7 +39,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
   void initState() {
     super.initState();
     presenter = OrdersPresenter(this);
-    this.order = widget.item as Order;
+    this.order = widget.item;
     total = order.deliveryCost;
     order.items.forEach((element) {
       total += element.getTotal();
@@ -55,23 +53,13 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       }
       index++;
     });
-    checkEvalutationOrder();
+    presenter.readSnapshot(order);
   }
 
-  void checkEvalutationOrder() async {
-    await Future.delayed(Duration(milliseconds: 500));
-    if (order.status.isLast() && order.evaluation == null) {
-      var evaluation = await showDialog(
-        context: context,
-        builder: (BuildContext context) => EvaluationDialog(),
-      );
-      if (evaluation != null) {
-        setState(() {
-          order.evaluation = evaluation;
-        });
-        presenter.update(order);
-      }
-    }
+  @override
+  void dispose() {
+    super.dispose();
+    presenter.dispose();
   }
 
   @override
@@ -87,7 +75,6 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
   @override
   onSuccess(Order result) {
     order.update(result);
-    print(result.status.toMap());
     int index = 0;
     order.status.values.forEach((element) {
       if (element.name == order.status.current.name) {
@@ -98,25 +85,36 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       }
       index++;
     });
+    checkEvalutationOrder();
+  }
+
+  void checkEvalutationOrder() async {
+    await Future.delayed(Duration(milliseconds: 500));
+    if (order.status.isLast() && order.evaluation == null) {
+      var evaluation = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => EvaluationDialog(),
+      );
+      if (evaluation != null) {
+        setState(() {
+          order.evaluation = evaluation;
+        });
+        presenter.update(order);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text("Pedido", style: TextStyle(color: Colors.white),),
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-        body: nestedScrollView(),
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text("Pedido", style: TextStyle(color: Colors.white),),
+        iconTheme: IconThemeData(color: Colors.white),
       ),
+      body: nestedScrollView(),
     );
-  }
-
-  Future<bool> _onBackPressed() {
-    PageRouter.pop(context, order);
   }
 
   Widget nestedScrollView() {
@@ -331,13 +329,8 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
   }
 
   Widget body() {
-    final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
-    return RefreshIndicator(
-      key: _refreshIndicatorKey,
-      onRefresh: () => presenter.read(order),
-      child: Center(
-        child: listView(),
-      ),
+    return Center(
+      child: listView(),
     );
   }
 

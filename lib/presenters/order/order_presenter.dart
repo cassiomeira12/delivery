@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import '../../models/singleton/singleton_user.dart';
 import '../../services/firebase/firebase_order_service.dart';
 import '../../contracts/order/order_contract.dart';
@@ -10,9 +12,20 @@ class OrdersPresenter implements OrderContractPresenter {
 
   OrderContractService service = FirebaseOrderService("orders");
 
+  StreamSubscription _streamSubscription;
+
+  void pause() {
+    if (_streamSubscription != null) _streamSubscription.pause();
+  }
+
+  void resume() {
+    if (_streamSubscription != null) _streamSubscription.resume();
+  }
+
   @override
   dispose() {
     service = null;
+    if (_streamSubscription != null) _streamSubscription.cancel();
   }
 
   @override
@@ -50,7 +63,7 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   Future<Order> delete(Order item) async {
-    return await service.create(item).then((value) {
+    return await service.delete(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
@@ -82,14 +95,23 @@ class OrdersPresenter implements OrderContractPresenter {
   }
 
   @override
-  listUserOrders() async {
-    return await service.listUserOrders(SingletonUser.instance.id).then((value) {
-      if (_view != null) _view.listSuccess(value);
-      return value;
-    }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
-      return null;
+  readSnapshot(Order item) async {
+    _streamSubscription = service.readSnapshot(item).listen((event) {
+      if (_view != null) _view.onSuccess(Order.fromMap(event.data));
     });
   }
+
+  @override
+  listUserOrders() async {
+    _streamSubscription = service.listUserOrders(SingletonUser.instance.id).listen((event) {
+      if (_view != null) _view.listSuccess(
+        event.documents.map<Order>((e) {
+          return Order.fromMap(e.data);
+        }).toList()
+      );
+    });
+  }
+
+
 
 }

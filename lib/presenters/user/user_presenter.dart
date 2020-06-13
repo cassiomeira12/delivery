@@ -48,7 +48,7 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
 
   @override
   Future<BaseUser> delete(BaseUser item) async {
-    return await service.create(item).then((value) {
+    return await service.delete(item).then((value) {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {

@@ -49,7 +49,7 @@ class CompanyPresenter implements CompanyContractPresenter {
 
   @override
   Future<Company> delete(Company item) async {
-    return await service.create(item).then((value) {
+    return await service.delete(item).then((value) {
       _view.onSuccess(value);
       return value;
     }).catchError((error) {

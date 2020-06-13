@@ -20,7 +20,7 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  OrderContractPresenter presenter;
+  OrdersPresenter presenter;
 
   List<Order> ordersList;
 
@@ -96,7 +96,14 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
             SliverList(
               delegate: SliverChildListDelegate(
                   ordersList.map<Widget>((item) {
-                    return HistoricWidget(item: item,);
+                    return GestureDetector(
+                      child: HistoricWidget(item: item,),
+                      onTap: () async {
+                        presenter.pause();
+                        await PageRouter.push(context, HistoricOrderPage(item: item,));
+                        presenter.resume();
+                      },
+                    );
                   }).toList()
               ),
             ),
