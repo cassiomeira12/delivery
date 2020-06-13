@@ -7,7 +7,6 @@ class Evaluation extends BaseModel<Evaluation> {
   Evaluation();
 
   Evaluation.fromMap(Map<dynamic, dynamic>  map) {
-    id = map["id"];
     stars = map["stars"] as int;
     comment = map["comment"];
   }
@@ -15,7 +14,6 @@ class Evaluation extends BaseModel<Evaluation> {
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["id"] = id;
     map["stars"] = stars;
     map["comment"] = comment;
     return map;

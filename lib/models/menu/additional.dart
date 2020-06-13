@@ -25,10 +25,4 @@ class Additional extends Item {
     return map;
   }
 
-//  update(Additional item) {
-//    name = item.name;
-//    description = item.description;
-//    cost = item.cost;
-//  }
-
 }

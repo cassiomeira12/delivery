@@ -1,3 +1,6 @@
+import 'package:delivery/views/historico/evalutation_dialog.dart';
+import 'package:sembast/sembast.dart';
+
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/order/order.dart';
@@ -7,6 +10,8 @@ import '../../presenters/order/order_presenter.dart';
 import '../../utils/date_util.dart';
 import '../../widgets/stars_widget.dart';
 import 'package:flutter/material.dart';
+
+import '../page_router.dart';
 
 class HistoricOrderPage extends StatefulWidget {
   final dynamic item;
@@ -50,8 +55,22 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       }
       index++;
     });
+    checkEvalutationOrder();
+  }
+
+  void checkEvalutationOrder() async {
+    await Future.delayed(Duration(milliseconds: 500));
     if (order.status.isLast() && order.evaluation == null) {
-      print("Avaliar pedido");
+      var evaluation = await showDialog(
+        context: context,
+        builder: (BuildContext context) => EvaluationDialog(),
+      );
+      if (evaluation != null) {
+        setState(() {
+          order.evaluation = evaluation;
+        });
+        presenter.update(order);
+      }
     }
   }
 
@@ -83,14 +102,21 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text("Pedido", style: TextStyle(color: Colors.white),),
-        iconTheme: IconThemeData(color: Colors.white),
+    return WillPopScope(
+      onWillPop: _onBackPressed,
+      child: Scaffold(
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Text("Pedido", style: TextStyle(color: Colors.white),),
+          iconTheme: IconThemeData(color: Colors.white),
+        ),
+        body: nestedScrollView(),
       ),
-      body: nestedScrollView(),
     );
+  }
+
+  Future<bool> _onBackPressed() {
+    PageRouter.pop(context, order);
   }
 
   Widget nestedScrollView() {
@@ -145,14 +171,15 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               ],
             ),
             addressDataWidget(order.deliveryAddress),
+            SizedBox(height: 10,),
             order.status.isLast() && order.evaluation != null ?
               Column(
                 children: [
                   avaliationTextWidget(),
-                  StarsWidget(stars: 5, size: 40,),
+                  StarsWidget(initialStar: order.evaluation.stars, size: 40,),
                 ],
               ) : Container(),
-            deliveryCurrentStatus(),
+            order.evaluation == null ? deliveryCurrentStatus() : Container(),
           ],
         ),
       ),
@@ -251,7 +278,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 ),
               ),
               Text(
-                "R\$ ${(item.amount * item.cost).toStringAsFixed(2)}",
+                "R\$ ${(item.getTotal()).toStringAsFixed(2)}",
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.black45,

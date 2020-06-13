@@ -1,3 +1,4 @@
+import '../services/notifications/firebase_push_notification.dart';
 import '../contracts/user/user_contract.dart';
 import '../models/base_user.dart';
 import '../models/singleton/singleton_user.dart';
@@ -15,7 +16,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:package_info/package_info.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'intro_page.dart';
 import 'login/login_page.dart';
 import 'login/verified_email_page.dart';
@@ -272,12 +272,21 @@ class _RootPageState extends State<RootPage> implements UserContractView {
   }
 
   void updateNotificationToken() async {
+    var pushNotifications = FirebaseNotifications();
+    await pushNotifications.setUpFirebase();
     String notificationToken = await PreferencesUtil.getNotificationToken();
     NotificationToken token = SingletonUser.instance.notificationToken;
-    if (token == null || token.token != notificationToken) {
-      SingletonUser.instance.notificationToken = NotificationToken(notificationToken);
+    if (token == null || (token.token == null || token.token != notificationToken)) {
+      if (token != null) {
+        token.token = notificationToken;
+      } else {
+        token = NotificationToken(notificationToken);
+        token.topics = List();
+      }
+      SingletonUser.instance.notificationToken = token;
       presenter.update(SingletonUser.instance);
     }
+    pushNotifications.subscribeDefaultTopics();
   }
 
 }

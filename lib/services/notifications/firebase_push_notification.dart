@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:delivery/models/base_user.dart';
+
 import '../../models/singleton/singleton_user.dart';
 import '../../services/notifications/local_notifications.dart';
 import '../../utils/preferences_util.dart';
@@ -22,7 +24,6 @@ class FirebaseNotifications {
     notifications.initialize(
       InitializationSettings(settingsAndroid, settingsIOS), onSelectNotification: onSelectNotification
     );
-    subscribeDefaultTopics();
   }
 
   void subscribeDefaultTopics() async {
@@ -32,33 +33,35 @@ class FirebaseNotifications {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String packageName = packageInfo.packageName + "-" + Platform.operatingSystem;
     topics.add(packageName);
-    subscriveTopicsList(topics);
+    if (SingletonUser.instance.notificationToken != null) {
+      topics.addAll(SingletonUser.instance.notificationToken.topics);
+    }
+    subscribeTopicsList(topics);
   }
 
-  static void subscriveTopicsList(List<String> topics) async  {
+  static void subscribeTopicsList(List<String> topics) async  {
     var preferences = await PreferencesUtil.getInstance();
     topics.forEach((topic) async {
       if (preferences.getString(topic) == null) {
         bool value = await subscribeToTopic(topic);
         if (value) {
           preferences.setString(topic, topic);
-          print("subscriveTopic: $topic");
         }
       }
     });
   }
 
-  void setUpFirebase() {
+  Future<void> setUpFirebase() {
     _firebaseMessaging = FirebaseMessaging();
-    firebaseCloudMessaging_Listeners();
+    return firebaseCloudMessaging_Listeners();
   }
 
-  void firebaseCloudMessaging_Listeners() {
+  Future<void> firebaseCloudMessaging_Listeners() async {
     if (Platform.isIOS) iOSPermission();
 
-    _firebaseMessaging.getToken().then((token) {
-      PreferencesUtil.setNotificationToken(token);
-    });
+    var token = await _firebaseMessaging.getToken();
+
+    PreferencesUtil.setNotificationToken(token);
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {

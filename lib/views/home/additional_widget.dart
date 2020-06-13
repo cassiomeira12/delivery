@@ -85,9 +85,11 @@ class _AdditionalWidgetState extends State<AdditionalWidget> {
                 minValue: 0,
                 maxValue: item.maxQuantity,
                 changedCount: (value) {
+                  print("antes ${item.amount}");
                   setState(() {
                     item.amount = value;
                   });
+                  print("depois ${item.amount}");
                   widget.changedCount(widget.additional);
                 },
               ),

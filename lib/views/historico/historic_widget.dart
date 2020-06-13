@@ -17,9 +17,7 @@ class HistoricWidget extends StatefulWidget {
 }
 
 class _HistoricWidgetState extends State<HistoricWidget> {
-
   Order order;
-
   double total = 0;
 
   @override
@@ -37,8 +35,8 @@ class _HistoricWidgetState extends State<HistoricWidget> {
     return Card(
       margin: EdgeInsets.fromLTRB(5, 5, 5, 10),
       elevation: 5,
-      shadowColor: order.status.isFirst() ? Colors.green : Colors.white,
-      color: order.status.isFirst() ? Colors.green[50] : Colors.white,
+      shadowColor: order.status.isLast() ? order.evaluation == null ? Colors.amber : Colors.white : Colors.green,
+      color: order.status.isLast() ? order.evaluation == null ? Colors.amber[100] : Colors.white : Colors.green[50],
       borderOnForeground: true,
       child: FlatButton(
         padding: EdgeInsets.all(0),
@@ -60,15 +58,20 @@ class _HistoricWidgetState extends State<HistoricWidget> {
                   order.evaluation == null ?
                     Text(order.status.current.name, style: Theme.of(context).textTheme.body2,)
                       :
-                    StarsWidget(stars: order.evaluation.stars, size: 30,),
+                    StarsWidget(initialStar: order.evaluation.stars, size: 30,),
                   costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
                 ],
               ),
             ],
           ),
         ),
-        onPressed: () {
-          PageRouter.push(context, HistoricOrderPage(item: order,));
+        onPressed: () async {
+          var result = await PageRouter.push(context, HistoricOrderPage(item: order,));
+          if (result != null) {
+            setState(() {
+              order = result;
+            });
+          }
         },
       ),
     );

@@ -1,3 +1,4 @@
+import '../../models/menu/product.dart';
 import '../../models/menu/additional.dart';
 import '../base_model.dart';
 
@@ -6,13 +7,10 @@ class OrderItem extends BaseModel<OrderItem> {
   String description;
   double cost;
   double discount;
-  String preparationTime;
-
+  PreparationTime preparationTime;
   int amount;
-
   List<String> choicesSelected;
   List<Additional> additionalSelected;
-
   String note;
 
   OrderItem() {
@@ -26,11 +24,10 @@ class OrderItem extends BaseModel<OrderItem> {
     description = map["description"];
     cost = (map["cost"] as num).toDouble();
     discount = (map["discount"] as num).toDouble();
-    preparationTime = map["preparationTime"];
+    preparationTime = map["preparationTime"] == null ? null : PreparationTime.fromMap(map["preparationTime"]);
     amount = map["amount"] as int;
     choicesSelected = map["choicesSelected"] == null ?
         List() : List.from(map["choicesSelected"]);
-        //List.from(map["choicesSelected"]).map<Choice>((e) => Choice.fromMap(e)).toList();
     additionalSelected = map["additionalSelected"] == null ?
         List() :
         List.from(map["additionalSelected"]).map<Additional>((e) => Additional.fromMap(e)).toList();
@@ -45,11 +42,9 @@ class OrderItem extends BaseModel<OrderItem> {
     map["description"] = description;
     map["cost"] = cost;
     map["discount"] = discount;
-    map["preparationTime"] = preparationTime;
+    map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
     map["amount"] = amount;
-    map["choicesSelected"] = choicesSelected == null ?
-        null : choicesSelected.toList();
-        //choicesSelected.map((e) => e.toMap()).toList();
+    map["choicesSelected"] = choicesSelected == null ?  null : choicesSelected.toList();
     map["additionalSelected"] = additionalSelected == null ?
         null :
         additionalSelected.map((e) => e.toMap()).toList();

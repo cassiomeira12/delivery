@@ -1,29 +1,31 @@
 import 'package:flutter/material.dart';
 
 class StarsWidget extends StatefulWidget {
-  int stars;
+  final int initialStar;
   final int maxStarts;
   final double size;
-  final bool press;
+  final ValueChanged<int> onChanged;
 
   StarsWidget({
-    this.stars,
+    this.initialStar = 0,
     this.maxStarts = 5,
     this.size = 20,
-    this.press = false,
-  }) : assert(stars <= maxStarts);
+    this.onChanged,
+  }) : assert(initialStar <= maxStarts);
 
   @override
   _StarsWidgetState createState() => _StarsWidgetState();
 }
 
 class _StarsWidgetState extends State<StarsWidget> {
+  int star;
   int starBorder;
   List<Widget> listaEstrelas = List();
 
   @override
   void initState() {
     super.initState();
+    star = widget.initialStar;
     buildStarList();
   }
 
@@ -36,7 +38,7 @@ class _StarsWidgetState extends State<StarsWidget> {
   }
 
   void buildStarList() {
-    starBorder = widget.maxStarts - widget.stars;
+    starBorder = widget.maxStarts - widget.initialStar;
     listaEstrelas.clear();
     setState(() {
       for (int i = 1; i <= widget.maxStarts; i++) {
@@ -48,18 +50,18 @@ class _StarsWidgetState extends State<StarsWidget> {
   Widget startItem(int index) {
     return GestureDetector(
       child: Icon(
-        index <= widget.stars ? Icons.star : Icons.star_border,
+        index <= star ? Icons.star : Icons.star_border,
         color: Colors.amber,
         size: widget.size,
       ),
       onTap: () {
-        if (widget.press) {
-          setState(() {
-            print(index);
-            widget.stars = index;
-            buildStarList();
-          });
-        }
+        setState(() {
+          star = index;
+          buildStarList();
+          if (widget.onChanged != null) {
+            widget.onChanged(star);
+          }
+        });
       },
     );
   }

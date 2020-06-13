@@ -77,27 +77,32 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
   }
 
   Widget body() {
-    return Center(
-      child: ordersList == null ?
-      LoadingWidget()
-          :
-      ordersList.isEmpty ?
-      EmptyListWidget(
-        message: "Você ainda não fez pedidos",
-        //assetsImage: "assets/notification.png",
-      )
-          :
-      CustomScrollView(
-        slivers: <Widget>[
-          SliverList(
-            delegate: SliverChildListDelegate(
-                ordersList.map<Widget>((item) {
-                  return HistoricWidget(item: item,);
-                }).toList()
+    final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
+    return RefreshIndicator(
+      key: _refreshIndicatorKey,
+      onRefresh: () => presenter.listUserOrders(),
+      child: Center(
+        child: ordersList == null ?
+        LoadingWidget()
+            :
+        ordersList.isEmpty ?
+        EmptyListWidget(
+          message: "Você ainda não fez pedidos",
+          //assetsImage: "assets/notification.png",
+        )
+            :
+        CustomScrollView(
+          slivers: <Widget>[
+            SliverList(
+              delegate: SliverChildListDelegate(
+                  ordersList.map<Widget>((item) {
+                    return HistoricWidget(item: item,);
+                  }).toList()
+              ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
+      )
     );
   }
 

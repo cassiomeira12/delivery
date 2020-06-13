@@ -307,7 +307,7 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  Widget tempoPreparo(String tempo) {
+  Widget tempoPreparo(PreparationTime preparationTime) {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
       child: Row(
@@ -320,7 +320,7 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ),
           Text(
-            "20 - 30 min",
+            preparationTime.toString(),
             style: TextStyle(
               fontSize: 20,
               color: Colors.black45,
@@ -357,6 +357,9 @@ class _ProductPageState extends State<ProductPage> {
           });
           setState(() {
             additionalCost = temp;
+          });
+          product.additional.forEach((element) {
+            print(element.toMap());
           });
         },
       ),
@@ -401,10 +404,6 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   void saveOrderItem() async {
-//    final database = LocalDB.MemoryDatabaseAdapter().database();
-//    //await database.collection("orders").document(product.id).insert(data: product.toMap());
-//    var item = await database.collection("asdf").insert(data: product.toMap(), reach: LocalDB.Reach.local);
-//    print(item.documentId);
     setState(() {
       _loading = true;
     });
@@ -426,6 +425,7 @@ class _ProductPageState extends State<ProductPage> {
       order.note = _observacaoController.text;
 
       product.additional.forEach((element) {
+        print(element.toMap());
         if (element.amount > 0) {
           order.additionalSelected.add(element);
         }
@@ -448,7 +448,7 @@ class _ProductPageState extends State<ProductPage> {
         });
         ScaffoldSnackBar.failure(context, _scaffoldKey, "Selecione todas as opções obrigatórias");
       } else {
-        OrderSingleton.instance.id = product.id;
+        OrderSingleton.instance.id = "temp";
         OrderSingleton.instance.userId = SingletonUser.instance.id;
         OrderSingleton.instance.userName = SingletonUser.instance.name;
         OrderSingleton.instance.items.add(order);
@@ -468,6 +468,7 @@ class _ProductPageState extends State<ProductPage> {
       order.note = _observacaoController.text;
 
       product.additional.forEach((element) {
+        print(element.toMap());
         if (element.amount > 0) {
           order.additionalSelected.add(element);
         }

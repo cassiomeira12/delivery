@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/company/type_payment.dart';
@@ -37,6 +38,8 @@ class ConfirmOrderPage extends StatefulWidget {
 
 class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderContractView {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  bool _loading = false;
 
   OrderContractPresenter presenter;
 
@@ -79,6 +82,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   @override
   onSuccess(Order result) {
+    setState(() {
+      _loading = false;
+    });
     OrderSingleton.instance.id = result.id;
     widget.orderCallback();
     PageRouter.pop(context, true);
@@ -92,10 +98,14 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
         title: Text("Confirmar pedido", style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: Stack(
-        children: [
-          body(),
-        ],
+      body: ModalProgressHUD(
+        inAsyncCall: _loading,
+        progressIndicator: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),
+          child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(),),
+        ),
+        child: body(),
       ),
     );
   }
@@ -109,8 +119,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           cardDeliveryAddress(),
           SizedBox(height: 10,),
           cardPaymentType(),
-          SizedBox(height: 40,),
+          SizedBox(height: 30,),
           sendOrderButton(),
+          SizedBox(height: 10,),
         ],
       ),
     );
@@ -843,6 +854,10 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha uma forma de pagamento!");
             return;
           }
+
+          setState(() {
+            _loading = true;
+          });
 
           OrderSingleton.instance.id = null;
           OrderSingleton.instance.createdAt = DateTime.now();

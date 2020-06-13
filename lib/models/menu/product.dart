@@ -1,18 +1,14 @@
 import '../../models/menu/additional.dart';
 import '../../models/menu/choice.dart';
-
 import '../base_model.dart';
-import 'item.dart';
 
 class Product extends BaseModel<Product> {
   String name;
   String description;
   double cost;
   double discount;
-  String preparationTime;
+  PreparationTime preparationTime;
   List<String> images;
-  //List<Size> sizes;
-  //List<Ingredient> ingredientes;
   List<Choice> choices;
   List<Additional> additional;
 
@@ -24,14 +20,10 @@ class Product extends BaseModel<Product> {
     description = map["description"];
     cost = (map["cost"] as num).toDouble();
     discount = (map["discount"] as num).toDouble();
-    preparationTime = map["preparationTime"];
+    preparationTime = map["preparationTime"] == null ? null : PreparationTime.fromMap(map["preparationTime"]);
     images = map["images"] == null ? List() : List.from(map["images"]);
     choices = map["choices"] == null ? List() : List.from(map["choices"]).map<Choice>((e) => Choice.fromMap(e)).toList();
     additional = map["additional"] == null ? List() : List.from(map["additional"]).map<Additional>((e) => Additional.fromMap(e)).toList();
-    //images
-    //sizes
-    //ingredites
-    //cost = 10;
   }
 
   @override
@@ -42,13 +34,10 @@ class Product extends BaseModel<Product> {
     map["description"] = description;
     map["cost"] = cost;
     map["discount"] = discount;
-    map["preparationTime"] = preparationTime;
+    map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
     map["images"] = images == null ? List() : images;
     map["choices"] = choices == null ? List() : choices.map<Map>((e) => e.toMap()).toList();
     map["additional"] = additional == null ? List() : additional.map((e) => e.toMap()).toList();
-    //images
-    //sizes
-    //ingredientes
     return map;
   }
 
@@ -73,8 +62,8 @@ class PreparationTime extends BaseModel<PreparationTime> {
   PreparationTime();
 
   PreparationTime.fromMap(Map<dynamic, dynamic>  map) {
-    hour = map["hour"];
-    minute = map["minute"];
+    hour = map["hour"] as int;
+    minute = map["minute"] as int;
   }
 
   @override
