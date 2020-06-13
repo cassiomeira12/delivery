@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import '../../contracts/order/order_contract.dart';
@@ -864,14 +866,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           OrderSingleton.instance.status.values[0].date = DateTime.now();
           OrderSingleton.instance.status.current = OrderSingleton.instance.status.values[0];
           OrderSingleton.instance.note = _observacaoController.text;
+          OrderSingleton.instance.deliveryCost = pickup ? 0 : deliveryCost;
+          OrderSingleton.instance.delivery = !pickup;
 
-          if (pickup) {
-            OrderSingleton.instance.deliveryCost = 0;
-          } else {
-            OrderSingleton.instance.deliveryCost = deliveryCost;
-          }
-
-          Log.d(OrderSingleton.instance.toMap());
           presenter.create(OrderSingleton.instance);
         },
       ),

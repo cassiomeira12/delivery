@@ -18,11 +18,12 @@ class Order extends BaseModel<Order> {
   String note;
   Evaluation evaluation;
   Address deliveryAddress;
-  double deliveryCost;
   TypePayment typePayment;
   List<OrderItem> items;
   OrderStatus status;
   String changeMoney;
+  bool delivery;
+  double deliveryCost;
   DeliveryForecast deliveryForecast;
   PreparationTime preparationTime;
 
@@ -49,6 +50,7 @@ class Order extends BaseModel<Order> {
     items = List.from(map["items"]).map<OrderItem>((e) => OrderItem.fromMap(e)).toList();
     status = OrderStatus.fromMap(map["status"]);
     changeMoney = map["changeMoney"];
+    delivery = map["delivery"] == null ? deliveryCost != 0 : map["delivery"] as bool;
     deliveryForecast = map["deliveryForecast"] == null ? null : DeliveryForecast.fromMap(map["deliveryForecast"]);
     preparationTime = map["preparationTime"] == null ? null : PreparationTime.fromMap(map["preparationTime"]);
   }
@@ -71,6 +73,7 @@ class Order extends BaseModel<Order> {
     map["items"] = items.map<Map>((e) => e.toMap()).toList();
     map["status"] = status.toMap();
     map["changeMoney"] = changeMoney;
+    map["delivery"] = delivery == null ? deliveryCost != 0 : deliveryCost;
     map["deliveryForecast"] = deliveryForecast == null ? null : deliveryForecast.toMap();
     map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
     return map;
@@ -93,6 +96,7 @@ class Order extends BaseModel<Order> {
     items = item.items;
     status = item.status;
     changeMoney = item.changeMoney;
+    deliveryCost = item.deliveryCost;
     deliveryForecast = item.deliveryForecast;
     preparationTime = item.preparationTime;
   }
@@ -113,6 +117,7 @@ class Order extends BaseModel<Order> {
     items = List();
     status = OrderStatus();
     changeMoney = null;
+    delivery = deliveryCost != 0;
     deliveryForecast = null;
     preparationTime = null;
 
