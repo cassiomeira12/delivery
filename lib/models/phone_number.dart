@@ -11,7 +11,7 @@ class PhoneNumber {
     countryCode = map["countryCode"];
     ddd = map["ddd"];
     number = map["number"];
-    verified = map["verified"];
+    verified = map["verified"] == null ? false : map["verified"] as bool;
   }
 
   toMap() {
@@ -19,7 +19,7 @@ class PhoneNumber {
     map["countryCode"] = countryCode;
     map["ddd"] = ddd;
     map["number"] = number;
-    map["verified"] = verified;
+    map["verified"] = verified == null ? false : verified;
     return map;
   }
 
