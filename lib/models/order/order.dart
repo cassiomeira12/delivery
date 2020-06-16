@@ -73,7 +73,7 @@ class Order extends BaseModel<Order> {
     map["items"] = items.map<Map>((e) => e.toMap()).toList();
     map["status"] = status.toMap();
     map["changeMoney"] = changeMoney;
-    map["delivery"] = delivery == null ? deliveryCost != 0 : deliveryCost;
+    map["delivery"] = delivery == null ? deliveryCost != 0 : delivery;
     map["deliveryForecast"] = deliveryForecast == null ? null : deliveryForecast.toMap();
     map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
     return map;

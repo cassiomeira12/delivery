@@ -16,7 +16,6 @@ import '../../widgets/primary_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:progress_state_button/progress_button.dart';
 import '../../widgets/background_card.dart';
 import '../page_router.dart';
 import 'choice_widget.dart';
@@ -55,8 +54,6 @@ class _ProductPageState extends State<ProductPage> {
   Item escolhido;
 
   List<ChoiceWidget> selectedChoices = List();
-
-  ButtonState buttonState = ButtonState.idle;
 
   @override
   void initState() {

@@ -174,6 +174,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
       child: TextInputField(
         labelText: "Número",
         textCapitalization: TextCapitalization.sentences,
+        validator: (value) => null,
         onSaved: (value) => numero = value.trim(),
       ),
     );
@@ -186,6 +187,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
         labelText: "Referência",
         textCapitalization: TextCapitalization.sentences,
         maxLines: 3,
+        validator: (value) => null,
         onSaved: (value) => referencia = value.trim(),
       ),
     );
@@ -236,8 +238,8 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
       ..userId = SingletonUser.instance.id
       ..neighborhood = bairro
       ..street = rua
-      ..number = numero
-      ..reference = referencia;
+      ..number = numero.isEmpty ? null : numero
+      ..reference = referencia.isEmpty ? null : referencia;
     address.city = widget.city;
     address.smallTown = widget.smallTown;
     return address;

@@ -32,6 +32,7 @@ const EMAIL_VERIFICACAO_ENVIADO = "Email de verificação enviado com sucesso!";
 const ERROR_ENVIAR_EMAIL = "Erro ao enviar email de verificação";
 const EMAIL_VERIFICACAO = "Email de verificação";
 const REENVIAR_EMAIL = "Reenviar email";
+const NETWORK_ERROR = "Verifique sua conexão com a internet";
 
 const CRIAR_CONTA = "Criar conta";
 const CRIANDO_CONTA = "Criando conta";

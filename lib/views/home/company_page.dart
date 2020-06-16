@@ -1,4 +1,5 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 import '../../contracts/menu/menu_contract.dart';
 import '../../models/menu/additional.dart';
 import '../../models/menu/category.dart';
@@ -136,6 +137,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     return SlidingUpPanel(
       controller: _pc,
       backdropEnabled: true,
+      maxHeight: MediaQuery.of(context).size.height / 1.4,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(20),
         topRight: Radius.circular(20),
@@ -153,27 +155,41 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
           child: Container(
             margin: EdgeInsets.fromLTRB(25, 0, 25, 0),
             child: Row(
-              //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Row(
-                  children: [
-                    FaIcon(FontAwesomeIcons.shoppingCart, color: Theme.of(context).backgroundColor),
-                    SizedBox(width: 10,),
-                    Text(
-                      "Pedidos selecionados",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
                 Flexible(
                   flex: 1,
-                  child: Container(
-                    color: Theme.of(context).primaryColor,
-                    height: MediaQuery.of(context).size.height,
+                  child: Row(
+                    children: [
+                      FaIcon(FontAwesomeIcons.shoppingCart, color: Theme.of(context).backgroundColor),
+                      SizedBox(width: 10,),
+                      Flexible(
+                        flex: 1,
+                        child: Wrap(
+                          alignment: WrapAlignment.start,
+                          spacing: 5,
+                          children: [
+                            Text(
+                              "Pedidos",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              "selecionados",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 notificationCount(orderItens),
@@ -450,8 +466,9 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     return Container(
       //color: Colors.red,
       alignment: Alignment.center,
-      child: Text(
+      child: AutoSizeText(
         widget.company.getOpenTime(DateTime.now().weekday),
+        maxLines: 1,
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -464,10 +481,11 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   Widget deliveryCostCompanyWidget() {
     return Container(
       //color: Colors.green,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        runSpacing: 5,
+        spacing: 5,
         children: <Widget>[
-
           widget.company.delivery.pickup ?
             Container(
               padding: EdgeInsets.all(10),
@@ -477,9 +495,6 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
               ),
               child: FaIcon(FontAwesomeIcons.running, size: 16, color: Theme.of(context).errorColor,),
             ) : Container(),
-
-          SizedBox(width: 5,),
-
           Container(
             padding: EdgeInsets.all(10),
             decoration: BoxDecoration(
@@ -487,6 +502,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 FaIcon(FontAwesomeIcons.motorcycle, size: 16, color: Theme.of(context).errorColor,),
                 SizedBox(width: 5,),
@@ -501,7 +517,6 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
               ],
             ),
           ),
-
         ],
       ),
     );

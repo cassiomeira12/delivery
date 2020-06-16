@@ -1,7 +1,8 @@
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:delivery/views/settings/phone_number_page.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:progress_dialog/progress_dialog.dart';
 import '../../widgets/text_input_field.dart';
 import '../../contracts/login/login_contract.dart';
 import '../../models/base_user.dart';
@@ -38,12 +39,10 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
   String _password;
 
   bool _loading = false;
-  ProgressDialog pr;
 
   @override
   void initState() {
     super.initState();
-    pr = ProgressDialog(context);
     presenter = LoginPresenter(this);
   }
 
@@ -55,13 +54,11 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   @override
   hideProgress() {
-    //pr.hide();
     setState(() => _loading = false);
   }
 
   @override
   showProgress() {
-    //pr.show();
     setState(() => _loading = true);
   }
 
@@ -72,9 +69,14 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
   }
 
   @override
-  onSuccess(BaseUser result) {
+  onSuccess(BaseUser result) async {
     SingletonUser.instance.update(result);
+    if (result.phoneNumber == null) {
+      var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
+      SingletonUser.instance.phoneNumber = phoneNumber;
+    }
     widget.loginCallback();
+    PageRouter.pop(context);
   }
 
   @override
@@ -175,7 +177,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
       padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
       child: TextInputField(
         labelText: EMAIL,
-        inputType: TextInputType.emailAddress,
+        keyboardType: TextInputType.emailAddress,
         onSaved: (value) => _email = value.trim(),
       ),
     );
@@ -186,7 +188,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
       padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
       child: TextInputField(
         labelText: SENHA,
-        inputType: TextInputType.text,
+        keyboardType: TextInputType.text,
         obscureText: true,
         onSaved: (value) => _password = value.trim(),
       ),
@@ -242,8 +244,10 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
               flex: 5,
               child: Container(
                 alignment: Alignment.center,
-                child: Text(
+                child: AutoSizeText(
                   LOGAR_COM_GOOGLE,
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.body2,
                 ),
               ),

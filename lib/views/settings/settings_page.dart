@@ -125,7 +125,7 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
       children: <Widget>[
         perfilButton(),
         notificationsSettingsButton(),
-        darkModeButton(),
+        //darkModeButton(),
         //aboutAppButton(),
         //termosButton(),
         //disableAccountButton(),

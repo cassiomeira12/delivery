@@ -87,7 +87,7 @@ class _ForgotPasswordState extends State<ForgotPasswordPage> implements ForgotPa
       padding: EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
       child: TextInputField(
         labelText: EMAIL,
-        inputType: TextInputType.emailAddress,
+        keyboardType: TextInputType.emailAddress,
         onSaved: (value) => _email = value.trim(),
       ),
     );

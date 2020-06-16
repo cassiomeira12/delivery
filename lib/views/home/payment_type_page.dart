@@ -72,17 +72,27 @@ class _PaymentTypePageState extends State<PaymentTypePage> {
         child: Container(
           padding: EdgeInsets.fromLTRB(0, 15, 15, 15),
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 50,
-                alignment: Alignment.center,
-                child: FaIcon(icon, color: Colors.green,),
+              Row(
+                children: [
+                  Container(
+                    width: 50,
+                    alignment: Alignment.center,
+                    child: FaIcon(icon, color: Colors.green,),
+                  ),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black45,
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                name,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black45,
+              Container(
+                child: Checkbox(
+                  value: false,
                 ),
               ),
             ],

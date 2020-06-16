@@ -193,10 +193,13 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
           caption: DELETAR,
           color: Colors.red,
           icon: Icons.delete,
-          onTap: () {
-            setState(() {
-              presenter.delete(address);
-            });
+          onTap: () async {
+            var result = await presenter.delete(address);
+            if (result != null) {
+              setState(() {
+                addressList.remove(address);
+              });
+            }
           },
         ),
       ],
@@ -273,7 +276,6 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
                 ),
               ),
               Container(
-                //color: Colors.red,
                 child: Checkbox(
                   value: false,
                 ),
@@ -308,10 +310,24 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
   }
 
   @override
-  listSuccess(List<Address> list) {
+  listSuccess(List<Address> list) async {
     setState(() {
       addressList = list;
     });
+    if (addressList.isEmpty) {
+      await Future.delayed(Duration(milliseconds: 300));
+      var result = await PageRouter.push(context,
+        NewAddressPage(
+          city: widget.address.city,
+          smallTown: widget.address.smallTown,
+        ),
+      );
+      if (result != null) {
+        setState(() {
+          addressList.add(result);
+        });
+      }
+    }
   }
 
   @override
@@ -321,9 +337,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
 
   @override
   onSuccess(Address result) {
-    setState(() {
-      addressList.remove(result);
-    });
+
   }
 
 }

@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class TextInputField extends StatefulWidget {
   final String labelText;
-  final TextInputType inputType;
+  final String hintText;
+  final TextInputType keyboardType;
 
   TextAlign textAlign;
   bool obscureText;
@@ -15,8 +16,9 @@ class TextInputField extends StatefulWidget {
 
   TextInputField({
     @required this.labelText,
+    this.hintText,
 
-    this.inputType = TextInputType.text,
+    this.keyboardType = TextInputType.text,
     this.textAlign = TextAlign.center,
     this.obscureText = false,
     this.textCapitalization = TextCapitalization.none,
@@ -35,7 +37,7 @@ class _TextInputFieldState extends State<TextInputField> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      keyboardType: widget.inputType,
+      keyboardType: widget.keyboardType,
       style: Theme.of(context).textTheme.body2,
       textAlign: TextAlign.center,
       obscureText: widget.obscureText,
@@ -43,6 +45,7 @@ class _TextInputFieldState extends State<TextInputField> {
       textInputAction: TextInputAction.next,
       onFieldSubmitted: (_) => FocusScope.of(context).nextFocus(),
       decoration: InputDecoration(
+        hintText: widget.hintText == null ? null : widget.hintText,
         labelText: widget.labelText,
         labelStyle: Theme.of(context).textTheme.body2,
         errorBorder: OutlineInputBorder(

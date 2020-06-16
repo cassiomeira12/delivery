@@ -33,8 +33,8 @@ class _EvaluationDialogState extends State<EvaluationDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                "Gostou? deixe aqui sua avaliação!",
-                textAlign: TextAlign.left,
+                "Gostou?\nDeixe aqui sua avaliação!",
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 20,
                   color: Colors.black45,
@@ -43,7 +43,7 @@ class _EvaluationDialogState extends State<EvaluationDialog> {
               ),
               SizedBox(height: 10,),
               StarsWidget(
-                size: 50,
+                size: 40,
                 initialStar: 1,
                 onChanged: (value) {
                   selectedStart = value;

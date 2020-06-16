@@ -1,3 +1,5 @@
+import 'package:auto_size_text/auto_size_text.dart';
+
 import '../../models/order/order_item.dart';
 import '../../models/singleton/order_singleton.dart';
 import '../../views/home/confirm_order_page.dart';
@@ -66,24 +68,26 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, 10, 0, 20),
+      padding: EdgeInsets.fromLTRB(0, 20, 0, 30),
       child: Stack(
         children: [
-          Align(
-            alignment: Alignment.topLeft,
-            child: textTitle(),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 60, 0, 80),
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  listViewOrder(),
-                  //textDelivery(),
-                  textCost(),
-                ],
-              ),
+          SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                textTitle(),
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      listViewOrder(),
+                      //textDelivery(),
+                      textCost(),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
           Align(
@@ -97,7 +101,7 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
 
   Widget textTitle() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 20, 0, 20),
+      padding: EdgeInsets.fromLTRB(10, 0, 0, 20),
       child: Text(
         "Pedidos selecionados",
         textAlign: TextAlign.left,
@@ -161,13 +165,16 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "${item.amount}x ${item.name}",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black45,
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    "${item.amount}x ${item.name}",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black45,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Row(
@@ -291,7 +298,7 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
 
   Widget deliveryButton() {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: PrimaryButton(
         text: "Escolher endereço",
         onPressed: () async {

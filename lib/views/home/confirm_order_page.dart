@@ -80,6 +80,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   @override
   onFailure(String error) {
     print(error);
+    setState(() {
+      _loading = false;
+    });
   }
 
   @override
@@ -200,7 +203,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   Widget textDelivery() {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.only(top: 10, bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -229,7 +232,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   Widget textCost() {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.only(top: 10, bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -274,20 +277,23 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       margin: EdgeInsets.only(top: 1),
       elevation: 0,
       child: Container(
-        padding: EdgeInsets.fromLTRB(10, 18, 10, 18),
+        padding: EdgeInsets.fromLTRB(0, 18, 0, 18),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  "${item.amount}x ${item.name}",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black45,
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  flex: 1,
+                  child: Text(
+                    "${item.amount}x ${item.name}",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black45,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Row(
@@ -453,94 +459,82 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
         ),
-        child: FlatButton(
-          padding: EdgeInsets.all(0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Container(
-            padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-            width: MediaQuery.of(context).size.width,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+        child: Container(
+          padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+                child: Text(
+                  pickup ? "Buscar em" : "Entregar em",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 23,
+                    color: Colors.black54,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+
+              !pickup && (deliveryAddress == null) ?
+              Padding(
+                padding: EdgeInsets.only(left: 10, top: 15, right: 10, bottom: 15),
+                child: Text(
+                  "Adicione aqui o local para entrega",
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black54,
+                  ),
+                ),
+              ) : addressDataWidget( deliveryAddress == null ? OrderSingleton.instance.company.address : deliveryAddress ),
+
+              pickup ?
+              GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColorLight,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                  ),
                   child: Text(
-                    pickup ? "Buscar em" : "Entregar em",
+                    "Abrir o Mapa",
                     textAlign: TextAlign.left,
                     style: TextStyle(
-                      fontSize: 23,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white,
                     ),
                   ),
                 ),
-
-                 !pickup && (deliveryAddress == null) ?
-                  Padding(
-                    padding: EdgeInsets.only(left: 10, top: 15, right: 10, bottom: 15),
-                    child: Text(
-                      "Adicione aqui o local para entrega",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ) : addressDataWidget( deliveryAddress == null ? OrderSingleton.instance.company.address : deliveryAddress ),
-
-                pickup ?
-                  Container(
-                    padding: EdgeInsets.only(top: 10, bottom: 10),
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColorLight,
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                    ),
-                    child: Text(
-                      "Abrir o Mapa",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ) : deliveryAddress == null ?
-                    Padding(
-                      padding: EdgeInsets.all(10),
-                      child: RoundedShape(
-                        padding: EdgeInsets.all(15),
-                        color: Colors.transparent,
-                        child: Text(
-                          "Escolher local",
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.body2,
-                        ),
-                      ),
-                    ) : Container(),
-
-              ],
-            ),
+                onTap: () async {
+                  var address =  OrderSingleton.instance.company.address;
+                  var mapSchema = 'geo:${address.location["lat"]},${address.location["long"]}';
+                  if (await canLaunch(mapSchema)) {
+                  await launch(mapSchema);
+                  }
+                },
+              ) : deliveryAddress == null ?
+              Padding(
+                padding: EdgeInsets.all(10),
+                child: SecondaryButton(
+                  text: "Escolher local",
+                  onPressed: () async {
+                    Address companyAddress = OrderSingleton.instance.company.address;
+                    Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
+                    if (result != null) {
+                      setState(() {
+                        deliveryAddress = result;
+                      });
+                    }
+                  },
+                ),
+              ) : Container(),
+            ],
           ),
-          onPressed: () async {
-            if (pickup) {
-              var address =  OrderSingleton.instance.company.address;
-              var mapSchema = 'geo:${address.location["lat"]},${address.location["long"]}';
-              if (await canLaunch(mapSchema)) {
-                await launch(mapSchema);
-              }
-            } else {
-              Address companyAddress = OrderSingleton.instance.company.address;
-              Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
-              if (result != null) {
-                setState(() {
-                  deliveryAddress = result;
-                });
-              }
-            }
-          },
         ),
       ),
     );
@@ -566,67 +560,89 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   }
 
   Widget addressDataWidget(Address address) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Padding(
-          padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-          child: Text(
-            address.city.toString(),
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.black54,
-            ),
-          ),
-        ),
-        address.smallTown != null ?
-          Padding(
-            padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
-            child: Text(
-              address.smallTown.toString(),
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black54,
+        Flexible(
+          flex: 1,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+                child: Text(
+                  address.city.toString(),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black54,
+                  ),
+                ),
               ),
-            ),
-          ) : Container(),
-        //SizedBox(height: 5,),
-        Padding(
-          padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-          child: Text(
-            "${address.street}" + (address.number == null ? "" : ", ${address.number}"),
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.black54,
-            ),
+              address.smallTown != null ?
+              Padding(
+                padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
+                child: Text(
+                  address.smallTown.toString(),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black54,
+                  ),
+                ),
+              ) : Container(),
+              //SizedBox(height: 5,),
+              Padding(
+                padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+                child: Text(
+                  "${address.street}" + (address.number == null ? "" : ", ${address.number}"),
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              address.neighborhood != null ? Padding(
+                padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+                child: Text(
+                  address.neighborhood,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black54,
+                  ),
+                ),
+              ) : Container(),
+              address.reference != null ? Padding(
+                padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+                child: Text(
+                  address.reference,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black38,
+                  ),
+                ),
+              ) : Container(),
+              SizedBox(height: 10,),
+            ],
           ),
         ),
-        address.neighborhood != null ? Padding(
-          padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-          child: Text(
-            address.neighborhood,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.black54,
-            ),
-          ),
+        deliveryAddress != null && !pickup ?
+        LightButton(
+          text: "Trocar",
+          onPressed: () async {
+            Address companyAddress = OrderSingleton.instance.company.address;
+            Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
+            if (result != null) {
+              setState(() {
+                deliveryAddress = result;
+              });
+            }
+          },
         ) : Container(),
-        address.reference != null ? Padding(
-          padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-          child: Text(
-            address.reference,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.black38,
-            ),
-          ),
-        ) : Container(),
-        SizedBox(height: 10,),
+        SizedBox(width: 5,),
       ],
     );
   }

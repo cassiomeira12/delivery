@@ -1,3 +1,4 @@
+import 'package:delivery/widgets/text_input_field.dart';
 import 'package:flutter/material.dart';
 import '../../models/phone_number.dart';
 import '../../strings.dart';
@@ -10,6 +11,10 @@ import '../page_router.dart';
 import 'verified_phone_number_page.dart';
 
 class PhoneNumberPage extends StatefulWidget {
+  final bool authenticate;
+
+  PhoneNumberPage({this.authenticate = true});
+
   @override
   State<StatefulWidget> createState() => _PhoneNumberPageState();
 }
@@ -78,7 +83,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
       padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 0.0),
       child: Center(
         child: Text(
-          MENSAGEM_SMS_VERIFICACAO,
+          widget.authenticate ? MENSAGEM_SMS_VERIFICACAO : "Adicione aqui o seu telefone para contato",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.body2,
         ),
@@ -90,35 +95,12 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
     var controller = MaskedTextController(mask: '(00) 0 0000-0000');
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
-      child: TextFormField(
-        textAlign: TextAlign.center,
-        maxLines: 1,
-        keyboardType: TextInputType.phone,
-        style: Theme.of(context).textTheme.body2,
-        textCapitalization: TextCapitalization.words,
-        decoration: InputDecoration(
-          labelText: NUMERO_CELULAR,
-          hintText: "(XX) X XXXX-XXXX",
-          hintStyle: Theme.of(context).textTheme.body2,
-          labelStyle: Theme.of(context).textTheme.body2,
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Theme.of(context).errorColor),
-          ),
-          focusedErrorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Theme.of(context).errorColor),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Theme.of(context).hintColor),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: BorderSide(color: Theme.of(context).primaryColor),
-          ),
-        ),
+      child: TextInputField(
         controller: controller,
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.phone,
+        labelText: NUMERO_CELULAR,
+        hintText: "(XX) X XXXX-XXXX",
         validator: (value) => value.isEmpty ? DIGITE_NUMERO_TELEFONE : null,
         onSaved: (value) => _phoneNumber = value.trim(),
       ),
@@ -127,11 +109,11 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
 
   Widget enviarSMSButton() {
     return Padding(
-        padding: EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
-        child: PrimaryButton(
-            text: RECEBER_SMS,
-            onPressed: validateAndSubmit
-        )
+      padding: EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
+      child: PrimaryButton(
+        text: widget.authenticate ? RECEBER_SMS : SALVAR,
+        onPressed: validateAndSubmit,
+      ),
     );
   }
 
@@ -155,8 +137,11 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   void validateAndSubmit() {
     if (validateAndSave()) {
       PhoneNumber phone = createNumber(_phoneNumber);
-      PageRouter.pop(context);
-      PageRouter.push(context, VerifiedPhoneNumberPage(phoneNumber: phone,));
+      if (widget.authenticate) {
+        PageRouter.pop(context);
+        PageRouter.push(context, VerifiedPhoneNumberPage(phoneNumber: phone,));
+      }
+      PageRouter.pop(context, phone);
     }
   }
 

@@ -48,6 +48,7 @@ class _StarsWidgetState extends State<StarsWidget> {
   }
 
   Widget startItem(int index) {
+    //print(MediaQuery.of(context).size.width);
     return GestureDetector(
       child: Icon(
         index <= star ? Icons.star : Icons.star_border,

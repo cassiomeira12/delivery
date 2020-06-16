@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:delivery/views/historico/evalutation_dialog.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
@@ -152,7 +153,10 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                titleTextWidget(order.companyName),
+                Flexible(
+                  flex: 1,
+                  child: titleTextWidget(order.companyName),
+                ),
                 dateTextWidget(DateUtil.formatDateCalendar(order.createdAt)),
               ],
             ),
@@ -192,9 +196,10 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
           Column(
             children: [
-              Text(
+              AutoSizeText(
                 "Previsão de entrega",
-                textAlign: TextAlign.left,
+                maxLines: 1,
+                textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 25,
                   color: Colors.black45,
@@ -205,7 +210,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               order.status.isFirst() ?
                 Text(
                   "Aguarde seu pedido ser confirmado",
-                  textAlign: TextAlign.left,
+                  textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20,
                     color: Colors.black45,
@@ -236,13 +241,17 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "Taxa de entrega",
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.black45,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            flex: 1,
+            child: AutoSizeText(
+              "Taxa de entrega",
+              maxLines: 1,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.black45,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
           Text(
@@ -268,11 +277,15 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                "${item.amount}x ${item.name}",
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black45,
+              Flexible(
+                flex: 1,
+                child: AutoSizeText(
+                  "${item.amount}x ${item.name}",
+                  maxLines: 1,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black45,
+                  ),
                 ),
               ),
               Text(
@@ -358,6 +371,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       child: Text(
         text,
         textAlign: TextAlign.left,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontSize: 25,
           color: Colors.black45,

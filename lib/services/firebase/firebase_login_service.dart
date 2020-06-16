@@ -38,7 +38,6 @@ class FirebaseLoginService extends LoginContractService {
       }
 
     }).catchError((error) {
-      Log.e(error);
       switch (error.code) {
         case "ERROR_USER_NOT_FOUND":
           presenter.onFailure(USUARIO_NAO_ENCONTRADO);
@@ -46,7 +45,11 @@ class FirebaseLoginService extends LoginContractService {
         case "ERROR_WRONG_PASSWORD":
           presenter.onFailure(SENHA_INVALIDA);
           break;
+        case "ERROR_NETWORK_REQUEST_FAILED":
+          presenter.onFailure(NETWORK_ERROR);
+          break;
         default:
+          Log.e(error);
           presenter.onFailure(error.message);
       }
     });
