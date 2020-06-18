@@ -7,12 +7,7 @@ abstract class CreateAccountContractView implements BaseProgressContract, BaseRe
 }
 
 abstract class CreateAccountContractPresenter {
-  CreateAccountContractView view;
-  CreateAccountContractPresenter(this.view);
-
-  dispose() {
-    this.view = null;
-  }
+  dispose();
 
   Future<BaseUser> createAccount(BaseUser user);
 

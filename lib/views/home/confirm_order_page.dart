@@ -1,6 +1,12 @@
 import 'dart:math';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:delivery/contracts/user/user_contract.dart';
+import 'package:delivery/models/address/states.dart';
+import 'package:delivery/presenters/user/user_presenter.dart';
+import 'package:delivery/services/api/time_service.dart';
+import 'package:delivery/utils/preferences_util.dart';
+import 'package:delivery/views/settings/phone_number_page.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
@@ -43,7 +49,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   bool _loading = false;
 
-  OrderContractPresenter presenter;
+  OrderContractPresenter orderPresenter;
+  UserContractPresenter userPresenter;
 
   TextEditingController _observacaoController;
 
@@ -61,7 +68,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   @override
   void initState() {
     super.initState();
-    presenter = OrdersPresenter(this);
+    orderPresenter = OrdersPresenter(this);
+    userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
     deliveryCost = OrderSingleton.instance.company.delivery.cost/100;
     setState(() {
@@ -70,6 +78,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     listOrder.forEach((element) {
       total += element.getTotal();
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    orderPresenter.dispose();
+    userPresenter.dispose();
   }
 
   @override
@@ -847,35 +862,93 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     return typePayment != null;
   }
 
+  void showCompanyClosed() async {
+    String message;
+    if (OrderSingleton.instance.company.isTodayOpen()) {
+      message = "${OrderSingleton.instance.company.name} abre às ${OrderSingleton.instance.company.openTime()}";
+    } else {
+      message = "${OrderSingleton.instance.company.name} não abre hoje.";
+    }
+    await showOkAlertDialog(
+      context: context,
+      title: "Fechado",
+      okLabel: "Ok",
+      message: message,
+    );
+  }
+
+  Future<DateTime> getTrueTime() async {
+    var stateData = await PreferencesUtil.getStateData();
+    var state = States.fromMap(stateData);
+    return await TimeService(state.timeAPI).now();
+  }
+
+  Future<bool> validatedOrder() async {
+    var timeNow = await getTrueTime();
+
+    if (timeNow == null) {//Sem conexão com internet
+      await showOkAlertDialog(
+        context: context,
+        title: "Internet",
+        okLabel: "Ok",
+        message: "Error, verifique sua conexão com a internet e tente novamente.",
+      );
+      return false;
+    }
+
+    bool openToday = OrderSingleton.instance.company.isTodayOpen();
+    var opened = OrderSingleton.instance.company.getOpenTime(timeNow);
+
+    if (!openToday || opened != null) {
+      showCompanyClosed();
+      return false;
+    }
+    
+    if (checkDelevieryAddress()) {
+      if (pickup) {
+        var companyAddress = OrderSingleton.instance.company.address;
+        OrderSingleton.instance.deliveryAddress = companyAddress;
+      } else {
+        OrderSingleton.instance.deliveryAddress = deliveryAddress;
+      }
+    } else {
+      ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha um local para entrega!");
+      return false;
+    }
+
+    if (checkPaymentType()) {
+      OrderSingleton.instance.typePayment = typePayment;
+    } else {
+      ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha uma forma de pagamento!");
+      return false;
+    }
+
+    if (SingletonUser.instance.phoneNumber == null) {
+      var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
+      if (phoneNumber != null) {
+        SingletonUser.instance.phoneNumber = phoneNumber;
+        userPresenter.update(SingletonUser.instance);
+        return true;
+      }
+      return false;
+    }
+
+    return true;
+  }
+
   Widget sendOrderButton() {
     return Padding(
       padding: EdgeInsets.all(10),
       child: PrimaryButton(
         text: "Enviar Pedido",
-        onPressed: () {
+        onPressed: () async {
 
-          if (checkDelevieryAddress()) {
-            if (pickup) {
-              var companyAddress = OrderSingleton.instance.company.address;
-              OrderSingleton.instance.deliveryAddress = companyAddress;
-            } else {
-              OrderSingleton.instance.deliveryAddress = deliveryAddress;
-            }
-          } else {
-            ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha um local para entrega!");
+          setState(() => _loading = true);
+
+          if (!await validatedOrder()) {
+            setState(() => _loading = false);
             return;
           }
-
-          if (checkPaymentType()) {
-            OrderSingleton.instance.typePayment = typePayment;
-          } else {
-            ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha uma forma de pagamento!");
-            return;
-          }
-
-          setState(() {
-            _loading = true;
-          });
 
           OrderSingleton.instance.id = null;
           OrderSingleton.instance.createdAt = DateTime.now();
@@ -884,8 +957,10 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           OrderSingleton.instance.note = _observacaoController.text;
           OrderSingleton.instance.deliveryCost = pickup ? 0 : deliveryCost;
           OrderSingleton.instance.delivery = !pickup;
+          OrderSingleton.instance.companyPhoneNumber = OrderSingleton.instance.company.phoneNumber;
+          OrderSingleton.instance.userPhoneNumber = SingletonUser.instance.phoneNumber;
 
-          presenter.create(OrderSingleton.instance);
+          orderPresenter.create(OrderSingleton.instance);
         },
       ),
     );

@@ -7,12 +7,7 @@ abstract class NotificationContractView implements BaseResultContract<UserNotifi
 }
 
 abstract class NotificationContractPresenter extends Crud<UserNotification> {
-  NotificationContractView view;
-  NotificationContractPresenter(this.view);
-
-  dispose() {
-    this.view = null;
-  }
+  dispose();
 }
 
 abstract class NotificationContractService extends Crud<UserNotification> {

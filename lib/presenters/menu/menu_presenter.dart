@@ -17,10 +17,10 @@ class MenuPresenter implements MenuContractPresenter {
   @override
   Future<Menu> create(Menu item) async {
     return await service.create(item).then((value) {
-      _view.onSuccess(value);
+      if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -28,10 +28,10 @@ class MenuPresenter implements MenuContractPresenter {
   @override
   Future<Menu> read(Menu item) async {
     return await service.read(item).then((value) {
-      _view.onSuccess(value);
+      if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.toString());
       return null;
     });
   }
@@ -39,10 +39,10 @@ class MenuPresenter implements MenuContractPresenter {
   @override
   Future<Menu> update(Menu item) async {
     return await service.update(item).then((value) {
-      _view.onSuccess(value);
+      if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.toString());
       return null;
     });
   }
@@ -50,10 +50,10 @@ class MenuPresenter implements MenuContractPresenter {
   @override
   Future<Menu> delete(Menu item) async {
     return await service.delete(item).then((value) {
-      _view.onSuccess(value);
+      if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -61,10 +61,10 @@ class MenuPresenter implements MenuContractPresenter {
   @override
   Future<List<Menu>> findBy(String field, value) async {
     return await service.findBy(field, value).then((value) {
-      _view.listSuccess(value);
+      if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }

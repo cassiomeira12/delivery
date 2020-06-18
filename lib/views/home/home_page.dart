@@ -1,22 +1,23 @@
+import 'package:delivery/models/address/city.dart';
+import 'package:delivery/models/address/small_town.dart';
+import 'package:delivery/models/address/states.dart';
+import 'package:delivery/services/api/time_service.dart';
+import 'package:delivery/utils/preferences_util.dart';
+import 'package:delivery/views/location/location_page.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../contracts/company/company_contract.dart';
 import '../../models/company/company.dart';
-import '../../models/company/opening_hour.dart';
-import '../../models/company/type_payment.dart';
 import '../../presenters/company/company_presenter.dart';
 import '../../views/home/company_widget.dart';
 import '../../widgets/empty_list_widget.dart';
-import '../../widgets/list_view_body.dart';
 import '../../widgets/loading_shimmer_list.dart';
-import '../../widgets/loading_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:shimmer/shimmer.dart';
 import '../../strings.dart';
 import '../../widgets/background_card.dart';
 
 import '../page_router.dart';
 import 'company_page.dart';
-import 'search_page.dart';
 
 class HomePage extends StatefulWidget {
   final VoidCallback orderCallback;
@@ -32,21 +33,86 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> implements CompanyContractView {
   final _formKey = new GlobalKey<FormState>();
 
-  CompanyContractPresenter presenter;
+  CompanyContractPresenter companyPresenter;
 
+  City city;
+  SmallTown smallTown;
   List<Company> list;
+
+  DateTime dateNow;
 
   @override
   void initState() {
     super.initState();
-    presenter = CompanyPresenter(this);
-    presenter.list();
+    companyPresenter = CompanyPresenter(this);
+    checkState();
   }
 
   @override
   void dispose() {
+    print("Home dispose");
     super.dispose();
-    presenter.dispose();
+    companyPresenter.dispose();
+  }
+
+  void verifiedCityTown() async {
+    var townData = await PreferencesUtil.getSmallTownData();
+    if (townData != null) {
+      setState(() {
+        smallTown = SmallTown.fromMap(townData);
+        city = smallTown.city;
+      });
+      findCompaniesBySmallTown();
+    } else {
+      var cityData = await PreferencesUtil.getCityData();
+      if (cityData != null) {
+        setState(() {
+          smallTown = null;
+          city = City.fromMap(cityData);
+        });
+        findCompaniesByCity();
+      } else {
+        await PageRouter.push(context, LocationPage());
+        verifiedCityTown();
+      }
+    }
+  }
+
+  void checkState() async {
+    var stateData = await PreferencesUtil.getStateData();
+    if (stateData != null) {
+      var state = States.fromMap(stateData);
+      var townData = await PreferencesUtil.getSmallTownData();
+      var cityData = await PreferencesUtil.getCityData();
+
+      if (townData != null) {
+        setState(() {
+          smallTown = SmallTown.fromMap(townData);
+          city = smallTown.city;
+        });
+      } else {
+        if (cityData != null) {
+          setState(() {
+            smallTown = null;
+            city = City.fromMap(cityData);
+          });
+        }
+      }
+
+      var now = await TimeService(state.timeAPI).now();//demora resposta
+      dateNow = now;
+    }
+    verifiedCityTown();
+  }
+
+  void findCompaniesByCity() async {
+    setState(() => list = null);
+    companyPresenter.findBy("address.city.id", city.id);
+  }
+
+  void findCompaniesBySmallTown() async {
+    setState(() => list = null);
+    companyPresenter.findBy("address.smallTown.id", smallTown.id);
   }
 
   @override
@@ -96,28 +162,57 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     return Padding(
       padding: EdgeInsets.all(12),
       child: SizedBox(
-        width: double.infinity,
-        height: 60,
+        width: MediaQuery.of(context).size.width,
         child: RaisedButton(
-          elevation: 5.0,
+          elevation: 5,
+          padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0),),
           color: Colors.white,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Icon(Icons.search, color: Colors.grey,),
-              SizedBox(width: 10,),
-              Text(
-                "Pesquise aqui",
-                style: TextStyle(
-                  fontSize: 18.0,
-                  color: Colors.grey,
-                  //fontWeight: FontWeight.bold,
-                )
-              )
+              Flexible(
+                flex: 1,
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    FaIcon(FontAwesomeIcons.searchLocation, color: Colors.grey,),
+                    SizedBox(width: 10,),
+                    Flexible(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            city == null ? "" : city.toString(),
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.grey,
+                            ),
+                          ),
+                          smallTown != null ?
+                          Text(
+                            smallTown.name,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ) : Container(),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              FaIcon(FontAwesomeIcons.caretDown, color: Colors.grey[400], ),
             ],
           ),
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchPage()));
+          onPressed: () async {
+            await PageRouter.push(context, LocationPage());
+            verifiedCityTown();
           },
         ),
       ),
@@ -165,7 +260,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       onRefresh: () {
-        return presenter.list();
+        return companyPresenter.list();
       },
       child: Center(
         child: list == null ?
@@ -204,6 +299,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
         actionExtentRatio: 0.25,
         child: CompanyWidget(
           item: item,
+          dateTime: dateNow,
           onPressed: (value) {
             PageRouter.push(context, CompanyPage(company: item, orderCallback: widget.orderCallback,));
           },

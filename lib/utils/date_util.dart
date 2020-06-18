@@ -1,5 +1,14 @@
-
 class DateUtil {
+
+  static DateTime midNight() {
+    var today = DateTime.now();
+    return DateTime(today.year, today.month, today.day);
+  }
+
+  static DateTime todayTime(int hour, int minute) {
+    var today = DateTime.now();
+    return DateTime(today.year, today.month, today.day, hour, minute);
+  }
 
   static String formatDateCalendar(DateTime date) {// [dd/MM/yyyy]
     return (date.day < 10 ? "0${date.day}" : date.day.toString()) + "/" +

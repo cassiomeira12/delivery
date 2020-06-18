@@ -8,7 +8,7 @@ abstract class UserContractView {
 }
 
 abstract class UserContractPresenter extends UserContractService {
-
+  dispose();
 }
 
 abstract class UserContractService extends Crud<BaseUser> {

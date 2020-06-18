@@ -1,3 +1,7 @@
+import 'package:delivery/models/phone_number.dart';
+import 'package:delivery/utils/date_util.dart';
+import 'package:flutter/material.dart';
+
 import '../../models/address/address.dart';
 import '../../models/company/opening_hour.dart';
 import '../../models/company/type_payment.dart';
@@ -15,6 +19,7 @@ class Company extends BaseModel<Company> {
   String idMenu;
   List<TypePayment> typePayments;
   Delivery delivery;
+  PhoneNumber phoneNumber;
 
   Company() {
     openHours = List();
@@ -37,6 +42,7 @@ class Company extends BaseModel<Company> {
       List() :
       List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
     delivery = map["delivery"] == null ? null : Delivery.fromMap(map["delivery"]);
+    phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
   }
 
   @override
@@ -53,6 +59,7 @@ class Company extends BaseModel<Company> {
     map["idMenu"] = idMenu;
     map["typePayments"] = typePayments.map<Map>((e) => e.toMap()).toList();
     map["delivery"] = delivery == null ? null : delivery.toMap();
+    map["phoneNumber"] = phoneNumber == null ? null : phoneNumber.toMap();
     return map;
   }
 
@@ -69,22 +76,86 @@ class Company extends BaseModel<Company> {
     idMenu = item.idMenu;
     typePayments = item.typePayments;
     delivery = item.delivery;
+    phoneNumber = item.phoneNumber;
   }
 
-  String getOpenTime(int weekDay) {
+  bool isTodayOpen() {
     OpeningHour openingHourToday;
     openHours.forEach((element) {
-      if (element.weekDay == weekDay) {
+      if (element.weekDay == DateTime.now().weekday) {
         openingHourToday = element;
         return;
       }
     });
-    if (openingHourToday == null) {
+    return openingHourToday != null;
+  }
+
+  String openTime() {
+    OpeningHour openingHourToday;
+    openHours.forEach((element) {
+      if (element.weekDay == DateTime.now().weekday) {
+        openingHourToday = element;
+        return;
+      }
+    });
+    if (openingHourToday == null) {// Nao abre no dia
       return "Fechado";
     }
-    String hora = openingHourToday.openHour < 10 ? "0${openingHourToday.openHour}" : openingHourToday.openHour.toString();
-    String minutos = openingHourToday.openMinute < 10 ? "0${openingHourToday.openMinute}" : openingHourToday.openMinute.toString();
-    return "Abre às $hora:$minutos";
+    var open = DateUtil.todayTime(openingHourToday.openHour, openingHourToday.openMinute);
+    String hour = open.hour < 10 ? "0${open.hour}" : open.hour.toString();
+    String minutes = open.minute < 10 ? "0${open.minute}" : open.minute.toString();
+    return "${hour}:${minutes}h";
+  }
+
+  String closeTime() {
+    OpeningHour openingHourToday;
+    openHours.forEach((element) {
+      if (element.weekDay == DateTime.now().weekday) {
+        openingHourToday = element;
+        return;
+      }
+    });
+    if (openingHourToday == null) {// Nao abre no dia
+      return "Fechado";
+    }
+    var close = DateUtil.todayTime(openingHourToday.closeHour, openingHourToday.closeMinute);
+    String hour = close.hour < 10 ? "0${close.hour}" : close.hour.toString();
+    String minutes = close.minute < 10 ? "0${close.minute}" : close.minute.toString();
+    return "${hour}:${minutes}h";
+  }
+
+  String getOpenTime(DateTime date) {
+    OpeningHour openingHourToday;
+    openHours.forEach((element) {
+      if (element.weekDay == date.weekday) {
+        openingHourToday = element;
+        return;
+      }
+    });
+    if (openingHourToday == null) {// Nao abre no dia
+      return "Fechado";
+    }
+
+    var open = DateUtil.todayTime(openingHourToday.openHour, openingHourToday.openMinute);
+    var close = DateUtil.todayTime(openingHourToday.closeHour, openingHourToday.closeMinute);
+    if (close.isBefore(open)) {
+      close = close.add(Duration(days: 1));
+    }
+
+    if (date.isBefore(open)) {
+      print("fechado");
+    } else {
+      if (date.isBefore(close)) {
+        print("aberto");
+        return null;
+      } else {
+        print("fechadp");
+      }
+    }
+
+    String hora = open.hour < 10 ? "0${open.hour}" : open.hour.toString();
+    String minutos = open.minute < 10 ? "0${open.minute}" : open.minute.toString();
+    return "Abre às ${hora}:${minutos}h";
   }
 
 }

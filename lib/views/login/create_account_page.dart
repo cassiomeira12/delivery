@@ -1,3 +1,5 @@
+import 'package:delivery/widgets/loading_widget.dart';
+
 import '../../contracts/login/create_account_contract.dart';
 import '../../models/base_user.dart';
 import '../../models/singleton/singleton_user.dart';
@@ -65,7 +67,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> implements Create
         child: Column(
           children: <Widget>[
             textTitle(),
-            _isLoading ? showCircularProgress() : imagem(), textMensagem(),
+            _isLoading ? LoadingWidget() : imagem(), textMensagem(),
           ],
         ),
       ),
@@ -92,13 +94,6 @@ class _CreateAccountPageState extends State<CreateAccountPage> implements Create
           child: Image.asset(_imgURL),
         ),
       ),
-    );
-  }
-
-  Widget showCircularProgress() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
-      child: CircularProgressIndicator(),
     );
   }
 

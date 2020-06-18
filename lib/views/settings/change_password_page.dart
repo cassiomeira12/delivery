@@ -1,3 +1,5 @@
+import 'package:delivery/widgets/scaffold_snackbar.dart';
+
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
 import '../../models/singleton/singleton_user.dart';
@@ -62,10 +64,7 @@ class _ChangePasswordState extends State<ChangePasswordPage> implements UserCont
     setState(() {
       _isLoading = false;
     });
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(error),
-      backgroundColor: Theme.of(context).errorColor,
-    ));
+    ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override
@@ -76,10 +75,7 @@ class _ChangePasswordState extends State<ChangePasswordPage> implements UserCont
     setState(() {
       _isLoading = false;
     });
-    _scaffoldKey.currentState.showSnackBar(SnackBar(
-      content: Text(SENHA_ALTERADA_SUCESSO),
-      backgroundColor: Colors.green,
-    ));
+    ScaffoldSnackBar.success(context, _scaffoldKey, SENHA_ALTERADA_SUCESSO);
   }
 
   Widget _showForm() {

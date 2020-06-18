@@ -7,13 +7,7 @@ abstract class LoginContractView implements BaseProgressContract, BaseResultCont
 }
 
 abstract class LoginContractPresenter {
-  LoginContractView view;
-  LoginContractPresenter(this.view);
-
-  dispose() {
-    this.view = null;
-  }
-
+  dispose();
   signIn(String email, String password);
   signInWithGoogle();
   onFailure(String error);
@@ -21,13 +15,7 @@ abstract class LoginContractPresenter {
 }
 
 abstract class LoginContractService {
-  LoginContractPresenter presenter;
-  LoginContractService(this.presenter);
-
-  dispose() {
-    this.presenter = null;
-  }
-
+  dispose();
   signIn(String email, String password);
   signInWithGoogle();
 }

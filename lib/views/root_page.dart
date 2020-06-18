@@ -197,8 +197,9 @@ class _RootPageState extends State<RootPage> implements UserContractView {
                   child: PrimaryButton(
                     text: UPDATE,
                     onPressed: () async {
-                      if (await canLaunch(versionApp.url)) {
-                        launch(versionApp.url);
+                      bool valid = await canLaunch(versionApp.storeUrl);
+                      if (valid) {
+                        launch(versionApp.storeUrl);
                       }
                     },
                   ),

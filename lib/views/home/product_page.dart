@@ -1,3 +1,4 @@
+import 'package:delivery/models/company/company.dart';
 import '../../models/order/order_item.dart';
 import '../../models/singleton/order_singleton.dart';
 import '../../models/singleton/singleton_user.dart';
@@ -22,9 +23,11 @@ import 'choice_widget.dart';
 
 class ProductPage extends StatefulWidget {
   final dynamic item;
+  final Company company;
 
   const ProductPage({
     this.item,
+    this.company,
   });
 
   @override
@@ -400,12 +403,34 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
+  void showCompanyClosed() async {
+    String message;
+    if (widget.company.isTodayOpen()) {
+      message = "${widget.company.name} abre às ${widget.company.openTime()}";
+    } else {
+      message = "${widget.company.name} não abre hoje.";
+    }
+    await showOkAlertDialog(
+      context: context,
+      title: "Fechado",
+      okLabel: "Ok",
+      message: message,
+    );
+  }
+
   void saveOrderItem() async {
-    setState(() {
-      _loading = true;
-    });
+    setState(() => _loading = true);
 
     await Future.delayed(Duration(seconds: 1));
+
+    bool openToday = widget.company.isTodayOpen();
+    var opened = widget.company.getOpenTime(DateTime.now());
+
+    if (!openToday || opened != null) {
+      setState(() => _loading = false);
+      showCompanyClosed();
+      return;
+    }
 
     bool foundError = false;
 

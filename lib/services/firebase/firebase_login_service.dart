@@ -1,18 +1,25 @@
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../utils/log_util.dart';
 import '../../utils/preferences_util.dart';
 import '../../contracts/login/login_contract.dart';
 import '../../models/base_user.dart';
 import '../../services/firebase/firebase_user_service.dart';
-import '../../utils/log_util.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import '../../strings.dart';
 import '../../contracts/crud.dart';
 
 class FirebaseLoginService extends LoginContractService {
+  LoginContractPresenter presenter;
+
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn googleSignIn = GoogleSignIn();
 
-  FirebaseLoginService(LoginContractPresenter presenter) : super(presenter);
+  FirebaseLoginService(this.presenter);
+
+  @override
+  dispose() {
+    presenter = null;
+  }
 
   @override
   signIn(String email, String password) async {

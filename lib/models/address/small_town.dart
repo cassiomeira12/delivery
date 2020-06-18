@@ -3,7 +3,6 @@ import 'city.dart';
 
 class SmallTown extends BaseModel<SmallTown> {
   String name;
-  String alias;
   City city;
   Map location;
 
@@ -12,7 +11,6 @@ class SmallTown extends BaseModel<SmallTown> {
   SmallTown.fromMap(Map<dynamic, dynamic>  map) {
     id = map["id"];
     name = map["name"];
-    alias = map["alias"];
     city = City.fromMap(map["city"]);
     location = Map.from(map["location"]);
   }
@@ -22,7 +20,6 @@ class SmallTown extends BaseModel<SmallTown> {
     var map = Map<String, dynamic>();
     map["id"] = id;
     map["name"] = name;
-    map["alias"] = alias;
     map["city"] = city.toMap();
     map["location"] = location;
     return map;
@@ -32,14 +29,13 @@ class SmallTown extends BaseModel<SmallTown> {
   update(SmallTown item) {
     id = item.id;
     name = item.name;
-    alias = item.alias;
     city = item.city;
     location = item.location;
   }
 
   @override
   String toString() {
-    return alias == null ? name : "$name - $alias";
+    return name;
   }
 
 }

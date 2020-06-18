@@ -46,8 +46,9 @@ class _AboutAppState extends State<AboutAppPage> {
                 _showForm(),
               ],
             ),
+            txtAppName(),
             versionAppWidget(),
-            txtAboutApp(),
+            //txtAboutApp(),
           ],
         ),
       ),
@@ -126,8 +127,8 @@ class _AboutAppState extends State<AboutAppPage> {
           ),
         ),
         onPressed: () async {
-          if (await canLaunch(versionApp.url)) {
-            launch(versionApp.url);
+          if (await canLaunch(versionApp.storeUrl)) {
+            launch(versionApp.storeUrl);
           }
         },
       ),
@@ -141,7 +142,6 @@ class _AboutAppState extends State<AboutAppPage> {
         child: Column(
           children: <Widget>[
             imgApp(),
-            txtAppName(),
           ],
         ),
       ),
@@ -169,12 +169,12 @@ class _AboutAppState extends State<AboutAppPage> {
 
   Widget txtAppName() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 0.0),
+      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Center(
         child: Text(
           APP_NAME,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.body1,
+          style: Theme.of(context).textTheme.subtitle,
         ),
       ),
     );

@@ -76,7 +76,6 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
       SingletonUser.instance.phoneNumber = phoneNumber;
     }
     widget.loginCallback();
-    PageRouter.pop(context);
   }
 
   @override

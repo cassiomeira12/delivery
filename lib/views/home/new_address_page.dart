@@ -136,7 +136,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
     return Padding(
       padding: EdgeInsets.only(top: 10),
       child: Text(
-        widget.smallTown.alias == null ? "${widget.smallTown.name}" : "${widget.smallTown.alias}",
+        widget.smallTown.name,
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,

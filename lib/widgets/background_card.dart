@@ -10,7 +10,7 @@ class BackgroundCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
+      width: MediaQuery.of(context).size.width,
       height: height == null ? 300 : height,
       color: Theme.of(context).primaryColor,
     );

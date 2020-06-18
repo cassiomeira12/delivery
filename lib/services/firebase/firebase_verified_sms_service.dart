@@ -2,11 +2,17 @@ import 'package:firebase_auth/firebase_auth.dart';
 import '../../contracts/user/verified_sms_contract.dart';
 
 class FirebaseVerifiedSMSService extends VerifiedSMSContractService {
-  FirebaseVerifiedSMSService(VerifiedSMSContractPresenter presenter) : super(presenter);
+  VerifiedSMSContractPresenter presenter;
+
+  FirebaseVerifiedSMSService(this.presenter);
+
+  @override
+  dispose() {
+    presenter = null;
+  }
 
   @override
   Future<void> verifyPhoneNumber(String phoneNumber) async {
-    print(phoneNumber);
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: Duration(seconds: 5),
@@ -14,22 +20,22 @@ class FirebaseVerifiedSMSService extends VerifiedSMSContractService {
         verificationCompleted: (credential) async {
           FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
           await currentUser.updatePhoneNumberCredential(credential).then((value) {
-            presenter.verificationCompleted();
+            if (presenter != null) presenter.verificationCompleted();
           }).catchError((error) {
-            presenter.verificationFailed(error.message);
+            if (presenter != null) presenter.verificationFailed(error.message);
           });
         },
 
         verificationFailed: (authException) {
-          presenter.verificationFailed(authException.message);
+          if (presenter != null) presenter.verificationFailed(authException.message);
         },
 
         codeAutoRetrievalTimeout: (verificationId) {
-          presenter.codeAutoRetrievalTimeout(verificationId);
+          if (presenter != null) presenter.codeAutoRetrievalTimeout(verificationId);
         },
 
         codeSent: (verificationId, [code]) {
-          presenter.codeSent(verificationId);
+          if (presenter != null) presenter.codeSent(verificationId);
         }
     );
   }
@@ -38,12 +44,10 @@ class FirebaseVerifiedSMSService extends VerifiedSMSContractService {
   Future<void> confirmSMSCode(String verificationId, String smsCode) async {
     var credential = PhoneAuthProvider.getCredential(verificationId: verificationId, smsCode: smsCode);
     FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-    print(currentUser.phoneNumber);
     await currentUser.updatePhoneNumberCredential(credential).then((value) {
-      print(currentUser.phoneNumber);
-      presenter.verificationCompleted();
+      if (presenter != null) presenter.verificationCompleted();
     }).catchError((error) {
-      presenter.verificationFailed(error.message);
+      if (presenter != null) presenter.verificationFailed(error.message);
     });
   }
 

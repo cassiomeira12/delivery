@@ -11,7 +11,7 @@ class ScaffoldSnackBar {
           color: Colors.white,
         ),
       ),
-      backgroundColor: Theme.of(context).primaryColorDark,
+      backgroundColor: Colors.green,//Theme.of(context).primaryColorDark,
     ));
   }
 

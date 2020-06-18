@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 class PreferencesUtil {
@@ -8,6 +7,9 @@ class PreferencesUtil {
   static String _LAST_CHECK_UPDATE = "last_check_update";
   static String _INTRO_DONE = "intro_done";
   static String _USER_DATA = "user_data";
+  static String _STATE_DATA = "state_data";
+  static String _CITY_DATA = "city_data";
+  static String _SMALL_TOWN_DATA = "small_town_data";
 
   static Future<SharedPreferences> getInstance() {
     return SharedPreferences.getInstance();
@@ -63,6 +65,39 @@ class PreferencesUtil {
   static Future<dynamic> getUserData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var result = prefs.getString(_USER_DATA);
+    return result == null ? null : json.decode(result);
+  }
+
+  static void setStateData(Map<dynamic, dynamic> value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_STATE_DATA, value == null ? null : json.encode(value));
+  }
+
+  static Future<dynamic> getStateData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var result = prefs.getString(_STATE_DATA);
+    return result == null ? null : json.decode(result);
+  }
+
+  static void setCityData(Map<dynamic, dynamic> value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_CITY_DATA, value == null ? null : json.encode(value));
+  }
+
+  static Future<dynamic> getCityData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var result = prefs.getString(_CITY_DATA);
+    return result == null ? null : json.decode(result);
+  }
+
+  static void setSmallTownData(Map<dynamic, dynamic> value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_SMALL_TOWN_DATA, value == null ? null : json.encode(value));
+  }
+
+  static Future<dynamic> getSmallTownData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var result = prefs.getString(_SMALL_TOWN_DATA);
     return result == null ? null : json.decode(result);
   }
 

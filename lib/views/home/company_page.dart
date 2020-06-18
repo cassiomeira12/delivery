@@ -1,5 +1,7 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:delivery/utils/preferences_util.dart';
+import 'package:delivery/views/location/location_page.dart';
 import '../../contracts/menu/menu_contract.dart';
 import '../../models/menu/additional.dart';
 import '../../models/menu/category.dart';
@@ -49,7 +51,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   String bannerURL;
   bool favotito = false;
 
-  //var menu = ['Remover'];
+  String openTime;
 
   List<Product> list;
 
@@ -65,10 +67,10 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     super.initState();
     logoURL = widget.company.logoURL;
     bannerURL = widget.company.bannerURL;
+    openTime = widget.company.getOpenTime(DateTime.now()) != null ? "Fechado" : widget.company.getOpenTime(DateTime.now());
     sliddingPage = OrderSliddingWidget(orderCallback: widget.orderCallback, updateOrders: updateOrders,);
     presenter = MenuPresenter(this);
     menu = Menu()..id = widget.company.idMenu;
-    //menu = Menu()..id = "1";
     presenter.read(menu);
     updateOrders();
   }
@@ -329,7 +331,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         child: ProductWidget(
           item: item,
           onPressed: (value) async {
-            var result = await PageRouter.push(context, ProductPage(item: item,));
+            var result = await PageRouter.push(context, ProductPage(item: item, company: widget.company,));
             if (result != null) {
               updateOrders();
             }
@@ -464,15 +466,14 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   Widget openingCompanyWidget() {
     return Container(
-      //color: Colors.red,
       alignment: Alignment.center,
       child: AutoSizeText(
-        widget.company.getOpenTime(DateTime.now().weekday),
+        openTime == null ? "Aberto" : openTime,
         maxLines: 1,
         style: TextStyle(
-          fontSize: 16,
+          fontSize: 18,
           fontWeight: FontWeight.bold,
-          color: Theme.of(context).errorColor,
+          color: openTime == null ? Colors.green : Colors.red,
         ),
       ),
     );
@@ -481,6 +482,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   Widget deliveryCostCompanyWidget() {
     return Container(
       //color: Colors.green,
+      alignment: Alignment.center,
       child: Wrap(
         alignment: WrapAlignment.center,
         runSpacing: 5,

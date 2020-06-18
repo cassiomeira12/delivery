@@ -6,13 +6,7 @@ abstract class ForgotPasswordContractView implements BaseProgressContract, BaseR
 }
 
 abstract class ForgotPasswordContractPresenter {
-  ForgotPasswordContractView view;
-  ForgotPasswordContractPresenter(this.view);
-
-  dispose() {
-    this.view = null;
-  }
-
+  dispose();
   sendEmail(String email);
 }
 

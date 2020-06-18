@@ -8,10 +8,12 @@ import 'package:flutter/material.dart';
 
 class CompanyWidget extends StatefulWidget {
   final dynamic item;
+  final DateTime dateTime;
   final ValueChanged<Company> onPressed;
 
   const CompanyWidget({
     this.item,
+    this.dateTime,
     this.onPressed,
   });
 
@@ -22,6 +24,7 @@ class CompanyWidget extends StatefulWidget {
 class _CompanyWidgetState extends State<CompanyWidget> {
   Color _colorButton, _colorTextButton;
   
+  DateTime timeNow;
   Company company;
 
   String openingHourMessage = "";
@@ -29,6 +32,7 @@ class _CompanyWidgetState extends State<CompanyWidget> {
   @override
   void initState() {
     super.initState();
+    timeNow = widget.dateTime == null ? DateTime.now() : widget.dateTime;
     company = widget.item as Company;
     _colorTextButton = Colors.white;
   }
@@ -50,7 +54,7 @@ class _CompanyWidgetState extends State<CompanyWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   titleTextWidget(company.name),
-                  messageTextWidget(company.getOpenTime(DateTime.now().weekday)),
+                  messageTextWidget(),
                 ],
               ),
             ),
@@ -79,15 +83,24 @@ class _CompanyWidgetState extends State<CompanyWidget> {
     );
   }
 
-  Widget messageTextWidget(String text) {
+  Widget messageTextWidget() {
+    bool openToday = company.isTodayOpen();
+    String openText, closeText;
+    if (openToday) {
+      closeText = company.getOpenTime(timeNow);
+      if (closeText == null) {
+        openText = "Aberto até ${company.closeTime()}";
+      }
+    }
     return Padding(
       padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
       child: Text(
-        text,
+        openToday ? closeText == null ? openText : closeText : "Fechado",
         textAlign: TextAlign.left,
         style: TextStyle(
           fontSize: 18,
-          color: Colors.black45,
+          color: openToday ? closeText == null ? Colors.green : Colors.red : Colors.red,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );

@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import '../../utils/log_util.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
 import '../../models/singleton/singleton_user.dart';
@@ -14,12 +14,17 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   UserContractService service = FirebaseUserService("users");
 
   @override
+  dispose() {
+    service = null;
+  }
+
+  @override
   Future<BaseUser> create(BaseUser item) async {
     return await service.create(item).then((value) {
-      _view.onSuccess(value);
+      if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -27,10 +32,10 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   @override
   Future<BaseUser> read(BaseUser item) async {
     return await service.read(item).then((value) {
-      _view.onSuccess(value);
+      if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -38,10 +43,10 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   @override
   Future<BaseUser> update(BaseUser item) async {
     return await service.update(item).then((value) {
-      _view.onSuccess(value);
+      if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -49,10 +54,10 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   @override
   Future<BaseUser> delete(BaseUser item) async {
     return await service.delete(item).then((value) {
-      _view.onSuccess(value);
+      if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -62,24 +67,23 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
     return await service.findBy(field, value).then((value) {
       return value;
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
 
   @override
   Future<List<BaseUser>> list() {
-    // TODO: implement list
-    return null;
+
   }
 
   @override
   Future<bool> changeName(String name) async {
     await service.changeName(name).then((value) {
       if (value) {
-        _view.onSuccess(SingletonUser.instance);
+        if (_view != null) _view.onSuccess(SingletonUser.instance);
       } else {
-        _view.onFailure(CHANGE_NAME_FAILURE);
+        if (_view != null) _view.onFailure(CHANGE_NAME_FAILURE);
       }
     });
   }
@@ -88,18 +92,29 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   Future<String> changeUserPhoto(File image) async {
     await service.changeUserPhoto(image).then((URL) {
       SingletonUser.instance.avatarURL = URL;
-      _view.onSuccess(SingletonUser.instance);
+      if (_view != null) _view.onSuccess(SingletonUser.instance);
     }).catchError((error) {
-      _view.onFailure(error.message);
+      if (_view != null) _view.onFailure(error.message);
     });
   }
 
   @override
   Future<String> changePassword(String email, String password, String newPassword) async {
     await service.changePassword(email, password, newPassword).then((value) {
-      _view.onSuccess(null);
+      if (_view != null) _view.onSuccess(null);
     }).catchError((error) {
-      _view.onFailure(error.message);
+      print(error.code);
+      switch (error.code) {
+        case "ERROR_WRONG_PASSWORD":
+          if (_view != null) _view.onFailure(SENHA_INVALIDA);
+          break;
+        case "ERROR_TOO_MANY_REQUESTS":
+          if (_view != null) _view.onFailure(EXCESSSO_TENTATIVAS);
+          break;
+        default:
+          Log.e(error);
+          if (_view != null) _view.onFailure("Ocorreu algum erro");
+      }
     });
   }
 
@@ -107,9 +122,9 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   Future<BaseUser> currentUser() async {
     BaseUser user =  await service.currentUser();
     if (user == null) {
-      _view.onFailure("");
+      if (_view != null) _view.onFailure("");
     } else {
-      _view.onSuccess(user);
+      if (_view != null) _view.onSuccess(user);
     }
   }
 
@@ -126,9 +141,9 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   @override
   Future<void> sendEmailVerification() async {
     await service.sendEmailVerification().then((value) {
-      _view.onSuccess(null);
+      if (_view != null) _view.onSuccess(null);
     }).catchError((error) {
-      _view.onFailure(ERROR_ENVIAR_EMAIL);
+      if (_view != null) _view.onFailure(ERROR_ENVIAR_EMAIL);
     });
   }
 

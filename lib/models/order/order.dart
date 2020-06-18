@@ -1,4 +1,5 @@
 import 'package:delivery/models/menu/product.dart';
+import 'package:delivery/models/phone_number.dart';
 
 import '../../models/company/company.dart';
 import '../../models/order/order_item.dart';
@@ -26,6 +27,8 @@ class Order extends BaseModel<Order> {
   double deliveryCost;
   DeliveryForecast deliveryForecast;
   PreparationTime preparationTime;
+  PhoneNumber companyPhoneNumber;
+  PhoneNumber userPhoneNumber;
 
   Company company;
 
@@ -53,6 +56,8 @@ class Order extends BaseModel<Order> {
     delivery = map["delivery"] == null ? deliveryCost != 0 : map["delivery"] as bool;
     deliveryForecast = map["deliveryForecast"] == null ? null : DeliveryForecast.fromMap(map["deliveryForecast"]);
     preparationTime = map["preparationTime"] == null ? null : PreparationTime.fromMap(map["preparationTime"]);
+    companyPhoneNumber = map["companyPhoneNumber"] == null ? null : PhoneNumber.fromMap(map["companyPhoneNumber"]);
+    userPhoneNumber = map["userPhoneNumber"] == null ? null : PhoneNumber.fromMap(map["userPhoneNumber"]);
   }
 
   @override
@@ -76,6 +81,8 @@ class Order extends BaseModel<Order> {
     map["delivery"] = delivery == null ? deliveryCost != 0 : delivery;
     map["deliveryForecast"] = deliveryForecast == null ? null : deliveryForecast.toMap();
     map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
+    map["companyPhoneNumber"] = companyPhoneNumber == null ? null : companyPhoneNumber.toMap();
+    map["userPhoneNumber"] = userPhoneNumber == null ? null : userPhoneNumber.toMap();
     return map;
   }
 
@@ -99,6 +106,8 @@ class Order extends BaseModel<Order> {
     deliveryCost = item.deliveryCost;
     deliveryForecast = item.deliveryForecast;
     preparationTime = item.preparationTime;
+    companyPhoneNumber = item.companyPhoneNumber;
+    userPhoneNumber = item.userPhoneNumber;
   }
 
   clear() {
@@ -120,6 +129,8 @@ class Order extends BaseModel<Order> {
     delivery = deliveryCost != 0;
     deliveryForecast = null;
     preparationTime = null;
+    companyPhoneNumber = null;
+    userPhoneNumber = null;
 
     company = null;
   }

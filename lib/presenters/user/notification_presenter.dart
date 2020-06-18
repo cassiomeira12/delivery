@@ -3,10 +3,17 @@ import '../../models/user_notification.dart';
 import '../../services/firebase/firebase_notification_service.dart';
 
 class NotificationPresenter extends NotificationContractPresenter {
+  NotificationContractView _view;
   NotificationContractService service;
 
-  NotificationPresenter(NotificationContractView view) : super(view) {
+  NotificationPresenter(this._view) {
     service = FirebaseNotificationService("notifications");
+  }
+
+  @override
+  dispose() {
+    service = null;
+    _view = null;
   }
 
   @override
@@ -37,13 +44,9 @@ class NotificationPresenter extends NotificationContractPresenter {
   @override
   Future<List<UserNotification>> list() async {
     await service.list().then((value) {
-      if (view != null) {
-        view.listSuccess(value);
-      }
+      if (_view != null) _view.listSuccess(value);
     }).catchError((error) {
-      if (view != null) {
-        view.onFailure(error.message);
-      }
+      if (_view != null) _view.onFailure(error.message);
     });
   }
 
