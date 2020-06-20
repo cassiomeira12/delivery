@@ -4,9 +4,9 @@ class Country extends BaseModel<Country> {
   String name;
   String code;
 
-  Country();
+  Country() : super('Country');
 
-  Country.fromMap(Map<dynamic, dynamic>  map) {
+  Country.fromMap(Map<dynamic, dynamic>  map) : super('Country') {
     id = map["id"];
     name = map["name"];
     code = map["code"];
@@ -21,11 +21,11 @@ class Country extends BaseModel<Country> {
     return map;
   }
 
-  @override
-  update(Country item) {
-    id = item.id;
-    name = item.name;
-    code = item.code;
-  }
+//  @override
+//  update(Country item) {
+//    id = item.id;
+//    name = item.name;
+//    code = item.code;
+//  }
 
 }

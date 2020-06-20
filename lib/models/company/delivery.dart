@@ -5,9 +5,9 @@ class Delivery extends BaseModel<Delivery> {
   double cost;// centavos
   bool pickup;
 
-  Delivery();
+  Delivery() : super('Delivery');
 
-  Delivery.fromMap(Map<dynamic, dynamic>  map) {
+  Delivery.fromMap(Map<dynamic, dynamic>  map) : super('Delivery') {
     name = map["name"];
     cost = (map["cost"] as num).toDouble();
     pickup = map["pickup"] as bool;
@@ -22,11 +22,11 @@ class Delivery extends BaseModel<Delivery> {
     return map;
   }
 
-  @override
-  update(Delivery item) {
-    name = item.name;
-    cost = item.cost;
-    pickup = item.pickup;
-  }
+//  @override
+//  update(Delivery item) {
+//    name = item.name;
+//    cost = item.cost;
+//    pickup = item.pickup;
+//  }
 
 }

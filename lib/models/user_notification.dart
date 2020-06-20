@@ -7,11 +7,11 @@ class UserNotification extends BaseModel<UserNotification> {
   bool read = false;
   DateTime createAt = DateTime.now();
   String avatarURL;
-  String type;
+  String paymentType;
 
-  UserNotification();
+  UserNotification() : super('UserNotification');
 
-  UserNotification.fromMap(Map map) {
+  UserNotification.fromMap(Map map) : super('UserNotification') {
     id = map["uId"];
     title = map["title"];
     message = map["message"];
@@ -19,11 +19,10 @@ class UserNotification extends BaseModel<UserNotification> {
     read = map["read"] == null ? true : map["read"] as bool;
     createAt = map["createAt"] == null ? null : DateTime.parse(map["createAt"]);
     avatarURL = map["avatarURL"];
-    type = map["type"];
+    paymentType = map["type"];
   }
 
-  @override
-  update(UserNotification item) {
+  updateData(UserNotification item) {
     id = item.id;
     title = item.title;
     message = item.message;
@@ -31,7 +30,7 @@ class UserNotification extends BaseModel<UserNotification> {
     read = item.read;
     createAt = item.createAt;
     avatarURL = item.avatarURL;
-    type = item.type;
+    paymentType = item.paymentType;
   }
 
   @override
@@ -45,7 +44,7 @@ class UserNotification extends BaseModel<UserNotification> {
     map["createAt"] = createAt == null ? null : createAt.toString();
     map["date"] = createAt == null ? null : createAt.millisecondsSinceEpoch;
     map["avatarURL"] = avatarURL;
-    map["type"] = type;
+    map["type"] = paymentType;
     return map;
   }
 

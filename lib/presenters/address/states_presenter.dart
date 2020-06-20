@@ -1,16 +1,13 @@
-import 'package:delivery/services/parse/parse_company_service.dart';
+import '../../contracts/address/states_contract.dart';
+import '../../models/address/states.dart';
+import '../../services/parse/parse_states_service.dart';
 
-import '../../services/firebase/firebase_company_service.dart';
-import '../../contracts/company/company_contract.dart';
-import '../../models/company/company.dart';
+class StatesPresenter implements StatesContractPresenter {
+  StatesContractView _view;
 
-class CompanyPresenter implements CompanyContractPresenter {
-  CompanyContractView _view;
+  StatesPresenter(this._view);
 
-  CompanyPresenter(this._view);
-
-  //CompanyContractService service = FirebaseCompanyService("companies");
-  CompanyContractService service = ParseCompanyService();
+  StatesContractService service = ParseStatesService();
 
   @override
   dispose() {
@@ -19,7 +16,7 @@ class CompanyPresenter implements CompanyContractPresenter {
   }
 
   @override
-  Future<Company> create(Company item) async {
+  Future<States> create(States item) async {
     return await service.create(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
@@ -30,7 +27,7 @@ class CompanyPresenter implements CompanyContractPresenter {
   }
 
   @override
-  Future<Company> read(Company item) async {
+  Future<States> read(States item) async {
     return await service.read(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
@@ -41,7 +38,7 @@ class CompanyPresenter implements CompanyContractPresenter {
   }
 
   @override
-  Future<Company> update(Company item) async {
+  Future<States> update(States item) async {
     return await service.update(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
@@ -52,7 +49,7 @@ class CompanyPresenter implements CompanyContractPresenter {
   }
 
   @override
-  Future<Company> delete(Company item) async {
+  Future<States> delete(States item) async {
     return await service.delete(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
@@ -63,24 +60,22 @@ class CompanyPresenter implements CompanyContractPresenter {
   }
 
   @override
-  Future<List<Company>> findBy(String field, value) async {
+  Future<List<States>> findBy(String field, value) async {
     return await service.findBy(field, value).then((value) {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      print(error);
       if (_view != null) _view.onFailure(error);
       return null;
     });
   }
 
   @override
-  Future<List<Company>> list() async {
+  Future<List<States>> list() async {
     return await service.list().then((value) {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      print(error);
       if (_view != null) _view.onFailure(error);
       return null;
     });

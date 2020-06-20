@@ -70,10 +70,12 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   @override
   onSuccess(BaseUser result) async {
-    SingletonUser.instance.update(result);
-    if (result.phoneNumber == null) {
-      var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
-      SingletonUser.instance.phoneNumber = phoneNumber;
+    SingletonUser.instance.updateData(result);
+    if (result.emailVerified) {
+      if (result.phoneNumber == null) {
+        var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
+        SingletonUser.instance.phoneNumber = phoneNumber;
+      }
     }
     widget.loginCallback();
   }

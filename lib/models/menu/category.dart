@@ -5,9 +5,9 @@ class Category extends BaseModel<Category> {
   String name;
   List<Product> products;
 
-  Category();
+  Category() : super('Category');
 
-  Category.fromMap(Map<dynamic, dynamic>  map) {
+  Category.fromMap(Map<dynamic, dynamic>  map) : super('Category') {
     id = map["id"];
     name = map["name"];
     products = map["products"] == null ? List() : List.from(map["products"]).map<Product>((e) => Product.fromMap(e)).toList();
@@ -22,11 +22,11 @@ class Category extends BaseModel<Category> {
     return map;
   }
 
-  @override
-  update(Category item) {
-    id = item.id;
-    name = item.name;
-    products = item.products;
-  }
+//  @override
+//  update(Category item) {
+//    id = item.id;
+//    name = item.name;
+//    products = item.products;
+//  }
 
 }

@@ -75,7 +75,8 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   @override
   onSuccess(Order result) {
-    order.update(result);
+    //order.update(result);
+    order = result;
     int index = 0;
     order.status.values.forEach((element) {
       if (element.name == order.status.current.name) {

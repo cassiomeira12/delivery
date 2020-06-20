@@ -13,9 +13,9 @@ class Address extends BaseModel<Address> {
   Map location;
   SmallTown smallTown;
 
-  Address();
+  Address() : super('Address');
 
-  Address.fromMap(Map<dynamic, dynamic>  map) {
+  Address.fromMap(Map<dynamic, dynamic>  map) : super('Address') {
     id = map["id"];
     userId = map["userId"];
     zipCode = map["zipCode"];
@@ -44,18 +44,18 @@ class Address extends BaseModel<Address> {
     return map;
   }
 
-  @override
-  update(Address item) {
-    id = item.id;
-    userId = item.userId;
-    zipCode = item.zipCode;
-    neighborhood = item.neighborhood;
-    street = item.street;
-    number = item.number;
-    reference = item.reference;
-    city = item.city;
-    location = item.location;
-    smallTown = item.smallTown;
-  }
+//  @override
+//  update(Address item) {
+//    id = item.id;
+//    userId = item.userId;
+//    zipCode = item.zipCode;
+//    neighborhood = item.neighborhood;
+//    street = item.street;
+//    number = item.number;
+//    reference = item.reference;
+//    city = item.city;
+//    location = item.location;
+//    smallTown = item.smallTown;
+//  }
 
 }

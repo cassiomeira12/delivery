@@ -65,7 +65,7 @@ class _PaymentTypePageState extends State<PaymentTypePage> {
   }
 
   Widget paymentListItem(TypePayment payment) {
-    IconData icon = findIcon(payment.type);
+    IconData icon = findIcon(payment.paymentType);
     String name = payment.getType();
     return Card(
       child: FlatButton(

@@ -180,8 +180,12 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
               ),
             ],
           ),
-          onPressed: () {
-            PageRouter.push(context, UserPage());
+          onPressed: () async {
+            await PageRouter.push(context, UserPage());
+            setState(() {
+              userName = SingletonUser.instance.name;
+              userPhoto = SingletonUser.instance.avatarURL;
+            });
           },
         ),
       ),

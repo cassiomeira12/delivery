@@ -1,7 +1,5 @@
-import 'package:delivery/models/phone_number.dart';
-import 'package:delivery/utils/date_util.dart';
-import 'package:flutter/material.dart';
-
+import '../../models/phone_number.dart';
+import '../../utils/date_util.dart';
 import '../../models/address/address.dart';
 import '../../models/company/opening_hour.dart';
 import '../../models/company/type_payment.dart';
@@ -21,34 +19,34 @@ class Company extends BaseModel<Company> {
   Delivery delivery;
   PhoneNumber phoneNumber;
 
-  Company() {
+  Company() : super('Company') {
     openHours = List();
     typePayments = List();
   }
 
-  Company.fromMap(Map<dynamic, dynamic>  map) {
-    id = map["id"];
-    topic = map["topic"];
+  Company.fromMap(Map<dynamic, dynamic>  map) : super('Company') {
+    id = map["objectId"];
+    //topic = map["topic"];
     name = map["name"];
-    cnpj = map["cnpj"];
-    logoURL = map["logoURL"];
-    bannerURL = map["bannerURL"];
-    openHours = map["openHours"] == null ?
-      List() :
-      List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
-    address = Address.fromMap(map["address"]);
-    idMenu = map["idMenu"];
-    typePayments = map["typePayments"] == null ?
-      List() :
-      List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
-    delivery = map["delivery"] == null ? null : Delivery.fromMap(map["delivery"]);
-    phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
+//    cnpj = map["cnpj"];
+//    logoURL = map["logoURL"];
+//    bannerURL = map["bannerURL"];
+//    openHours = map["openHours"] == null ?
+//      List() :
+//      List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
+//    address = Address.fromMap(map["address"]);
+//    idMenu = map["idMenu"];
+//    typePayments = map["typePayments"] == null ?
+//      List() :
+//      List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
+//    delivery = map["delivery"] == null ? null : Delivery.fromMap(map["delivery"]);
+//    phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
   }
 
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["id"] = id;
+    map["objectId"] = id;
     map["topic"] = topic;
     map["name"] = name;
     map["cnpj"] = cnpj;
@@ -63,21 +61,21 @@ class Company extends BaseModel<Company> {
     return map;
   }
 
-  @override
-  update(Company item) {
-    id = item.id;
-    topic = item.topic;
-    name = item.name;
-    cnpj = item.cnpj;
-    logoURL = item.logoURL;
-    bannerURL = item.bannerURL;
-    openHours = item.openHours;
-    address = item.address;
-    idMenu = item.idMenu;
-    typePayments = item.typePayments;
-    delivery = item.delivery;
-    phoneNumber = item.phoneNumber;
-  }
+//  @override
+//  update(Company item) {
+//    id = item.id;
+//    topic = item.topic;
+//    name = item.name;
+//    cnpj = item.cnpj;
+//    logoURL = item.logoURL;
+//    bannerURL = item.bannerURL;
+//    openHours = item.openHours;
+//    address = item.address;
+//    idMenu = item.idMenu;
+//    typePayments = item.typePayments;
+//    delivery = item.delivery;
+//    phoneNumber = item.phoneNumber;
+//  }
 
   bool isTodayOpen() {
     OpeningHour openingHourToday;

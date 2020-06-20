@@ -1,3 +1,5 @@
+import 'package:delivery/services/parse/parse_create_account_service.dart';
+
 import '../../contracts/login/create_account_contract.dart';
 import '../../models/base_user.dart';
 import '../../services/firebase/firebase_create_account_service.dart';
@@ -7,7 +9,8 @@ class CreateAccountPresenter extends CreateAccountContractPresenter {
   CreateAccountContractService service;
 
   CreateAccountPresenter(this._view) {
-    FirebaseCreateAccountService(this);
+    //service = FirebaseCreateAccountService(this);
+    service = ParseCreateAccountService(this);
   }
 
   @override

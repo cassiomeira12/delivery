@@ -4,7 +4,7 @@ class OrderStatus extends BaseModel<OrderStatus> {
   Status current;
   List<Status> values = List();
 
-  OrderStatus() {
+  OrderStatus() : super('OrderStatus') {
     values.add(Status("Pedido enviado"));
     values.add(Status("Pedido confirmado"));
     values.add(Status("Pedido em preparo"));
@@ -14,7 +14,7 @@ class OrderStatus extends BaseModel<OrderStatus> {
     current = values[0];
   }
 
-  OrderStatus.fromMap(Map<dynamic, dynamic>  map) {
+  OrderStatus.fromMap(Map<dynamic, dynamic>  map) : super('OrderStatus') {
     current = Status.fromMap(map["current"]);
     values = List.from(map["values"]).map<Status>((e) => Status.fromMap(e)).toList();
   }
@@ -27,11 +27,11 @@ class OrderStatus extends BaseModel<OrderStatus> {
     return map;
   }
 
-  @override
-  update(OrderStatus item) {
-    current = item.current;
-    values = item.values;
-  }
+//  @override
+//  update(OrderStatus item) {
+//    current = item.current;
+//    values = item.values;
+//  }
 
   bool isFirst() {
     return current.name == values.first.name;
@@ -43,13 +43,13 @@ class OrderStatus extends BaseModel<OrderStatus> {
 
 }
 
-class Status {
+class Status extends BaseModel<Status> {
   String name;
   DateTime date;
 
-  Status(this.name);
+  Status(this.name) : super('Status');
 
-  Status.fromMap(Map<dynamic, dynamic>  map) {
+  Status.fromMap(Map<dynamic, dynamic>  map) : super('Status') {
     name = map["name"];
     date = map["date"] == null ? null : DateTime.parse(map["date"]);
   }

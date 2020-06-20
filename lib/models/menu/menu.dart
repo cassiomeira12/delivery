@@ -5,9 +5,9 @@ class Menu extends BaseModel<Menu> {
   String idCompany;
   List<Category> categories;
 
-  Menu();
+  Menu() : super('Menu');
 
-  Menu.fromMap(Map<String, dynamic>  map) {
+  Menu.fromMap(Map<String, dynamic>  map) : super('Menu') {
     id = map["id"];
     idCompany = map["idCompany"];
     categories = List.from(map["categories"]).map<Category>((e) => Category.fromMap(e)).toList();
@@ -22,11 +22,11 @@ class Menu extends BaseModel<Menu> {
     return map;
   }
 
-  @override
-  update(Menu item) {
-    id = item.id;
-    idCompany = item.idCompany;
-    categories = item.categories;
-  }
+//  @override
+//  update(Menu item) {
+//    id = item.id;
+//    idCompany = item.idCompany;
+//    categories = item.categories;
+//  }
 
 }

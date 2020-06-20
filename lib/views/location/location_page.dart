@@ -1,3 +1,5 @@
+import 'package:delivery/contracts/address/states_contract.dart';
+import 'package:delivery/presenters/address/states_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -38,12 +40,14 @@ class _LocationPageState extends State<LocationPage> {
 
   bool _loading = false;
 
+  StatesContractPresenter statePresenter;
   CityContractPresenter cityPresenter;
   SmallTownContractPresenter smallTownPresenter;
 
   @override
   void initState() {
     super.initState();
+    statePresenter = StatesPresenter(null);
     cityPresenter = CityPresenter(null);
     smallTownPresenter = SmallTownPresenter(null);
     checkState();
@@ -62,14 +66,21 @@ class _LocationPageState extends State<LocationPage> {
   @override
   void dispose() {
     super.dispose();
+    statePresenter.dispose();
     cityPresenter.dispose();
+    smallTownPresenter.dispose();
   }
 
   Future<void> listCities() async {
     setState(() {
       cityList = null;
     });
-    var result = await cityPresenter.findBy("idState", state.id);
+    var value = {
+      "__type": "Pointer",
+      "className": "State",
+      "objectId": "1bp6TfFPUE",
+    };
+    var result = await cityPresenter.findBy("state", value);
     setState(() {
       cityList = result;
     });
@@ -245,7 +256,13 @@ class _LocationPageState extends State<LocationPage> {
   void listSmallTowns(City city) async {
     dialogList = List();
     setState(() => _loading = true);
-    List<SmallTown> result = await smallTownPresenter.findBy("city.id", city.id);
+    var value = {
+      "__type": "Pointer",
+      "className": "City",
+      "objectId": city.id,
+    };
+    List<SmallTown> result = await smallTownPresenter.list();
+    print("Result ${result}");
     if (result == null || result.isEmpty) {
       PreferencesUtil.setSmallTownData(null);
       PreferencesUtil.setCityData(city.toMap());
@@ -271,15 +288,18 @@ class _LocationPageState extends State<LocationPage> {
       cancelLabel: CANCELAR,
       barrierDismissible: false,
       actions: dialogList.map((e) {
-        return AlertDialogAction<String>(label: e["name"], key: e["id"]);
+        return AlertDialogAction<String>(label: e["name"], key: e["objectId"]);
       }).toList(),
     );
     if (result == null || result == city.id) {
+      print("cidade ${city.toMap()}");
       PreferencesUtil.setSmallTownData(null);
       PreferencesUtil.setCityData(city.toMap());
       PageRouter.pop(context);
     } else {
       var smallTown = smallTownList.singleWhere((element) => element.id == result, orElse: null);
+      smallTown.city = city;
+      print("povoado ${smallTown.toMap()}");
       PreferencesUtil.setCityData(null);
       PreferencesUtil.setSmallTownData(smallTown.toMap());
       PageRouter.pop(context);

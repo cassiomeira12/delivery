@@ -13,12 +13,12 @@ class OrderItem extends BaseModel<OrderItem> {
   List<Additional> additionalSelected;
   String note;
 
-  OrderItem() {
+  OrderItem() : super('OrderItem') {
     choicesSelected = List();
     additionalSelected = List();
   }
 
-  OrderItem.fromMap(Map<dynamic, dynamic>  map) {
+  OrderItem.fromMap(Map<dynamic, dynamic>  map) : super('OrderItem') {
     id = map["id"];
     name = map["name"];
     description = map["description"];
@@ -52,19 +52,19 @@ class OrderItem extends BaseModel<OrderItem> {
     return map;
   }
 
-  @override
-  update(OrderItem item) {
-    id = item.id;
-    name = item.name;
-    description = item.description;
-    cost = item.cost;
-    discount = item.discount;
-    preparationTime = item.preparationTime;
-    amount = item.amount;
-    choicesSelected = item.choicesSelected;
-    additionalSelected = item.additionalSelected;
-    note = item.note;
-  }
+//  @override
+//  update(OrderItem item) {
+//    id = item.id;
+//    name = item.name;
+//    description = item.description;
+//    cost = item.cost;
+//    discount = item.discount;
+//    preparationTime = item.preparationTime;
+//    amount = item.amount;
+//    choicesSelected = item.choicesSelected;
+//    additionalSelected = item.additionalSelected;
+//    note = item.note;
+//  }
 
   double getTotal() {
     double total = amount * cost;

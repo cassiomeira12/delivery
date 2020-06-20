@@ -31,12 +31,17 @@ enum AuthStatus {
 }
 
 class RootPage extends StatefulWidget {
-
+  _RootPageState _root;
+  
   @override
-  State<StatefulWidget> createState() => new _RootPageState();
+  State<StatefulWidget> createState() => _root = _RootPageState();
+
+  void init() {
+    _root.currentUser();
+  }
 }
 
-class _RootPageState extends State<RootPage> implements UserContractView {
+class _RootPageState extends State<RootPage> {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;
 
   UserContractPresenter presenter;
@@ -47,9 +52,28 @@ class _RootPageState extends State<RootPage> implements UserContractView {
   @override
   void initState() {
     super.initState();
-    presenter = UserPresenter(this);
-    presenter.currentUser();
+    presenter = UserPresenter(null);
     updateCurrentTheme();
+  }
+
+  void currentUser() async {
+    var result = await presenter.currentUser();
+    if (result == null) {
+      checkIntroDone();
+    } else {
+      SingletonUser.instance.updateData(result);
+      if (result.emailVerified) {
+        setState(() {
+          authStatus = AuthStatus.LOGGED_IN;
+        });
+        checkLastVersionApp();
+        updateNotificationToken();
+      } else {
+        setState(() {
+          authStatus = AuthStatus.EMAIL_NOT_VERIFIED;
+        });
+      }
+    }
   }
 
   void updateCurrentTheme() async {
@@ -224,39 +248,18 @@ class _RootPageState extends State<RootPage> implements UserContractView {
       setState(() {
         authStatus = AuthStatus.LOGGED_IN;
       });
+      updateNotificationToken();
     } else {
       setState(() {
         authStatus = AuthStatus.EMAIL_NOT_VERIFIED;
       });
     }
-    updateNotificationToken();
   }
 
   void logoutCallback() {
     setState(() {
       authStatus = AuthStatus.NOT_LOGGED_IN;
     });
-  }
-
-  @override
-  onFailure(String error) {
-    checkIntroDone();
-  }
-
-  @override
-  onSuccess(BaseUser user) async {
-    SingletonUser.instance.update(user);
-    if (user.emailVerified) {
-      setState(() {
-        authStatus = AuthStatus.LOGGED_IN;
-      });
-      checkLastVersionApp();
-    } else {
-      setState(() {
-        authStatus = AuthStatus.EMAIL_NOT_VERIFIED;
-      });
-    }
-    updateNotificationToken();
   }
 
   void checkIntroDone() async {
@@ -285,6 +288,7 @@ class _RootPageState extends State<RootPage> implements UserContractView {
         token.topics = List();
       }
       SingletonUser.instance.notificationToken = token;
+      PreferencesUtil.setUserData(SingletonUser.instance.toMap());
       presenter.update(SingletonUser.instance);
     }
     pushNotifications.subscribeDefaultTopics();

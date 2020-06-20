@@ -42,7 +42,7 @@ class _NotificationPageState extends State<NotificationPage> {
     UserNotification temp = await widget.presenter.update(widget.notification);
     if (temp != null) {
       setState(() {
-        widget.notification.update(temp);
+        widget.notification.updateData(temp);
       });
     }
   }

@@ -53,7 +53,7 @@ class FirebaseLoginService extends LoginContractService {
           presenter.onFailure(SENHA_INVALIDA);
           break;
         case "ERROR_NETWORK_REQUEST_FAILED":
-          presenter.onFailure(NETWORK_ERROR);
+          presenter.onFailure(ERROR_NETWORK);
           break;
         default:
           Log.e(error);
@@ -100,7 +100,7 @@ class FirebaseLoginService extends LoginContractService {
           ..email = result.user.email
           ..emailVerified = result.user.isEmailVerified
           ..avatarURL = result.user.photoUrl
-          ..createAt = DateTime.now();
+          ..createdAt = DateTime.now();
 
         Crud<BaseUser> crud = FirebaseUserService("users");
         user = await crud.create(user);

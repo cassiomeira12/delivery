@@ -6,8 +6,8 @@ class VersionApp extends BaseModel<VersionApp> {
   int minimumCode;
   String storeUrl;
 
-  VersionApp.fromMap(Map<dynamic, dynamic> map) {
-    id = map["id"];
+  VersionApp.fromMap(Map<dynamic, dynamic> map) : super('VersionApp') {
+    id = map["objectId"];
     name = map["name"];
     currentCode = (map["currentCode"] as num).toInt();
     minimumCode = (map["minimumCode"] as num).toInt();
@@ -16,15 +16,12 @@ class VersionApp extends BaseModel<VersionApp> {
 
   toMap() {
     var map = new Map<String, dynamic>();
-    map["id"] = id;
+    map["objectId"] = id;
     map["name"] = name;
     map["currentCode"] = currentCode;
     map["minimumCode"] = minimumCode;
     map["storeUrl"] = storeUrl;
     return map;
   }
-
-  @override
-  update(VersionApp item) {}
 
 }

@@ -1,3 +1,5 @@
+import 'package:delivery/utils/preferences_util.dart';
+
 import '../../widgets/image_network_widget.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
@@ -80,7 +82,7 @@ class _UserState extends State<UserPage> implements UserContractView {
       userPhoto = SingletonUser.instance.avatarURL;
       loading = false;
     });
-    ScaffoldSnackBar.success(context, _scaffoldKey, FOTO_ALTERADA);
+    ScaffoldSnackBar.success(context, _scaffoldKey, SUCCESS_UPDATE_DATA);
   }
 
   Widget _showForm() {
@@ -276,8 +278,11 @@ class _UserState extends State<UserPage> implements UserContractView {
               ),
             ],
           ),
-          onPressed: () {
-            PageRouter.push(context, UserNamePage());
+          onPressed: () async {
+            await PageRouter.push(context, UserNamePage());
+            setState(() {
+              userName = SingletonUser.instance.name;
+            });
           },
         ),
       ),
@@ -312,7 +317,9 @@ class _UserState extends State<UserPage> implements UserContractView {
               ),
             ],
           ),
-          onPressed: () {},
+          onPressed: () {
+
+          },
         ),
       ),
     );
@@ -346,8 +353,16 @@ class _UserState extends State<UserPage> implements UserContractView {
               ),
             ],
           ),
-          onPressed: () {
-            PageRouter.push(context, PhoneNumberPage());
+          onPressed: () async {
+            var result = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
+            if (result != null) {
+              SingletonUser.instance.phoneNumber = result;
+              PreferencesUtil.setUserData(SingletonUser.instance.toMap());
+              presenter.update(SingletonUser.instance);
+            }
+            setState(() {
+              userPhoneNumber = SingletonUser.instance.phoneNumber == null ? NUMERO_CELULAR : SingletonUser.instance.phoneNumber.toString();
+            });
           },
         ),
       ),

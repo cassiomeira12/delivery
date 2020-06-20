@@ -60,7 +60,7 @@ class _UserNamePageState extends State<UserNamePage> implements UserContractView
     setState(() {
       _loading = false;
     });
-    SingletonUser.instance.update(user);
+    SingletonUser.instance.name = user.name;
     ScaffoldSnackBar.success(context, _scaffoldKey, CHANGE_NAME_SUCCESS);
     await Future.delayed(const Duration(seconds: 2));
     PageRouter.pop(context);

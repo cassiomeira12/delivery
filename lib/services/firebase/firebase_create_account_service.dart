@@ -1,13 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../contracts/login/create_account_contract.dart';
 import '../../models/base_user.dart';
 import '../../services/firebase/firebase_user_service.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-
 import '../../strings.dart';
 import '../../contracts/crud.dart';
 
 class FirebaseCreateAccountService extends CreateAccountContractService {
-  FirebaseCreateAccountService(CreateAccountContractPresenter presenter) : super(presenter);
+  CreateAccountContractPresenter presenter;
+
+  FirebaseCreateAccountService(this.presenter);
+
+  @override
+  dispose() {
+    presenter = null;
+  }
 
   @override
   Future<BaseUser> createAccount(BaseUser user) async {

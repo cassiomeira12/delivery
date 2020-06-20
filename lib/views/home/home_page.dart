@@ -2,6 +2,7 @@ import 'package:delivery/models/address/city.dart';
 import 'package:delivery/models/address/small_town.dart';
 import 'package:delivery/models/address/states.dart';
 import 'package:delivery/services/api/time_service.dart';
+import 'package:delivery/utils/log_util.dart';
 import 'package:delivery/utils/preferences_util.dart';
 import 'package:delivery/views/location/location_page.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -32,6 +33,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> implements CompanyContractView {
   final _formKey = new GlobalKey<FormState>();
+  bool _initedState = false;
 
   CompanyContractPresenter companyPresenter;
 
@@ -45,31 +47,36 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
   void initState() {
     super.initState();
     companyPresenter = CompanyPresenter(this);
+    _initedState = true;
     checkState();
   }
 
   @override
   void dispose() {
-    print("Home dispose");
     super.dispose();
+    _initedState = false;
     companyPresenter.dispose();
   }
 
   void verifiedCityTown() async {
     var townData = await PreferencesUtil.getSmallTownData();
     if (townData != null) {
-      setState(() {
-        smallTown = SmallTown.fromMap(townData);
-        city = smallTown.city;
-      });
+      if (_initedState) {
+        setState(() {
+          smallTown = SmallTown.fromMap(townData);
+          city = smallTown.city;
+        });
+      }
       findCompaniesBySmallTown();
     } else {
       var cityData = await PreferencesUtil.getCityData();
       if (cityData != null) {
-        setState(() {
-          smallTown = null;
-          city = City.fromMap(cityData);
-        });
+        if (_initedState) {
+          setState(() {
+            smallTown = null;
+            city = City.fromMap(cityData);
+          });
+        }
         findCompaniesByCity();
       } else {
         await PageRouter.push(context, LocationPage());
@@ -86,16 +93,20 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
       var cityData = await PreferencesUtil.getCityData();
 
       if (townData != null) {
-        setState(() {
-          smallTown = SmallTown.fromMap(townData);
-          city = smallTown.city;
-        });
+        if (_initedState) {
+          setState(() {
+            smallTown = SmallTown.fromMap(townData);
+            city = smallTown.city;
+          });
+        }
       } else {
         if (cityData != null) {
-          setState(() {
-            smallTown = null;
-            city = City.fromMap(cityData);
-          });
+          if (_initedState) {
+            setState(() {
+              smallTown = null;
+              city = City.fromMap(cityData);
+            });
+          }
         }
       }
 
@@ -107,12 +118,14 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   void findCompaniesByCity() async {
     setState(() => list = null);
-    companyPresenter.findBy("address.city.id", city.id);
+    //companyPresenter.findBy("address.city.id", city.id);
+    companyPresenter.list();
   }
 
   void findCompaniesBySmallTown() async {
     setState(() => list = null);
-    companyPresenter.findBy("address.smallTown.id", smallTown.id);
+    //companyPresenter.findBy("address.smallTown.id", smallTown.id);
+    companyPresenter.list();
   }
 
   @override

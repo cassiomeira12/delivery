@@ -5,9 +5,9 @@ class Item extends BaseModel<Item> {
   String description;
   double cost;
 
-  Item();
+  Item() : super('Item');
 
-  Item.fromMap(Map<dynamic, dynamic>  map) {
+  Item.fromMap(Map<dynamic, dynamic>  map) : super('Item') {
     name = map["name"];
     description = map["description"];
     cost = map["cost"] == null ? null : (map["cost"] as num).toDouble();
@@ -22,12 +22,12 @@ class Item extends BaseModel<Item> {
     return map;
   }
 
-  @override
-  update(Item item) {
-    name = item.name;
-    description = item.description;
-    cost = item.cost;
-  }
+//  @override
+//  update(Item item) {
+//    name = item.name;
+//    description = item.description;
+//    cost = item.cost;
+//  }
 
   @override
   String toString() {

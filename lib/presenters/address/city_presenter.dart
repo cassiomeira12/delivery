@@ -1,3 +1,5 @@
+import 'package:delivery/services/parse/parse_city_service.dart';
+
 import '../../contracts/address/city_contract.dart';
 import '../../models/address/city.dart';
 import '../../services/firebase/firebase_city_service.dart';
@@ -7,7 +9,8 @@ class CityPresenter implements CityContractPresenter {
 
   CityPresenter(this._view);
 
-  CityContractService service = FirebaseCityService("cities");
+  //CityContractService service = FirebaseCityService("cities");
+  CityContractService service = ParseCityService();
 
   @override
   dispose() {

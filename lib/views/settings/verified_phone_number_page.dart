@@ -71,7 +71,7 @@ class _VerifiedPhoneNumberPageState extends State<VerifiedPhoneNumberPage> imple
 
   @override
   onSuccess(BaseUser user) async {
-    SingletonUser.instance.update(user);
+    SingletonUser.instance.phoneNumber = user.phoneNumber;
     _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text(TELEFONE_ATUALIZADO),
       backgroundColor: Colors.green,

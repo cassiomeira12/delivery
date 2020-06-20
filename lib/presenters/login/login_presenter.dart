@@ -1,3 +1,5 @@
+import 'package:delivery/services/parse/parse_login_service.dart';
+
 import '../../contracts/login/login_contract.dart';
 import '../../models/base_user.dart';
 import '../../services/firebase/firebase_login_service.dart';
@@ -7,7 +9,8 @@ class LoginPresenter extends LoginContractPresenter {
   LoginContractService service;
 
   LoginPresenter(this._view) {
-    this.service = FirebaseLoginService(this);
+    //service = FirebaseLoginService(this);
+    service = ParseLoginService(this);
   }
 
   @override

@@ -12,9 +12,9 @@ class Product extends BaseModel<Product> {
   List<Choice> choices;
   List<Additional> additional;
 
-  Product();
+  Product() : super('Product');
 
-  Product.fromMap(Map<dynamic, dynamic>  map) {
+  Product.fromMap(Map<dynamic, dynamic>  map) : super('Product') {
     id = map["id"];
     name = map["name"];
     description = map["description"];
@@ -41,27 +41,27 @@ class Product extends BaseModel<Product> {
     return map;
   }
 
-  @override
-  update(Product item) {
-    id = item.id;
-    name = item.name;
-    description = item.description;
-    cost = item.cost;
-    discount = item.discount;
-    preparationTime = item.preparationTime;
-    images = item.images;
-    choices = item.choices;
-    additional = item.additional;
-  }
+//  @override
+//  update(Product item) {
+//    id = item.id;
+//    name = item.name;
+//    description = item.description;
+//    cost = item.cost;
+//    discount = item.discount;
+//    preparationTime = item.preparationTime;
+//    images = item.images;
+//    choices = item.choices;
+//    additional = item.additional;
+//  }
 
 }
 
 class PreparationTime extends BaseModel<PreparationTime> {
   int hour, minute;
 
-  PreparationTime();
+  PreparationTime() : super('PreparationTime');
 
-  PreparationTime.fromMap(Map<dynamic, dynamic>  map) {
+  PreparationTime.fromMap(Map<dynamic, dynamic>  map) : super('PreparationTime') {
     hour = map["hour"] as int;
     minute = map["minute"] as int;
   }
@@ -74,11 +74,11 @@ class PreparationTime extends BaseModel<PreparationTime> {
     return map;
   }
 
-  @override
-  update(PreparationTime item) {
-    hour = item.hour;
-    minute = item.minute;
-  }
+//  @override
+//  update(PreparationTime item) {
+//    hour = item.hour;
+//    minute = item.minute;
+//  }
 
   @override
   String toString() {

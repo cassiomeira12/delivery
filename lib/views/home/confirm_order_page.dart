@@ -698,7 +698,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                     TypePayment result = await PageRouter.push(context, PaymentTypePage(paymentsType: companyPayments,));
                     await Future.delayed(Duration(milliseconds: 300));
                     if (result != null) {
-                      if (result.type == Type.MONEY) {
+                      if (result.paymentType == Type.MONEY) {
                         OrderSingleton.instance.changeMoney = await getTroco();
                       }
                     }
@@ -733,7 +733,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   }
 
   Widget paymentTypeWidget(TypePayment payment) {
-    IconData icon = findIcon(payment.type);
+    IconData icon = findIcon(payment.paymentType);
     String name = payment.getType();
     return Card(
       elevation: 0,
@@ -766,7 +766,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 TypePayment result = await PageRouter.push(context, PaymentTypePage(paymentsType: companyPayments,));
                 await Future.delayed(Duration(milliseconds: 300));
                 if (result != null) {
-                  if (result.type == Type.MONEY) {
+                  if (result.paymentType == Type.MONEY) {
                     OrderSingleton.instance.changeMoney = await getTroco();
                   }
                 }

@@ -6,22 +6,22 @@ enum Type {
 
 class TypePayment extends BaseModel<TypePayment> {
   String name;
-  Type type;
+  Type paymentType;
   double taxa;// 0.0 - 1.0
   int maxInstallments;//Max prestação
 
-  TypePayment() {
+  TypePayment() : super('TypePayment') {
     taxa = 0;
     maxInstallments = 1;
   }
 
-  TypePayment.fromMap(Map<dynamic, dynamic>  map) {
+  TypePayment.fromMap(Map<dynamic, dynamic>  map) : super('TypePayment') {
     //id = map["id"];
     name = map["name"];
     var typeTemp = map["type"];
     Type.values.forEach((element) {
       if (element.toString().split('.').last == typeTemp) {
-        type = element;
+        paymentType = element;
         return;
       }
     });
@@ -34,23 +34,23 @@ class TypePayment extends BaseModel<TypePayment> {
     var map = Map<String, dynamic>();
     //map["id"] = id;
     map["name"] = name;
-    map["type"] = type.toString().split('.').last;
+    map["type"] = paymentType.toString().split('.').last;
     map["taxa"] = taxa;
     map["maxInstallments"] = maxInstallments;
     return map;
   }
 
-  @override
-  update(TypePayment item) {
-    id = item.id;
-    name = item.name;
-    type = item.type;
-    taxa = item.taxa;
-    maxInstallments = item.maxInstallments;
-  }
+//  @override
+//  update(TypePayment item) {
+//    id = item.id;
+//    name = item.name;
+//    paymentType = item.paymentType;
+//    taxa = item.taxa;
+//    maxInstallments = item.maxInstallments;
+//  }
 
   String getType() {
-    switch (type) {
+    switch (paymentType) {
       case Type.CARD:
         return "Cartão";
       case Type.MONEY:

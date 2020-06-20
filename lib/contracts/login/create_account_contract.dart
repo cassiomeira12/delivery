@@ -16,12 +16,12 @@ abstract class CreateAccountContractPresenter {
 }
 
 abstract class CreateAccountContractService {
-  CreateAccountContractPresenter presenter;
-  CreateAccountContractService(this.presenter);
-
-  dispose() {
-    this.presenter = null;
-  }
-
+//  CreateAccountContractPresenter presenter;
+//  CreateAccountContractService(this.presenter);
+//
+//  dispose() {
+//    this.presenter = null;
+//  }
+  dispose();
   Future<BaseUser> createAccount(BaseUser user);
 }

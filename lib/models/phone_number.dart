@@ -1,13 +1,15 @@
+import '../models/base_model.dart';
 
-class PhoneNumber {
+class PhoneNumber extends BaseModel<PhoneNumber> {
   String countryCode;
   String ddd;
   String number;
   bool verified;
 
-  PhoneNumber();
+  PhoneNumber() : super('PhoneNumber');
 
-  PhoneNumber.fromMap(Map<dynamic, dynamic>  map) {
+  PhoneNumber.fromMap(Map<dynamic, dynamic>  map) : super('PhoneNumber') {
+    id = map["objectId"];
     countryCode = map["countryCode"];
     ddd = map["ddd"];
     number = map["number"];
@@ -16,6 +18,7 @@ class PhoneNumber {
 
   toMap() {
     var map = new Map<String, dynamic>();
+    map["objectId"] = id;
     map["countryCode"] = countryCode;
     map["ddd"] = ddd;
     map["number"] = number;

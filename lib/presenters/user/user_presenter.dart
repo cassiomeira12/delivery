@@ -1,4 +1,5 @@
 import 'dart:io';
+import '../../services/parse/parse_user_service.dart';
 import '../../utils/log_util.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
@@ -11,7 +12,8 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   final UserContractView _view;
   UserPresenter(this._view);
 
-  UserContractService service = FirebaseUserService("users");
+  //UserContractService service = FirebaseUserService("users");
+  UserContractService service = ParseUserService();
 
   @override
   dispose() {
@@ -73,9 +75,7 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
   }
 
   @override
-  Future<List<BaseUser>> list() {
-
-  }
+  Future<List<BaseUser>> list() { }
 
   @override
   Future<bool> changeName(String name) async {
@@ -103,29 +103,17 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
     await service.changePassword(email, password, newPassword).then((value) {
       if (_view != null) _view.onSuccess(null);
     }).catchError((error) {
-      print(error.code);
-      switch (error.code) {
-        case "ERROR_WRONG_PASSWORD":
-          if (_view != null) _view.onFailure(SENHA_INVALIDA);
-          break;
-        case "ERROR_TOO_MANY_REQUESTS":
-          if (_view != null) _view.onFailure(EXCESSSO_TENTATIVAS);
-          break;
-        default:
-          Log.e(error);
-          if (_view != null) _view.onFailure("Ocorreu algum erro");
-      }
+      if (_view != null) _view.onFailure(error.message);
     });
   }
 
   @override
   Future<BaseUser> currentUser() async {
-    BaseUser user =  await service.currentUser();
-    if (user == null) {
-      if (_view != null) _view.onFailure("");
-    } else {
-      if (_view != null) _view.onSuccess(user);
+    BaseUser user = await service.currentUser();
+    if (_view != null) {
+      user == null ? _view.onFailure("") : _view.onSuccess(user);
     }
+    return user;
   }
 
   @override

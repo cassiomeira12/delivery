@@ -4,9 +4,9 @@ class Evaluation extends BaseModel<Evaluation> {
   int stars;
   String comment;
 
-  Evaluation();
+  Evaluation() : super('Evaluation');
 
-  Evaluation.fromMap(Map<dynamic, dynamic>  map) {
+  Evaluation.fromMap(Map<dynamic, dynamic>  map) : super('Evaluation') {
     stars = map["stars"] as int;
     comment = map["comment"];
   }
@@ -19,11 +19,11 @@ class Evaluation extends BaseModel<Evaluation> {
     return map;
   }
 
-  @override
-  update(Evaluation item) {
-    id = item.id;
-    stars = item.stars;
-    comment = item.comment;
-  }
+//  @override
+//  update(Evaluation item) {
+//    id = item.id;
+//    stars = item.stars;
+//    comment = item.comment;
+//  }
 
 }

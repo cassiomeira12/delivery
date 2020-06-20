@@ -33,7 +33,14 @@ const EMAIL_VERIFICACAO_ENVIADO = "Email de verificação enviado com sucesso!";
 const ERROR_ENVIAR_EMAIL = "Erro ao enviar email de verificação";
 const EMAIL_VERIFICACAO = "Email de verificação";
 const REENVIAR_EMAIL = "Reenviar email";
-const NETWORK_ERROR = "Verifique sua conexão com a internet";
+
+const SUCCESS_UPDATE_DATA = "Dados alterados com sucesso!";
+const ERROR_DATA_SUCCESS = "Erro ao alterados dados!";
+
+const ERROR_NETWORK = "Verifique sua conexão com a internet";
+const SOME_ERROR = "Ocorreu um erro";
+const ERROR_ALREADY_EXISTS = "Error, já existe uma conta com esse email, tente novamente.";
+const ERROR_LOGIN_PASSWORD = "Login ou Senha inválidos";
 
 const CRIAR_CONTA = "Criar conta";
 const CRIANDO_CONTA = "Criando conta";

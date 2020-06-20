@@ -3,6 +3,7 @@ import 'package:delivery/contracts/login/login_contract.dart';
 import 'package:delivery/models/phone_number.dart';
 import 'package:delivery/models/singleton/singleton_user.dart';
 import 'package:delivery/presenters/login/login_presenter.dart';
+import 'package:delivery/services/parse/parse_create_account_service.dart';
 import 'package:delivery/utils/log_util.dart';
 import 'package:delivery/views/settings/phone_number_page.dart';
 import 'package:delivery/widgets/scaffold_snackbar.dart';
@@ -252,9 +253,9 @@ class _SignUpPageState extends State<SignUpPage> implements LoginContractView{
   BaseUser createBaseUser() {
     BaseUser user = BaseUser();
     user.name = _name;
+    user.username = _email;
     user.email = _email;
     user.password = _password;
-    user.createAt = DateTime.now();
     return user;
   }
 
@@ -284,7 +285,7 @@ class _SignUpPageState extends State<SignUpPage> implements LoginContractView{
 
   @override
   onSuccess(BaseUser result) async {
-    SingletonUser.instance.update(result);
+    SingletonUser.instance.updateData(result);
     if (result.phoneNumber == null) {
       var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
       SingletonUser.instance.phoneNumber = phoneNumber;

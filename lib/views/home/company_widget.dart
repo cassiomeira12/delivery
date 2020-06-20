@@ -54,7 +54,7 @@ class _CompanyWidgetState extends State<CompanyWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   titleTextWidget(company.name),
-                  messageTextWidget(),
+                  // messageTextWidget(),
                 ],
               ),
             ),

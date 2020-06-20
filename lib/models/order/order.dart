@@ -32,12 +32,12 @@ class Order extends BaseModel<Order> {
 
   Company company;
 
-  Order() {
+  Order() : super('Order') {
     items = List();
     status = OrderStatus();
   }
 
-  Order.fromMap(Map<dynamic, dynamic>  map) {
+  Order.fromMap(Map<dynamic, dynamic>  map) : super('Order') {
     id = map["id"];
     userId = map["userId"];
     userName = map["userName"];
@@ -86,29 +86,29 @@ class Order extends BaseModel<Order> {
     return map;
   }
 
-  @override
-  update(Order item) {
-    id = item.id;
-    userId = item.userId;
-    userName = item.userName;
-    companyId = item.companyId;
-    companyName = item.companyName;
-    createdAt = item.createdAt;
-    updatedAt = item.updatedAt;
-    note = item.note;
-    evaluation = item.evaluation;
-    deliveryAddress = item.deliveryAddress;
-    deliveryCost = item.deliveryCost;
-    typePayment = item.typePayment;
-    items = item.items;
-    status = item.status;
-    changeMoney = item.changeMoney;
-    deliveryCost = item.deliveryCost;
-    deliveryForecast = item.deliveryForecast;
-    preparationTime = item.preparationTime;
-    companyPhoneNumber = item.companyPhoneNumber;
-    userPhoneNumber = item.userPhoneNumber;
-  }
+//  @override
+//  update(Order item) {
+//    id = item.id;
+//    userId = item.userId;
+//    userName = item.userName;
+//    companyId = item.companyId;
+//    companyName = item.companyName;
+//    createdAt = item.createdAt;
+//    updatedAt = item.updatedAt;
+//    note = item.note;
+//    evaluation = item.evaluation;
+//    deliveryAddress = item.deliveryAddress;
+//    deliveryCost = item.deliveryCost;
+//    typePayment = item.typePayment;
+//    items = item.items;
+//    status = item.status;
+//    changeMoney = item.changeMoney;
+//    deliveryCost = item.deliveryCost;
+//    deliveryForecast = item.deliveryForecast;
+//    preparationTime = item.preparationTime;
+//    companyPhoneNumber = item.companyPhoneNumber;
+//    userPhoneNumber = item.userPhoneNumber;
+//  }
 
   clear() {
     id = null;
@@ -140,9 +140,9 @@ class Order extends BaseModel<Order> {
 class DeliveryForecast extends BaseModel<DeliveryForecast> {
   int hour, minute;
 
-  DeliveryForecast();
+  DeliveryForecast() : super('DeliveryForecast');
 
-  DeliveryForecast.fromMap(Map<dynamic, dynamic>  map) {
+  DeliveryForecast.fromMap(Map<dynamic, dynamic>  map) : super('DeliveryForecast') {
     hour = map["hour"];
     minute = map["minute"];
   }
@@ -155,11 +155,11 @@ class DeliveryForecast extends BaseModel<DeliveryForecast> {
     return map;
   }
 
-  @override
-  update(DeliveryForecast item) {
-    hour = item.hour;
-    minute = item.minute;
-  }
+//  @override
+//  update(DeliveryForecast item) {
+//    hour = item.hour;
+//    minute = item.minute;
+//  }
 
   @override
   String toString() {
