@@ -8,7 +8,7 @@ class Category extends BaseModel<Category> {
   Category() : super('Category');
 
   Category.fromMap(Map<dynamic, dynamic>  map) : super('Category') {
-    id = map["id"];
+    id = map["objectId"];
     name = map["name"];
     products = map["products"] == null ? List() : List.from(map["products"]).map<Product>((e) => Product.fromMap(e)).toList();
   }
@@ -16,7 +16,7 @@ class Category extends BaseModel<Category> {
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["id"] = id;
+    map["objectId"] = id;
     map["name"] = name;
     map["products"] = products.map<Map>((e) => e.toMap()).toList();
     return map;

@@ -1,5 +1,4 @@
-import 'package:delivery/services/parse/parse_small_town_service.dart';
-
+import '../../services/parse/parse_small_town_service.dart';
 import '../../contracts/address/small_town_contract.dart';
 import '../../models/address/small_town.dart';
 import '../../services/firebase/firebase_small_town_service.dart';
@@ -24,7 +23,7 @@ class SmallTownPresenter implements SmallTownContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -35,7 +34,7 @@ class SmallTownPresenter implements SmallTownContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -46,7 +45,7 @@ class SmallTownPresenter implements SmallTownContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -57,7 +56,7 @@ class SmallTownPresenter implements SmallTownContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -68,7 +67,7 @@ class SmallTownPresenter implements SmallTownContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -79,7 +78,7 @@ class SmallTownPresenter implements SmallTownContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }

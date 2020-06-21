@@ -38,7 +38,7 @@ class Order extends BaseModel<Order> {
   }
 
   Order.fromMap(Map<dynamic, dynamic>  map) : super('Order') {
-    id = map["id"];
+    id = map["objectId"];
     userId = map["userId"];
     userName = map["userName"];
     companyId = map["companyId"];
@@ -63,7 +63,7 @@ class Order extends BaseModel<Order> {
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["id"] = id;
+    map["objectId"] = id;
     map["userId"] = userId;
     map["userName"] = userName;
     map["companyId"] = companyId;

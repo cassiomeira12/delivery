@@ -70,7 +70,7 @@ class ParseStatesService extends StatesContractService {
   @override
   Future<List<States>> findBy(String field, value) async {
     return service.findBy(field, value).then((response) {
-      return response.map<States>((item) => States.fromMap(item)).toList();
+      return response.isEmpty ? List<States>() : response.map<States>((item) => States.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });
@@ -79,7 +79,7 @@ class ParseStatesService extends StatesContractService {
   @override
   Future<List<States>> list() {
     return service.list().then((response) {
-      return response.map<States>((item) => States.fromMap(item)).toList();
+      return response.isEmpty ? List<States>() : response.map<States>((item) => States.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });

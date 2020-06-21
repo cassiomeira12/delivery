@@ -1,3 +1,4 @@
+import 'package:delivery/utils/log_util.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import '../../models/base_model.dart';
 
@@ -45,9 +46,12 @@ class BaseParseService {
     queryBuilder.whereEqualTo(field, value);
     return await queryBuilder.query().then((value) {
       if (value.success) {
-        if (value.result == null) return [];
-        List<ParseObject> list = value.result;
-        return list.map<Map<String, dynamic>>((e) => e.toJson()).toList();
+        if (value.result == null) {
+          return List();
+        } else {
+          List<ParseObject> list = value.result;
+          return list.map<Map<String, dynamic>>((e) => e.toJson()).toList();
+        }
       } else {
         return throw value.error;
       }
@@ -57,9 +61,12 @@ class BaseParseService {
   Future<List<Map<String, dynamic>>> list() async {
     return await object.getAll().then((value) {
       if (value.success) {
-        if (value.result == null) return [];
-        List<ParseObject> list = value.result;
-        return list.map<Map<String, dynamic>>((e) => e.toJson()).toList();
+        if (value.result == null) {
+          return List();
+        } else {
+          List<ParseObject> list = value.result;
+          return list.map<Map<String, dynamic>>((e) => e.toJson()).toList();
+        }
       } else {
         return throw value.error;
       }

@@ -70,7 +70,7 @@ class ParseMenuService extends MenuContractService {
   @override
   Future<List<Menu>> findBy(String field, value) async {
     return service.findBy(field, value).then((response) {
-      return response.map<Menu>((item) => Menu.fromMap(item)).toList();
+      return response.isEmpty ? List<Menu>() : response.map<Menu>((item) => Menu.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });
@@ -79,7 +79,7 @@ class ParseMenuService extends MenuContractService {
   @override
   Future<List<Menu>> list() {
     return service.list().then((response) {
-      return response.map<Menu>((item) => Menu.fromMap(item)).toList();
+      return response.isEmpty ? List<Menu>() : response.map<Menu>((item) => Menu.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });

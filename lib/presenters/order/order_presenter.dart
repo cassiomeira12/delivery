@@ -1,5 +1,5 @@
 import 'dart:async';
-
+import '../../services/parse/parse_order_service.dart';
 import '../../models/singleton/singleton_user.dart';
 import '../../services/firebase/firebase_order_service.dart';
 import '../../contracts/order/order_contract.dart';
@@ -10,7 +10,8 @@ class OrdersPresenter implements OrderContractPresenter {
 
   OrdersPresenter(this._view);
 
-  OrderContractService service = FirebaseOrderService("orders");
+  //OrderContractService service = FirebaseOrderService("orders");
+  OrderContractService service = ParseOrderService();
 
   StreamSubscription _streamSubscription;
 
@@ -34,7 +35,7 @@ class OrdersPresenter implements OrderContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -45,7 +46,7 @@ class OrdersPresenter implements OrderContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -56,7 +57,7 @@ class OrdersPresenter implements OrderContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -67,7 +68,7 @@ class OrdersPresenter implements OrderContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -78,7 +79,7 @@ class OrdersPresenter implements OrderContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -89,7 +90,7 @@ class OrdersPresenter implements OrderContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }

@@ -70,7 +70,7 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<List<Order>> findBy(String field, value) async {
     return service.findBy(field, value).then((response) {
-      return response.map<Order>((item) => Order.fromMap(item)).toList();
+      return response.isEmpty ? List<Order>() : response.map<Order>((item) => Order.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });
@@ -79,7 +79,7 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<List<Order>> list() {
     return service.list().then((response) {
-      return response.map<Order>((item) => Order.fromMap(item)).toList();
+      return response.isEmpty ? List<Order>() : response.map<Order>((item) => Order.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });

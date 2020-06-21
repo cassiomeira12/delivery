@@ -19,7 +19,7 @@ class OrderItem extends BaseModel<OrderItem> {
   }
 
   OrderItem.fromMap(Map<dynamic, dynamic>  map) : super('OrderItem') {
-    id = map["id"];
+    id = map["objectId"];
     name = map["name"];
     description = map["description"];
     cost = (map["cost"] as num).toDouble();
@@ -37,7 +37,7 @@ class OrderItem extends BaseModel<OrderItem> {
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["id"] = id;
+    map["objectId"] = id;
     map["name"] = name;
     map["description"] = description;
     map["cost"] = cost;

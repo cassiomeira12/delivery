@@ -38,6 +38,7 @@ class City extends BaseModel<City> {
 
   @override
   String toString() {
+    this.get("name");
     return "$name - $codeState";
   }
 

@@ -5,6 +5,7 @@ import 'package:delivery/services/api/time_service.dart';
 import 'package:delivery/utils/log_util.dart';
 import 'package:delivery/utils/preferences_util.dart';
 import 'package:delivery/views/location/location_page.dart';
+import 'package:delivery/widgets/scaffold_snackbar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../contracts/company/company_contract.dart';
 import '../../models/company/company.dart';
@@ -32,10 +33,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> implements CompanyContractView {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
   bool _initedState = false;
 
-  CompanyContractPresenter companyPresenter;
+  CompanyPresenter companyPresenter;
 
   City city;
   SmallTown smallTown;
@@ -118,20 +121,18 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   void findCompaniesByCity() async {
     setState(() => list = null);
-    //companyPresenter.findBy("address.city.id", city.id);
-    companyPresenter.list();
+    companyPresenter.listFromCity(city.id);
   }
 
   void findCompaniesBySmallTown() async {
     setState(() => list = null);
-    //companyPresenter.findBy("address.smallTown.id", smallTown.id);
-    companyPresenter.list();
+    companyPresenter.listFromSmallTown(smallTown.id);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //key: _scaffoldKey,
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(TAB1, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
@@ -234,7 +235,10 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   @override
   onFailure(String error) {
-    print(error);
+    setState(() {
+      this.list = [];
+    });
+    ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override
@@ -244,28 +248,19 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   @override
   listSuccess(List<Company> list) {
+    if (smallTown != null) {
+      for (var company in list) {
+        company.address.smallTown = smallTown;
+      }
+    } else {
+      for (var company in list) {
+        company.address.city = city;
+      }
+    }
+
     setState(() {
-      this.list = [];
-      this.list.addAll(list);
+      this.list = list;
     });
-
-
-//    TypePayment p = TypePayment();
-//    p.name = "Dinheiro";
-//    p.type = Type.MONEY;
-//
-//    list[0].typePayments.add(p);
-//    for (int i=0; i<7; i++) {
-//      OpeningHour h = OpeningHour();
-//      h.weekDay = i;
-//      h.openHour = 18;
-//      h.openMinute = 0;
-//      h.closeHour = 0;
-//      h.closeMinute = 0;
-//      list[0].openHours.add(h);
-//    }
-
-    //presenter.update(list[0]);
   }
 
   Widget body() {

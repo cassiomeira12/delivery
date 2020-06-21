@@ -8,8 +8,11 @@ abstract class CompanyContractView extends BaseResultContract<Company> {
 
 abstract class CompanyContractPresenter extends Crud<Company> {
   dispose();
+  listFromCity(String id);
+  listFromSmallTown(String id);
 }
 
 abstract class CompanyContractService extends Crud<Company> {
-
+  listFromCity(String id);
+  listFromSmallTown(String id);
 }

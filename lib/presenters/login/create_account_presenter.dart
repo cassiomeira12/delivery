@@ -1,5 +1,4 @@
-import 'package:delivery/services/parse/parse_create_account_service.dart';
-
+import '../../services/parse/parse_create_account_service.dart';
 import '../../contracts/login/create_account_contract.dart';
 import '../../models/base_user.dart';
 import '../../services/firebase/firebase_create_account_service.dart';
@@ -28,7 +27,7 @@ class CreateAccountPresenter extends CreateAccountContractPresenter {
   @override
   onFailure(String error) {
     if (_view != null) _view.hideProgress();
-    if (service != null) _view.onFailure(error.toString());
+    if (service != null) _view.onFailure(error);
   }
 
   @override

@@ -21,7 +21,7 @@ class StatesPresenter implements StatesContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -32,7 +32,7 @@ class StatesPresenter implements StatesContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -43,7 +43,7 @@ class StatesPresenter implements StatesContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -54,7 +54,7 @@ class StatesPresenter implements StatesContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -65,7 +65,7 @@ class StatesPresenter implements StatesContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -76,7 +76,7 @@ class StatesPresenter implements StatesContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }

@@ -1,3 +1,5 @@
+import 'package:delivery/utils/log_util.dart';
+
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
 import '../../services/parse/base_parse_service.dart';
@@ -70,16 +72,16 @@ class ParseAddressService extends AddressContractService {
   @override
   Future<List<Address>> findBy(String field, value) async {
     return service.findBy(field, value).then((response) {
-      return response.map<Address>((item) => Address.fromMap(item)).toList();
+      return response.isEmpty ? List<Address>() : response.map<Address>((item) => Address.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });
   }
 
   @override
-  Future<List<Address>> list() {
-    return service.list().then((response) {
-      return response.map<Address>((item) => Address.fromMap(item)).toList();
+  Future<List<Address>> list() async {
+    return await service.list().then((response) {
+      return response.isEmpty ? List<Address>() : response.map<Address>((item) => Address.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });

@@ -70,7 +70,7 @@ class ParseSmallTownService extends SmallTownContractService {
   @override
   Future<List<SmallTown>> findBy(String field, value) async {
     return service.findBy(field, value).then((response) {
-      return response.map<SmallTown>((item) => SmallTown.fromMap(item)).toList();
+      return response.isEmpty ? List<SmallTown>() : response.map<SmallTown>((item) => SmallTown.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });
@@ -79,7 +79,7 @@ class ParseSmallTownService extends SmallTownContractService {
   @override
   Future<List<SmallTown>> list() {
     return service.list().then((response) {
-      return response.map<SmallTown>((item) => SmallTown.fromMap(item)).toList();
+      return response.isEmpty ? List<SmallTown>() : response.map<SmallTown>((item) => SmallTown.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });

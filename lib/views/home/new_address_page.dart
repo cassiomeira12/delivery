@@ -1,5 +1,4 @@
-import 'package:delivery/widgets/area_input_field.dart';
-
+import '../../widgets/area_input_field.dart';
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/address/city.dart';
@@ -75,7 +74,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          textCityWidget(),
+          widget.city != null ? textCityWidget() : Container(),
           widget.smallTown == null ? Container() : textDistritoWidget(),
           widget.smallTown == null ? cityForm() : smallTomForm(),
           saveButton(),

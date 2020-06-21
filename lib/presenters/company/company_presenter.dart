@@ -1,5 +1,4 @@
-import 'package:delivery/services/parse/parse_company_service.dart';
-
+import '../../services/parse/parse_company_service.dart';
 import '../../services/firebase/firebase_company_service.dart';
 import '../../contracts/company/company_contract.dart';
 import '../../models/company/company.dart';
@@ -24,7 +23,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -35,7 +34,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -46,7 +45,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -57,7 +56,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -68,8 +67,7 @@ class CompanyPresenter implements CompanyContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      print(error);
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -80,8 +78,29 @@ class CompanyPresenter implements CompanyContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      print(error);
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
+      return null;
+    });
+  }
+
+  @override
+  Future<List<Company>> listFromCity(String id) async {
+    return await service.listFromCity(id).then((value) {
+      if (_view != null) _view.listSuccess(value);
+      return value;
+    }).catchError((error) {
+      if (_view != null) _view.onFailure(error.message);
+      return null;
+    });
+  }
+
+  @override
+  Future<List<Company>> listFromSmallTown(String id) async {
+    return await service.listFromSmallTown(id).then((value) {
+      if (_view != null) _view.listSuccess(value);
+      return value;
+    }).catchError((error) {
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }

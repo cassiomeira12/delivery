@@ -70,7 +70,7 @@ class ParseCityService extends CityContractService {
   @override
   Future<List<City>> findBy(String field, value) async {
     return service.findBy(field, value).then((response) {
-      return response.map<City>((item) => City.fromMap(item)).toList();
+      return response.isEmpty ? List<City>() : response.map<City>((item) => City.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });
@@ -79,7 +79,7 @@ class ParseCityService extends CityContractService {
   @override
   Future<List<City>> list() {
     return service.list().then((response) {
-      return response.map<City>((item) => City.fromMap(item)).toList();
+      return response.isEmpty ? List<City>() : response.map<City>((item) => City.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });

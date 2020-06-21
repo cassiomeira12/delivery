@@ -1,3 +1,4 @@
+import '../../services/parse/parse_address_service.dart';
 import '../../models/singleton/singleton_user.dart';
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
@@ -8,7 +9,8 @@ class AddressPresenter implements AddressContractPresenter {
 
   AddressPresenter(this._view);
 
-  AddressContractService service = FirebaseAddressService("address");
+  //AddressContractService service = FirebaseAddressService("address");
+  AddressContractService service = ParseAddressService();
 
   @override
   dispose() {
@@ -22,8 +24,7 @@ class AddressPresenter implements AddressContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      print(error);
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -34,7 +35,7 @@ class AddressPresenter implements AddressContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -45,7 +46,7 @@ class AddressPresenter implements AddressContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -56,7 +57,7 @@ class AddressPresenter implements AddressContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -67,7 +68,7 @@ class AddressPresenter implements AddressContractPresenter {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -79,14 +80,19 @@ class AddressPresenter implements AddressContractPresenter {
       return value;
     }).catchError((error) {
       print(error);
-      if (_view != null) _view.onFailure(error);
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
 
   @override
   listUsersAddress() async {
-    return await service.findBy("userId", SingletonUser.instance.id).then((value) {
+    var value = {
+      "__type": "Pointer",
+      "className": "_User",
+      "objectId": SingletonUser.instance.id,
+    };
+    return await service.findBy("user", value).then((value) {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {

@@ -1,5 +1,4 @@
-import 'package:delivery/services/parse/parse_login_service.dart';
-
+import '../../services/parse/parse_login_service.dart';
 import '../../contracts/login/login_contract.dart';
 import '../../models/base_user.dart';
 import '../../services/firebase/firebase_login_service.dart';

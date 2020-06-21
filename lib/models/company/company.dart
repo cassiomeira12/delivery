@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import '../../models/phone_number.dart';
 import '../../utils/date_util.dart';
 import '../../models/address/address.dart';
@@ -28,19 +30,19 @@ class Company extends BaseModel<Company> {
     id = map["objectId"];
     //topic = map["topic"];
     name = map["name"];
-//    cnpj = map["cnpj"];
-//    logoURL = map["logoURL"];
-//    bannerURL = map["bannerURL"];
-//    openHours = map["openHours"] == null ?
-//      List() :
-//      List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
-//    address = Address.fromMap(map["address"]);
+    cnpj = map["cnpj"];
+    logoURL = map["logo"] == null ? null : (map["logo"] as dynamic)["url"];
+    bannerURL = map["banner"] == null ? null : (map["logo"] as dynamic)["url"];
+    openHours = map["openHours"] == null ?
+      List() :
+      List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
+    address = Address.fromMap(map["address"]);
 //    idMenu = map["idMenu"];
-//    typePayments = map["typePayments"] == null ?
-//      List() :
-//      List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
-//    delivery = map["delivery"] == null ? null : Delivery.fromMap(map["delivery"]);
-//    phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
+    typePayments = map["typePayments"] == null ?
+      List() :
+      List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
+    delivery = map["delivery"] == null ? null : Delivery.fromMap(map["delivery"]);
+    phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
   }
 
   @override

@@ -6,10 +6,8 @@ class ParseVersionAppService {
 
   Future<VersionApp> checkCurrentVersion(String packageName) async {
     return await service.findBy("packageName", packageName).then((value) {
-      print(value);
       return VersionApp.fromMap(value[0]);
     }).catchError((error) {
-      print(error);
       return null;
     });
   }

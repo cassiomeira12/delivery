@@ -1,7 +1,6 @@
-import 'package:delivery/utils/log_util.dart';
-import 'package:delivery/utils/preferences_util.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
-
+import '../../utils/log_util.dart';
+import '../../utils/preferences_util.dart';
 import '../../contracts/crud.dart';
 import '../../services/parse/parse_user_service.dart';
 import '../../contracts/login/create_account_contract.dart';

@@ -62,4 +62,16 @@ class FirebaseCompanyService implements CompanyContractService {
     });
   }
 
+  @override
+  listFromCity(String id) {
+    // TODO: implement listFromCity
+    throw UnimplementedError();
+  }
+
+  @override
+  listFromSmallTown(String id) {
+    // TODO: implement listSmallTown
+    throw UnimplementedError();
+  }
+
 }

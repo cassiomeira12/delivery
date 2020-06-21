@@ -70,7 +70,7 @@ class ParseNotificationService extends NotificationContractService {
   @override
   Future<List<UserNotification>> findBy(String field, value) async {
     return service.findBy(field, value).then((response) {
-      return response.map<UserNotification>((item) => UserNotification.fromMap(item)).toList();
+      return response.isEmpty ? List<UserNotification>() : response.map<UserNotification>((item) => UserNotification.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });
@@ -79,7 +79,7 @@ class ParseNotificationService extends NotificationContractService {
   @override
   Future<List<UserNotification>> list() {
     return service.list().then((response) {
-      return response.map<UserNotification>((item) => UserNotification.fromMap(item)).toList();
+      return response.isEmpty ? List<UserNotification>() : response.map<UserNotification>((item) => UserNotification.fromMap(item)).toList();
     }).catchError((error) {
       return throw Exception(error.message);
     });

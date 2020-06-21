@@ -15,7 +15,7 @@ class Product extends BaseModel<Product> {
   Product() : super('Product');
 
   Product.fromMap(Map<dynamic, dynamic>  map) : super('Product') {
-    id = map["id"];
+    id = map["objectId"];
     name = map["name"];
     description = map["description"];
     cost = (map["cost"] as num).toDouble();
@@ -29,7 +29,7 @@ class Product extends BaseModel<Product> {
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["id"] = id;
+    map["objectId"] = id;
     map["name"] = name;
     map["description"] = description;
     map["cost"] = cost;

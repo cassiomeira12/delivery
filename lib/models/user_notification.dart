@@ -12,7 +12,7 @@ class UserNotification extends BaseModel<UserNotification> {
   UserNotification() : super('UserNotification');
 
   UserNotification.fromMap(Map map) : super('UserNotification') {
-    id = map["uId"];
+    id = map["objectId"];
     title = map["title"];
     message = map["message"];
     observacao = map["observacao"];
@@ -36,7 +36,7 @@ class UserNotification extends BaseModel<UserNotification> {
   @override
   toMap() {
     var map = new Map<String, dynamic>();
-    map["uId"] = id;
+    map["objectId"] = id;
     map["title"] = title;
     map["message"] = message;
     map["observacao"] = observacao;

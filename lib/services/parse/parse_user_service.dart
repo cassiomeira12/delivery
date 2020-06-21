@@ -19,8 +19,8 @@ class ParseUserService implements UserContractService {
 
   @override
   Future<BaseUser> create(BaseUser item) async {
-    return _service.create(item).then((value) {
-      return value == null ? null : BaseUser.fromMap(value);
+    return _service.create(item).then((response) {
+      return response == null ? null : BaseUser.fromMap(response);
     }).catchError((error) {
       Log.e(error);
       switch (error.code) {
@@ -38,8 +38,8 @@ class ParseUserService implements UserContractService {
 
   @override
   Future<BaseUser> read(BaseUser item) {
-    return _service.read(item).then((value) {
-      return value == null ? null : BaseUser.fromMap(value);
+    return _service.read(item).then((response) {
+      return response == null ? null : BaseUser.fromMap(response);
     }).catchError((error) {
       Log.e(error);
       return throw Exception(error.message);
@@ -51,8 +51,8 @@ class ParseUserService implements UserContractService {
     item.username = null;
     item.email = null;
     item.password = null;
-    return _service.update(item).then((value) {
-      return value == null ? null : item;
+    return _service.update(item).then((response) {
+      return response == null ? null : item;
     }).catchError((error) {
       Log.e(error);
       return throw Exception(error.message);
@@ -61,8 +61,8 @@ class ParseUserService implements UserContractService {
 
   @override
   Future<BaseUser> delete(BaseUser item) {
-    return _service.delete(item).then((value) {
-      return value == null ? null : item;
+    return _service.delete(item).then((response) {
+      return response == null ? null : item;
     }).catchError((error) {
       Log.e(error);
       return throw Exception(error.message);
@@ -71,8 +71,8 @@ class ParseUserService implements UserContractService {
 
   @override
   Future<List<BaseUser>> findBy(String field, value) async {
-    return _service.findBy(field, value).then((value) {
-      return value.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
+    return _service.findBy(field, value).then((response) {
+      return response.isEmpty ? List<BaseUser>() : response.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
     }).catchError((error) {
       Log.e(error);
       return throw Exception(error.message);
@@ -81,8 +81,8 @@ class ParseUserService implements UserContractService {
 
   @override
   Future<List<BaseUser>> list() {
-    return _service.list().then((value) {
-      return value.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
+    return _service.list().then((response) {
+      return response.isEmpty ? List<BaseUser>() : response.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
     }).catchError((error) {
       Log.e(error);
       return throw Exception(error.message);
@@ -90,10 +90,10 @@ class ParseUserService implements UserContractService {
   }
 
   Future<BaseUser> findUserByEmail(String email) async {
-    await findBy("email", email).then((value) {
-      if (value.length == 1) {
-        return value.first;
-      } else if (value.length == 0) {
+    await findBy("email", email).then((response) {
+      if (response.length == 1) {
+        return response.first;
+      } else if (response.length == 0) {
         Log.e("Usuário não encontrado");
         return null;
       } else {
@@ -101,7 +101,6 @@ class ParseUserService implements UserContractService {
         return null;
       }
     }).catchError((error) {
-      Log.e(error);
       return throw Exception(error.message);
     });
   }
@@ -113,8 +112,8 @@ class ParseUserService implements UserContractService {
 
   @override
   Future<void> changePassword(String email, String password, String newPassword) async {
-    return await ParseUser(email, password, email).login().then((value) async {
-      if (value.success) {
+    return await ParseUser(email, password, email).login().then((response) async {
+      if (response.success) {
         SingletonUser.instance.password = newPassword;
         _object.objectId = SingletonUser.instance.id;
         _object.set("password", newPassword);
@@ -122,7 +121,7 @@ class ParseUserService implements UserContractService {
           return value.success ? value.result.toJson() : throw value.error;
         });
       } else {
-        throw value.error;
+        throw response.error;
       }
     }).catchError((error) {
       Log.e(error);
@@ -200,8 +199,8 @@ class ParseUserService implements UserContractService {
   @override
   Future<void> sendEmailVerification() async {
     ParseUser currentUser = await ParseUser.currentUser();
-    return await currentUser.verificationEmailRequest().then((value) {
-      return value.success ? null : throw Exception(value.error.message);
+    return await currentUser.verificationEmailRequest().then((response) {
+      return response.success ? null : throw Exception(response.error.message);
     }).catchError((error) {
       return throw Exception(error.message);
     });

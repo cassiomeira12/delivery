@@ -1,3 +1,5 @@
+import 'package:delivery/services/parse/parse_menu_service.dart';
+
 import '../../models/menu/menu.dart';
 import '../../services/firebase/firebase_menu_service.dart';
 import '../../contracts/menu/menu_contract.dart';
@@ -7,7 +9,8 @@ class MenuPresenter implements MenuContractPresenter {
 
   MenuPresenter(this._view);
 
-  MenuContractService service = FirebaseMenuService("menus");
+  //MenuContractService service = FirebaseMenuService("menus");
+  MenuContractService service = ParseMenuService();
 
   @override
   dispose() {
@@ -31,7 +34,7 @@ class MenuPresenter implements MenuContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -42,7 +45,7 @@ class MenuPresenter implements MenuContractPresenter {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
-      if (_view != null) _view.onFailure(error.toString());
+      if (_view != null) _view.onFailure(error.message);
       return null;
     });
   }
@@ -75,7 +78,7 @@ class MenuPresenter implements MenuContractPresenter {
       _view.listSuccess(value);
       return value;
     }).catchError((error) {
-      _view.onFailure(error.toString());
+      _view.onFailure(error.message);
       return null;
     });
   }

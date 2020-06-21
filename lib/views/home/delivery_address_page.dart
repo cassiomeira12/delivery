@@ -1,5 +1,4 @@
 import 'package:flutter_slidable/flutter_slidable.dart';
-
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/company/type_payment.dart';
@@ -31,7 +30,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
   void initState() {
     super.initState();
     presenter = AddressPresenter(this);
-    presenter.listUsersAddress();
+    //presenter.listUsersAddress();
+    //presenter.list();
+    print(widget.address);
   }
 
   @override
@@ -52,16 +53,20 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.add, color: Colors.white,),
         onPressed: () async {
-          var result = await PageRouter.push(context,
-            NewAddressPage(
-              city: widget.address.city,
-              smallTown: widget.address.smallTown,
-            ),
-          );
-          if (result != null) {
-            setState(() {
-              addressList.add(result);
-            });
+          try {
+            var result = await PageRouter.push(context,
+              NewAddressPage(
+                city: widget.address.city,
+                smallTown: widget.address.smallTown,
+              ),
+            );
+            if (result != null) {
+              setState(() {
+                addressList.add(result);
+              });
+            }
+          } catch (error) {
+            print(error);
           }
         },
       ),
@@ -232,16 +237,17 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
 //                      ),
 //                    ),
 //                    SizedBox(height: 5,),
-                    Text(
-                      address.city.toString(),
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Colors.black45,
-                      ),
-                    ),
+                    address.cityName != null ?
+                      Text(
+                        address.cityName,
+                        style: TextStyle(
+                          fontSize: 17,
+                          color: Colors.black45,
+                        ),
+                      ) : Container(),
                     address.smallTown != null ?
                       Text(
-                        address.smallTown.toString(),
+                        address.smallTownName,
                         style: TextStyle(
                           fontSize: 17,
                           color: Colors.black38,
@@ -315,17 +321,21 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
       addressList = list;
     });
     if (addressList.isEmpty) {
-      await Future.delayed(Duration(milliseconds: 300));
-      var result = await PageRouter.push(context,
-        NewAddressPage(
-          city: widget.address.city,
-          smallTown: widget.address.smallTown,
-        ),
-      );
-      if (result != null) {
-        setState(() {
-          addressList.add(result);
-        });
+      try {
+        await Future.delayed(Duration(milliseconds: 300));
+        var result = await PageRouter.push(context,
+          NewAddressPage(
+            city: widget.address.city,
+            smallTown: widget.address.smallTown,
+          ),
+        );
+        if (result != null) {
+          setState(() {
+            addressList.add(result);
+          });
+        }
+      } catch (error) {
+        print(error);
       }
     }
   }

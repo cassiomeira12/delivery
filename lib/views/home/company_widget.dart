@@ -54,7 +54,7 @@ class _CompanyWidgetState extends State<CompanyWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   titleTextWidget(company.name),
-                  // messageTextWidget(),
+                  openingHourMessageTextWidget(),
                 ],
               ),
             ),
@@ -83,7 +83,7 @@ class _CompanyWidgetState extends State<CompanyWidget> {
     );
   }
 
-  Widget messageTextWidget() {
+  Widget openingHourMessageTextWidget() {
     bool openToday = company.isTodayOpen();
     String openText, closeText;
     if (openToday) {

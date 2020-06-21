@@ -1,7 +1,10 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:delivery/contracts/company/company_contract.dart';
+import 'package:delivery/utils/log_util.dart';
 import 'package:delivery/utils/preferences_util.dart';
 import 'package:delivery/views/location/location_page.dart';
+import 'package:delivery/widgets/scaffold_snackbar.dart';
 import '../../contracts/menu/menu_contract.dart';
 import '../../models/menu/additional.dart';
 import '../../models/menu/category.dart';
@@ -41,9 +44,10 @@ class CompanyPage extends StatefulWidget {
 }
 
 class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  MenuContractPresenter presenter;
+  MenuContractPresenter menuPresenter;
 
   Menu menu;
 
@@ -55,7 +59,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   List<Product> list;
 
-  PanelController _pc = new PanelController();
+  PanelController _pc = PanelController();
 
   bool orderSelected = false;
   int orderItens = 0;
@@ -69,9 +73,14 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     bannerURL = widget.company.bannerURL;
     openTime = widget.company.getOpenTime(DateTime.now()) != null ? "Fechado" : widget.company.getOpenTime(DateTime.now());
     sliddingPage = OrderSliddingWidget(orderCallback: widget.orderCallback, updateOrders: updateOrders,);
-    presenter = MenuPresenter(this);
+    menuPresenter = MenuPresenter(this);
     menu = Menu()..id = widget.company.idMenu;
-    presenter.read(menu);
+    var value = {
+      "__type": "Pointer",
+      "className": "Company",
+      "objectId": widget.company.id,
+    };
+    menuPresenter.findBy("company", value);
     updateOrders();
   }
 
@@ -107,7 +116,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   @override
   void dispose() {
     super.dispose();
-    presenter.dispose();
+    menuPresenter.dispose();
   }
 
   @override
@@ -115,6 +124,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     return WillPopScope(
       onWillPop: _onBackPressed,
       child: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Text(widget.company.name),
         ),
@@ -284,7 +294,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     return RefreshIndicator(
       key: _refreshIndicatorKey,
-      onRefresh: () => presenter.read(menu),
+      onRefresh: () => menuPresenter.read(menu),
       child: Center(
         child: list == null ?
           LoadingShimmerList()
@@ -343,100 +353,42 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   @override
   listSuccess(List<Menu> list) {
-    list.forEach((element) {
-      print(element.toMap());
-    });
+    if (list.isEmpty) {
+      setState(() {
+        this.list = [];
+      });
+    } else {
+      List<Product> temp = List();
+      var menu = list[0];
+      menu.categories.forEach((product) {
+        temp.addAll(product.products);
+      });
+      setState(() {
+        menu = menu;
+        this.list = temp;
+      });
+    }
   }
 
   @override
   onFailure(String error)  {
-    print(error);
     setState(() {
       list = [];
       menu.id = widget.company.idMenu;
     });
+    ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override
   onSuccess(Menu menu) {
     List<Product> temp = List();
-
-//    if (menu.categories.isEmpty) {
-//      menu.categories.add(adicionar());
-//      presenter.update(menu);
-//    }
-
     menu.categories.forEach((product) {
       temp.addAll(product.products);
     });
-
-//    if (temp.length == 2) {
-//      var p = adicionar();
-//      menu.categories[0].products.add(p);
-//      presenter.update(menu);
-//    }
-
     setState(() {
       menu = menu;
       list = temp;
     });
-
-  }
-
-  Product adicionar() {
-
-    var item = Item()
-      ..name = "100ml"
-      ..description = "asdf"
-      ..cost = 10.5;
-
-    var item2 = Item()
-      ..name = "200ml"
-      ..description = "asdf"
-      ..cost = 12.5;
-
-    var choice = Choice()
-      ..name = "Tamanho"
-      ..description = "escolha um tamanho"
-      ..required = true
-      ..maxQuantity = 1
-      ..minQuantity = 1
-      ..itens = [item, item2];
-
-    var additional1 = Additional()
-      ..name = "Blend"
-      ..description = "Carne bolvina 120g"
-      ..maxQuantity = 3
-      ..cost = 4.0;
-
-    var additional2 = Additional()
-      ..name = "Bacon"
-      //..description = "Carne bolvina 120g"
-      ..maxQuantity = 5
-      ..cost = 1.0;
-
-    var product = Product()
-      ..id = "0"
-      ..name = "Hamburger Super Cheddar"
-      ..description = "Pão de hamnúguer, blend bolvino 120g, fatia de cheddar e creme de cheddar."
-      ..cost = 12.0
-      ..discount = 0
-      ..choices = []
-      ..additional = [additional1];
-
-
-    var categoria = Category()
-      ..id = "2"
-      ..name = "Hamburger"
-      ..products = [product];
-
-//    print(product.toMap());
-//
-//    setState(() {
-//      list.add(product);
-//    });
-
-    return product;
   }
 
   Widget infoCompanyWidget() {
@@ -447,7 +399,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         children: <Widget>[
           Flexible(
             flex: 3,
-            child: openingCompanyWidget(),
+            child: widget.company.openHours != null ? openingCompanyWidget() : Container(),
           ),
           Flexible(
             flex: 2,
@@ -455,10 +407,8 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
           ),
           Flexible(
             flex: 3,
-            child: deliveryCostCompanyWidget(),
+            child: widget.company.delivery != null ? deliveryCostCompanyWidget() : Container(),
           ),
-          //openingCompanyWidget(),
-          //deliveryCostCompanyWidget(),
         ],
       ),
     );

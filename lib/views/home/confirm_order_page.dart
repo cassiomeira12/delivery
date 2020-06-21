@@ -71,7 +71,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     orderPresenter = OrdersPresenter(this);
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
-    deliveryCost = OrderSingleton.instance.company.delivery.cost/100;
+    deliveryCost = OrderSingleton.instance.company.delivery == null ? 0 : OrderSingleton.instance.company.delivery.cost/100;
     setState(() {
       listOrder.addAll(OrderSingleton.instance.items);
     });
@@ -385,12 +385,15 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   textDeliveryAddress(),
+                  OrderSingleton.instance.company.delivery != null ?
                   OrderSingleton.instance.company.delivery.pickup ?
-                  Container(
-                    alignment: Alignment.center,
-                    width: MediaQuery.of(context).size.width,
-                    child: typeDeliveryButtons(),
-                  ) : Container(),
+                    Container(
+                      alignment: Alignment.center,
+                      width: MediaQuery.of(context).size.width,
+                      child: typeDeliveryButtons(),
+                    ) : Container()
+                  :
+                    Container(),
                   deliveryAddressWidget(),
                 ],
               ),
@@ -575,6 +578,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   }
 
   Widget addressDataWidget(Address address) {
+    print(address.toMap());
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -586,7 +590,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: Text(
-                  address.city.toString(),
+                  address.cityName == null ? address.smallTownName : address.cityName,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 20,
@@ -594,19 +598,19 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   ),
                 ),
               ),
-              address.smallTown != null ?
-              Padding(
-                padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
-                child: Text(
-                  address.smallTown.toString(),
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black54,
-                  ),
-                ),
-              ) : Container(),
-              //SizedBox(height: 5,),
+//              address.smallTown != null ?
+//              Padding(
+//                padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
+//                child: Text(
+//                  address.smallTownName,
+//                  textAlign: TextAlign.left,
+//                  style: TextStyle(
+//                    fontSize: 20,
+//                    color: Colors.black54,
+//                  ),
+//                ),
+//              ) : Container(),
+              SizedBox(height: 5,),
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: Text(
