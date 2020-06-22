@@ -10,7 +10,9 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<Order> create(Order item) async {
     return service.create(item).then((response) {
-      return response == null ? null : Order.fromMap(response);
+      item.id = response["objectId"];
+      item.objectId = response["objectId"];
+      return response == null ? null : item;
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -72,7 +74,13 @@ class ParseOrderService extends OrderContractService {
     return service.findBy(field, value).then((response) {
       return response.isEmpty ? List<Order>() : response.map<Order>((item) => Order.fromMap(item)).toList();
     }).catchError((error) {
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 
@@ -81,18 +89,14 @@ class ParseOrderService extends OrderContractService {
     return service.list().then((response) {
       return response.isEmpty ? List<Order>() : response.map<Order>((item) => Order.fromMap(item)).toList();
     }).catchError((error) {
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
-  }
-
-  @override
-  readSnapshot(Order item) {
-
-  }
-
-  @override
-  listUserOrders(String userId) {
-
   }
 
 }

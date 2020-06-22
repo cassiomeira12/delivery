@@ -100,7 +100,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
       orderSelected = OrderSingleton.instance.id != null;
     });
     if (orderSelected) {
-      OrderSingleton.instance.companyId = widget.company.id;
+      OrderSingleton.instance.company = widget.company;
       OrderSingleton.instance.companyName = widget.company.name;
 
       OrderSingleton.instance.company = widget.company;

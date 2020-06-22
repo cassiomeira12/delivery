@@ -14,11 +14,13 @@ class BaseUser extends BaseModel<BaseUser> {
   DateTime createdAt;
   DateTime updatedAt;
   PhoneNumber phoneNumber;
+  bool socialProvider;
 
   BaseUser() : super('_User');
 
   BaseUser.fromMap(Map<dynamic, dynamic>  map) : super('_User') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     notificationToken = map["notificationToken"] == null ? null : NotificationToken.fromMap(map["notificationToken"]);
     avatarURL = map["avatarURL"];
     username = map["username"];
@@ -29,10 +31,12 @@ class BaseUser extends BaseModel<BaseUser> {
     createdAt = map["createdAt"] == null ? null : DateTime.parse(map["createdAt"]).toLocal();
     updatedAt = map["updatedAt"] == null ? null : DateTime.parse(map["updatedAt"]).toLocal();
     phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
+    socialProvider = map["socialProvider"] == null ? false : map["socialProvider"] as bool;
   }
 
   updateData(BaseUser user) {
     id = user.id;
+    objectId = id;
     notificationToken = user.notificationToken;
     avatarURL = user.avatarURL;
     status = user.status;
@@ -44,6 +48,7 @@ class BaseUser extends BaseModel<BaseUser> {
     createdAt = user.createdAt;
     updatedAt = user.updatedAt;
     phoneNumber = user.phoneNumber;
+    socialProvider = user.socialProvider;
   }
 
   toMap() {
@@ -59,6 +64,7 @@ class BaseUser extends BaseModel<BaseUser> {
     map["createdAt"] = createdAt == null ? null : createdAt.toString();
     map["updatedAt"] = updatedAt == null ? null : updatedAt.toString();
     map["phoneNumber"] = phoneNumber == null ? null : phoneNumber.toMap();
+    map["socialProvider"] = socialProvider;
     return map;
   }
 

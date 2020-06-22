@@ -1,3 +1,4 @@
+import 'package:delivery/utils/log_util.dart';
 import 'package:delivery/utils/preferences_util.dart';
 
 import '../../widgets/image_network_widget.dart';
@@ -375,7 +376,11 @@ class _UserState extends State<UserPage> implements UserContractView {
       child: PrimaryButton(
         text: ALTERAR_SENHA,
         onPressed: () {
-          PageRouter.push(context, ChangePasswordPage());
+          if (SingletonUser.instance.socialProvider) {
+            ScaffoldSnackBar.failure(context, _scaffoldKey, "Você está logado com o Google");
+          } else {
+            PageRouter.push(context, ChangePasswordPage());
+          }
         },
       ),
     );

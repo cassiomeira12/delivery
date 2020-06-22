@@ -12,7 +12,8 @@ class UserNotification extends BaseModel<UserNotification> {
   UserNotification() : super('UserNotification');
 
   UserNotification.fromMap(Map map) : super('UserNotification') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     title = map["title"];
     message = map["message"];
     observacao = map["observacao"];

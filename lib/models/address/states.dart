@@ -11,7 +11,8 @@ class States extends BaseModel<States> {
   States() : super('State');
 
   States.fromMap(Map<dynamic, dynamic>  map) : super('State') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     idCountry = map["idCountry"];
     nameCountry = map["nameCountry"];
     codeCountry = map["codeCountry"];

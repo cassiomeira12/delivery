@@ -75,7 +75,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
           widget.city != null ? textCityWidget() : Container(),
-          widget.smallTown == null ? Container() : textDistritoWidget(),
+          widget.smallTown != null ? textDistritoWidget() : Container(),
           widget.smallTown == null ? cityForm() : smallTomForm(),
           saveButton(),
         ],
@@ -121,7 +121,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
     return Padding(
       padding: EdgeInsets.only(top: 20),
       child: Text(
-        "${widget.city.name}-${widget.city.codeState}",
+        widget.city.name,
         style: TextStyle(
           fontSize: 25,
           fontWeight: FontWeight.bold,
@@ -234,7 +234,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
 
   Address create() {
     Address address = Address()
-      ..userId = SingletonUser.instance.id
+      ..user = SingletonUser.instance
       ..neighborhood = bairro
       ..street = rua
       ..number = numero.isEmpty ? null : numero

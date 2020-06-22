@@ -53,7 +53,7 @@ class _TabsPageState extends State<TabsPage> {
   }
 
   void listOrders() async {
-    var result = await presenter.listUserOrders();
+    var result = await presenter.list();
     if (result != null) {
       var temp = 0;
       result.forEach((element) {

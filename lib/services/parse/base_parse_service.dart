@@ -27,6 +27,7 @@ class BaseParseService {
   }
 
   Future<Map<String, dynamic>> update(BaseModel item) async {
+    object.objectId = item.id;
     item.toMap().forEach((key, value) {
       object.set(key, value);
     });

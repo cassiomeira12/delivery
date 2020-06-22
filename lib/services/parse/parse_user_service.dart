@@ -20,7 +20,9 @@ class ParseUserService implements UserContractService {
   @override
   Future<BaseUser> create(BaseUser item) async {
     return _service.create(item).then((response) {
-      return response == null ? null : BaseUser.fromMap(response);
+      item.id = response["objectId"];
+      item.objectId = response["objectId"];
+      return response == null ? null : item;
     }).catchError((error) {
       Log.e(error);
       switch (error.code) {
@@ -42,20 +44,32 @@ class ParseUserService implements UserContractService {
       return response == null ? null : BaseUser.fromMap(response);
     }).catchError((error) {
       Log.e(error);
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 
   @override
   Future<BaseUser> update(BaseUser item) async {
-    item.username = null;
-    item.email = null;
-    item.password = null;
-    return _service.update(item).then((response) {
+    var temp = BaseUser.fromMap(item.toMap());
+    temp.username = null;
+    temp.email = null;
+    temp.password = null;
+    return _service.update(temp).then((response) {
       return response == null ? null : item;
     }).catchError((error) {
-      Log.e(error);
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 
@@ -64,8 +78,13 @@ class ParseUserService implements UserContractService {
     return _service.delete(item).then((response) {
       return response == null ? null : item;
     }).catchError((error) {
-      Log.e(error);
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 
@@ -74,8 +93,13 @@ class ParseUserService implements UserContractService {
     return _service.findBy(field, value).then((response) {
       return response.isEmpty ? List<BaseUser>() : response.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
     }).catchError((error) {
-      Log.e(error);
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 
@@ -84,13 +108,18 @@ class ParseUserService implements UserContractService {
     return _service.list().then((response) {
       return response.isEmpty ? List<BaseUser>() : response.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
     }).catchError((error) {
-      Log.e(error);
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 
   Future<BaseUser> findUserByEmail(String email) async {
-    await findBy("email", email).then((response) {
+    return await findBy("email", email).then((response) {
       if (response.length == 1) {
         return response.first;
       } else if (response.length == 0) {
@@ -100,9 +129,16 @@ class ParseUserService implements UserContractService {
         Log.e("Mais de 1 usuário com mesmo email");
         return null;
       }
-    }).catchError((error) {
-      return throw Exception(error.message);
     });
+//    }).catchError((error) {
+//      switch (error.code) {
+//        case -1:
+//          throw Exception(ERROR_NETWORK);
+//          break;
+//        default:
+//          throw Exception(error.message);
+//      }
+//    });
   }
 
   @override
@@ -121,10 +157,15 @@ class ParseUserService implements UserContractService {
           return value.success ? value.result.toJson() : throw value.error;
         });
       } else {
-        throw response.error;
+        switch (response.error.code) {
+          case -1:
+            throw Exception(ERROR_NETWORK);
+            break;
+          default:
+            throw Exception(response.error.message);
+        }
       }
     }).catchError((error) {
-      Log.e(error);
       switch (error.code) {
         case -1:
           throw Exception(ERROR_NETWORK);
@@ -171,7 +212,7 @@ class ParseUserService implements UserContractService {
       return null;
     } else {
       var userData = await PreferencesUtil.getUserData();
-      return BaseUser.fromMap(userData);
+      return userData == null ? null : BaseUser.fromMap(userData);
     }
   }
 
@@ -202,7 +243,13 @@ class ParseUserService implements UserContractService {
     return await currentUser.verificationEmailRequest().then((response) {
       return response.success ? null : throw Exception(response.error.message);
     }).catchError((error) {
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 

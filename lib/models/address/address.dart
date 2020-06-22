@@ -1,55 +1,49 @@
+import 'package:delivery/models/base_user.dart';
+
 import '../../models/address/small_town.dart';
 import '../base_model.dart';
 import 'city.dart';
 
 class Address extends BaseModel<Address> {
-  String userId;
+  BaseUser user;
   String zipCode;
   String neighborhood;
   String street;
   String number;
   String reference;
   City city;
-  String cityName;
-  String stateCode;
   Map location;
   SmallTown smallTown;
-  String smallTownName;
 
   Address() : super('Address');
 
   Address.fromMap(Map<dynamic, dynamic>  map) : super('Address') {
-    id = map["objectId"];
-    //userId = map["user"];
+    objectId = map["objectId"];
+    id = objectId;
+    user = map["user"] == null ? null : BaseUser.fromMap(map["user"]);
     zipCode = map["zipCode"];
     neighborhood = map["neighborhood"];
     street = map["street"];
     number = map["number"];
     reference = map["reference"];
     city = map["city"] == null ? null : City.fromMap(map["city"]);
-    cityName = map["cityName"];
-    stateCode = map["stateCode"];
     location = map["location"] == null ? null : Map.from(map["location"]);
     smallTown = map["smallTown"] == null ? null : SmallTown.fromMap(map["smallTown"]);
-    smallTownName = map["smallTownName"];
   }
 
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     map["objectId"] = id;
-    //map["user"] = userId;
+    map["user"] = user == null ? null : user.toPointer();
     map["zipCode"] = zipCode;
     map["neighborhood"] = neighborhood;
     map["street"] = street;
     map["number"] = number;
     map["reference"] = reference;
-    map["city"] = city == null ? null : city.toMap();
-    map["cityName"] = cityName;
-    map["stateCode"] = stateCode;
+    map["city"] = city == null ? null : city.toPointer();
     map["location"] = location;
-    map["smallTown"] = smallTown == null ? null : smallTown.toMap();
-    map["smallTownName"] = smallTownName;
+    map["smallTown"] = smallTown == null ? null : smallTown.toPointer();
     return map;
   }
 

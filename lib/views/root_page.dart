@@ -1,3 +1,6 @@
+import 'package:delivery/services/notifications/parse_push_notification.dart';
+import 'package:delivery/utils/log_util.dart';
+
 import '../services/notifications/firebase_push_notification.dart';
 import '../contracts/user/user_contract.dart';
 import '../models/base_user.dart';
@@ -276,6 +279,8 @@ class _RootPageState extends State<RootPage> {
   }
 
   void updateNotificationToken() async {
+    ParsePushNotification();
+
     var pushNotifications = FirebaseNotifications();
     await pushNotifications.setUpFirebase();
     String notificationToken = await PreferencesUtil.getNotificationToken();

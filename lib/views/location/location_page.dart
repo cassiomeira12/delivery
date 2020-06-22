@@ -26,7 +26,7 @@ class LocationPage extends StatefulWidget {
 
 class _LocationPageState extends State<LocationPage> {
   States state = States()
-    ..id = "Uuz6yEpzCGW3YMMsYykd"
+    ..id = "1bp6TfFPUE"
     ..name = "Bahia"
     ..code = "BA"
     ..idCountry = "AaBnNFM1U8l6isuYI1il"
@@ -50,7 +50,8 @@ class _LocationPageState extends State<LocationPage> {
     statePresenter = StatesPresenter(null);
     cityPresenter = CityPresenter(null);
     smallTownPresenter = SmallTownPresenter(null);
-    checkState();
+    //checkState();
+    listCities();
   }
 
   void checkState() async {
@@ -81,9 +82,11 @@ class _LocationPageState extends State<LocationPage> {
       "objectId": "1bp6TfFPUE",
     };
     var result = await cityPresenter.findBy("state", value);
-    setState(() {
-      cityList = result;
-    });
+    if (result == null) {
+      setState(() => cityList = List());
+    } else {
+      setState(() => cityList = result);
+    }
   }
 
   @override
@@ -261,8 +264,7 @@ class _LocationPageState extends State<LocationPage> {
       "className": "City",
       "objectId": city.id,
     };
-    List<SmallTown> result = await smallTownPresenter.list();
-    print("Result ${result}");
+    List<SmallTown> result = await smallTownPresenter.findBy("city", value);
     if (result == null || result.isEmpty) {
       PreferencesUtil.setSmallTownData(null);
       PreferencesUtil.setCityData(city.toMap());

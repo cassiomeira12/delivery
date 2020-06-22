@@ -27,7 +27,8 @@ class Company extends BaseModel<Company> {
   }
 
   Company.fromMap(Map<dynamic, dynamic>  map) : super('Company') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     //topic = map["topic"];
     name = map["name"];
     cnpj = map["cnpj"];
@@ -36,7 +37,7 @@ class Company extends BaseModel<Company> {
     openHours = map["openHours"] == null ?
       List() :
       List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
-    address = Address.fromMap(map["address"]);
+    address = map["address"] == null ? null : Address.fromMap(map["address"]);
 //    idMenu = map["idMenu"];
     typePayments = map["typePayments"] == null ?
       List() :

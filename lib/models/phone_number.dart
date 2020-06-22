@@ -9,7 +9,8 @@ class PhoneNumber extends BaseModel<PhoneNumber> {
   PhoneNumber() : super('PhoneNumber');
 
   PhoneNumber.fromMap(Map<dynamic, dynamic>  map) : super('PhoneNumber') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     countryCode = map["countryCode"];
     ddd = map["ddd"];
     number = map["number"];

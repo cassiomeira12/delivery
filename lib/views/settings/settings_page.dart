@@ -1,4 +1,6 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:delivery/widgets/scaffold_snackbar.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 import '../../views/image_view_page.dart';
 import '../../widgets/image_network_widget.dart';
 import '../../contracts/user/user_contract.dart';
@@ -28,7 +30,9 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> implements UserContractView {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _loading = false;
 
   UserContractPresenter presenter;
 
@@ -47,24 +51,32 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
   Widget build(BuildContext context) {
     darkMode = CustomTheme.instanceOf(context).isDarkTheme();
     return Scaffold(
-      //key: _scaffoldKey,
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(TAB4, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            Stack(
-              alignment: Alignment.center,
-              children: <Widget>[
-                BackgroundCard(height: 150,),
-                imgUser(),
-              ],
-            ),
-            textNameWidget(),
-            listConfigWidget(),
-          ],
+      body: ModalProgressHUD(
+        inAsyncCall: _loading,
+        progressIndicator: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),
+          child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(),),
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Stack(
+                alignment: Alignment.center,
+                children: <Widget>[
+                  BackgroundCard(height: 150,),
+                  imgUser(),
+                ],
+              ),
+              textNameWidget(),
+              listConfigWidget(),
+            ],
+          ),
         ),
       ),
     );
@@ -460,8 +472,12 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
     );
     switch(result) {
       case OkCancelResult.ok:
-        presenter.signOut().whenComplete(() {
+        setState(() => _loading = true);
+        presenter.signOut().then((value) {
           widget.logoutCallback();
+        }).catchError((error) {
+          setState(() => _loading = false);
+          ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
         });
         break;
       case OkCancelResult.cancel:
@@ -471,12 +487,15 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
 
   @override
   onFailure(String error) {
-    return null;
+    setState(() {
+      _loading = false;
+    });
+    ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override
   onSuccess(BaseUser user) {
-    return null;
+
   }
 
 }

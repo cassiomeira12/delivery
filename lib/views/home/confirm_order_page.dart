@@ -590,7 +590,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: Text(
-                  address.cityName == null ? address.smallTownName : address.cityName,
+                  address.city == null ? address.smallTown.city.name : address.city.name,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 20,
@@ -598,18 +598,18 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   ),
                 ),
               ),
-//              address.smallTown != null ?
-//              Padding(
-//                padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
-//                child: Text(
-//                  address.smallTownName,
-//                  textAlign: TextAlign.left,
-//                  style: TextStyle(
-//                    fontSize: 20,
-//                    color: Colors.black54,
-//                  ),
-//                ),
-//              ) : Container(),
+              address.smallTown != null ?
+              Padding(
+                padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
+                child: Text(
+                  address.smallTown.name,
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontSize: 20,
+                    color: Colors.black54,
+                  ),
+                ),
+              ) : Container(),
               SizedBox(height: 5,),
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 5, right: 10),
@@ -955,7 +955,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           }
 
           OrderSingleton.instance.id = null;
-          OrderSingleton.instance.createdAt = DateTime.now();
+          OrderSingleton.instance.user = SingletonUser.instance;
           OrderSingleton.instance.status.values[0].date = DateTime.now();
           OrderSingleton.instance.status.current = OrderSingleton.instance.status.values[0];
           OrderSingleton.instance.note = _observacaoController.text;

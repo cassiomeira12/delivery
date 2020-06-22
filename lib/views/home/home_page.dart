@@ -248,16 +248,6 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   @override
   listSuccess(List<Company> list) {
-    if (smallTown != null) {
-      for (var company in list) {
-        company.address.smallTown = smallTown;
-      }
-    } else {
-      for (var company in list) {
-        company.address.city = city;
-      }
-    }
-
     setState(() {
       this.list = list;
     });

@@ -54,6 +54,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       }
       index++;
     });
+    checkEvalutationOrder();
     presenter.readSnapshot(order);
   }
 
@@ -75,7 +76,6 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   @override
   onSuccess(Order result) {
-    //order.update(result);
     order = result;
     int index = 0;
     order.status.values.forEach((element) {
@@ -431,18 +431,18 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 ),
               ),
             ),
-            address.smallTown != null ?
-            Padding(
-              padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-              child: Text(
-                address.smallTown.toString(),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black54,
-                ),
-              ),
-            ) : Container(),
+//            address.smallTown != null ?
+//            Padding(
+//              padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+//              child: Text(
+//                "asdf",//address.smallTown.toString(),
+//                textAlign: TextAlign.left,
+//                style: TextStyle(
+//                  fontSize: 20,
+//                  color: Colors.black54,
+//                ),
+//              ),
+//            ) : Container(),
             Padding(
               padding: EdgeInsets.only(left: 10, top: 5, right: 10),
               child: Text(

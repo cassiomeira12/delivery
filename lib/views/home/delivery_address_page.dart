@@ -1,3 +1,5 @@
+import 'package:delivery/utils/log_util.dart';
+import 'package:delivery/widgets/scaffold_snackbar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
@@ -21,6 +23,7 @@ class DeliveryAddressPage extends StatefulWidget {
 }
 
 class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements AddressContractView {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   List<Address> addressList;
 
@@ -30,9 +33,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
   void initState() {
     super.initState();
     presenter = AddressPresenter(this);
-    //presenter.listUsersAddress();
-    //presenter.list();
-    print(widget.address);
+    presenter.listUsersAddress();
   }
 
   @override
@@ -44,7 +45,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //key: _scaffoldKey,
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Endereços", style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
@@ -237,22 +238,22 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
 //                      ),
 //                    ),
 //                    SizedBox(height: 5,),
-                    address.cityName != null ?
-                      Text(
-                        address.cityName,
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black45,
-                        ),
-                      ) : Container(),
-                    address.smallTown != null ?
-                      Text(
-                        address.smallTownName,
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Colors.black38,
-                        ),
-                      ) : Container(),
+//                    address.cityName != null ?
+//                      Text(
+//                        address.cityName,
+//                        style: TextStyle(
+//                          fontSize: 17,
+//                          color: Colors.black45,
+//                        ),
+//                      ) : Container(),
+//                    address.smallTown != null ?
+//                      Text(
+//                        address.smallTownName,
+//                        style: TextStyle(
+//                          fontSize: 17,
+//                          color: Colors.black38,
+//                        ),
+//                      ) : Container(),
                     SizedBox(height: 5,),
                     address.street != null ?
                       Text(
@@ -320,6 +321,9 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
     setState(() {
       addressList = list;
     });
+    list.forEach((element) {
+      Log.d(element.toMap());
+    });
     if (addressList.isEmpty) {
       try {
         await Future.delayed(Duration(milliseconds: 300));
@@ -342,7 +346,10 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
 
   @override
   onFailure(String error)  {
-
+    setState(() {
+      addressList = List();
+    });
+    ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override

@@ -12,6 +12,7 @@ class ParseInit {
     parse = await Parse().initialize(
       appId,
       serverUrl,
+      liveQueryUrl: serverUrl,
       masterKey: masterKey,
       autoSendSessionId: true,
       debug: true,

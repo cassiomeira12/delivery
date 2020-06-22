@@ -10,7 +10,9 @@ class ParseNotificationService extends NotificationContractService {
   @override
   Future<UserNotification> create(UserNotification item) async {
     return service.create(item).then((response) {
-      return response == null ? null : UserNotification.fromMap(response);
+      item.id = response["objectId"];
+      item.objectId = response["objectId"];
+      return response == null ? null : item;
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -72,7 +74,13 @@ class ParseNotificationService extends NotificationContractService {
     return service.findBy(field, value).then((response) {
       return response.isEmpty ? List<UserNotification>() : response.map<UserNotification>((item) => UserNotification.fromMap(item)).toList();
     }).catchError((error) {
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 
@@ -81,7 +89,13 @@ class ParseNotificationService extends NotificationContractService {
     return service.list().then((response) {
       return response.isEmpty ? List<UserNotification>() : response.map<UserNotification>((item) => UserNotification.fromMap(item)).toList();
     }).catchError((error) {
-      return throw Exception(error.message);
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw Exception(error.message);
+      }
     });
   }
 

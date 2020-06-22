@@ -17,10 +17,10 @@ class ParseCreateAccountService implements CreateAccountContractService {
   }
 
   @override
-  Future<BaseUser> createAccount(BaseUser user) async {
+  Future<BaseUser> createAccount(BaseUser item) async {
     Crud<BaseUser> crud = ParseUserService();
-    crud.create(user).then((newUser) async {
-      var userLogin = ParseUser(user.username, user.password, user.password);
+    crud.create(item).then((newUser) async {
+      var userLogin = ParseUser(item.username, item.password, item.password);
       userLogin.login().then((value) {
         ParseUser parseUser = value.result;
         BaseUser user = BaseUser.fromMap(parseUser.toJson());

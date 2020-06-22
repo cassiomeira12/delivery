@@ -1,19 +1,17 @@
+import '../../models/address/states.dart';
 import '../base_model.dart';
 
 class City extends BaseModel<City> {
   String name;
-  String idState;
-  String nameState;
-  String codeState;
+  States state;
 
   City() : super('City');
 
   City.fromMap(Map<dynamic, dynamic>  map) : super('City') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     name = map["name"];
-    idState = map["idState"];
-    nameState = map["nameState"];
-    codeState = map["codeState"];
+    state = map["state"] == null ? null : States.fromMap(map["state"]);
   }
 
   @override
@@ -21,9 +19,7 @@ class City extends BaseModel<City> {
     var map = Map<String, dynamic>();
     map["objectId"] = id;
     map["name"] = name;
-    map["idState"] = idState;
-    map["nameState"] = nameState;
-    map["codeState"] = codeState;
+    map["state"] = state == null ? null : state.toMap();
     return map;
   }
 
@@ -38,8 +34,7 @@ class City extends BaseModel<City> {
 
   @override
   String toString() {
-    this.get("name");
-    return "$name - $codeState";
+    return name;
   }
 
 }

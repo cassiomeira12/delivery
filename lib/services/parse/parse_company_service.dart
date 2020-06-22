@@ -1,4 +1,6 @@
 import 'package:delivery/models/address/address.dart';
+import 'package:delivery/models/address/city.dart';
+import 'package:delivery/models/address/small_town.dart';
 import 'package:delivery/utils/log_util.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
@@ -14,7 +16,9 @@ class ParseCompanyService extends CompanyContractService {
   @override
   Future<Company> create(Company item) async {
     return service.create(item).then((response) {
-      return response == null ? null : Company.fromMap(response);
+      item.id = response["objectId"];
+      item.objectId = response["objectId"];
+      return response == null ? null : item;
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -110,7 +114,8 @@ class ParseCompanyService extends CompanyContractService {
       ..whereMatchesQuery("city", city);
 
     var company = QueryBuilder<ParseObject>(service.object)
-      ..whereMatchesQuery("address", address);
+      ..whereMatchesQuery("address", address)
+      ..includeObject(["address", "address.city"]);
 
     return await company.query().then((value) async {
       if (value.success) {
@@ -118,19 +123,17 @@ class ParseCompanyService extends CompanyContractService {
           return List<Company>();
         } else {
           List<ParseObject> listObj = value.result;
-          List<Map<String, dynamic>> listJson = listObj.map<Map<String, dynamic>>((e) => e.toJson()).toList();
-          List<Company> companyList = listJson.map<Company>((item) => Company.fromMap(item)).toList();
 
-          List<String> addressIds = List();
-          companyList.forEach((element) {
-            addressIds.add(element.address.id);
-          });
-          var map = await listAddress(addressIds);
-          for (var company in companyList) {
-            company.address = map[company.address.id];
-          }
+          return listObj.map<Company>((obj) {
+            var companyJson = obj.toJson();
+            var addressJson = obj.get("address").toJson();
+            var cityJson = obj.get("address").get("city").toJson();
 
-          return companyList;
+            addressJson["city"] = cityJson;
+            companyJson["address"] = addressJson;
+
+            return Company.fromMap(companyJson);
+          }).toList();
         }
       } else {
         return throw value.error;
@@ -156,7 +159,7 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.object)
       ..whereMatchesQuery("address", address)
-      ..includeObject(["address"]);
+      ..includeObject(["address", "address.smallTown", "address.smallTown.city"]);
 
     return await company.query().then((value) async {
       if (value.success) {
@@ -164,22 +167,22 @@ class ParseCompanyService extends CompanyContractService {
           return List<Company>();
         } else {
           List<ParseObject> listObj = value.result;
-          List<Map<String, dynamic>> listJson = listObj.map<Map<String, dynamic>>((e) => e.toJson()).toList();
-          List<Company> companyList = listJson.map<Company>((item) => Company.fromMap(item)).toList();
 
-          List<String> addressIds = List();
-          companyList.forEach((element) {
-            addressIds.add(element.address.id);
-          });
-          var map = await listAddress(addressIds);
-          for (var company in companyList) {
-            company.address = map[company.address.id];
-          }
+          return listObj.map<Company>((obj) {
+            var companyJson = obj.toJson();
+            var addressJson = obj.get("address").toJson();
+            var smallTownJson = obj.get("address").get("smallTown").toJson();
+            var cityJson = obj.get("address").get("smallTown").get("city").toJson();
 
-          return companyList;
+            smallTownJson["city"] = cityJson;
+            addressJson["smallTown"] = smallTownJson;
+            companyJson["address"] = addressJson;
+
+            return Company.fromMap(companyJson);
+          }).toList();
         }
       } else {
-        return throw value.error;
+        throw value.error;
       }
     }).catchError((error) {
       switch (error.code) {
@@ -191,39 +194,5 @@ class ParseCompanyService extends CompanyContractService {
       }
     });
   }
-  
-  Future<Map<String, Address>> listAddress(List<String> addressIds) async {
-    var smallTown = QueryBuilder<ParseObject>(ParseObject('Address'))
-      ..whereArrayContainsAll("objectId", addressIds);
-
-    return await smallTown.query().then((value) {
-      if (value.success) {
-        if (value.result == null) {
-          return Map<String, Address>();
-        } else {
-          List<ParseObject> listObj = value.result;
-          List<Map<String, dynamic>> listJson = listObj.map<Map<String, dynamic>>((e) => e.toJson()).toList();
-          List<Address> addressList = listJson.map<Address>((item) => Address.fromMap(item)).toList();
-          var map = Map<String, Address>();
-          addressList.forEach((element) {
-            map[element.id] = element;
-          });
-          return map;
-        }
-      } else {
-        return throw value.error;
-      }
-    }).catchError((error) {
-      switch (error.code) {
-        case -1:
-          throw Exception(ERROR_NETWORK);
-          break;
-        default:
-          throw Exception(error.message);
-      }
-    });
-  }
-
-
 
 }

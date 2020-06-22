@@ -7,7 +7,8 @@ class Country extends BaseModel<Country> {
   Country() : super('Country');
 
   Country.fromMap(Map<dynamic, dynamic>  map) : super('Country') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     name = map["name"];
     code = map["code"];
   }

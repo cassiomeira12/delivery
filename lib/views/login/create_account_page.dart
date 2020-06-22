@@ -1,5 +1,4 @@
-import 'package:delivery/widgets/loading_widget.dart';
-
+import '../../widgets/loading_widget.dart';
 import '../../contracts/login/create_account_contract.dart';
 import '../../models/base_user.dart';
 import '../../models/singleton/singleton_user.dart';
@@ -7,7 +6,6 @@ import '../../presenters/login/create_account_presenter.dart';
 import '../../widgets/background_card.dart';
 import '../../widgets/shape_round.dart';
 import 'package:flutter/material.dart';
-
 import '../../strings.dart';
 import '../page_router.dart';
 

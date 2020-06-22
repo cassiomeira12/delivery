@@ -8,7 +8,8 @@ class Menu extends BaseModel<Menu> {
   Menu() : super('Menu');
 
   Menu.fromMap(Map<String, dynamic>  map) : super('Menu') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     idCompany = map["idCompany"];
     categories = map["categories"] == null ? null : List.from(map["categories"]).map<Category>((e) => Category.fromMap(e)).toList();
   }

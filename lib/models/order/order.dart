@@ -1,6 +1,6 @@
-import 'package:delivery/models/menu/product.dart';
-import 'package:delivery/models/phone_number.dart';
-
+import '../../models/base_user.dart';
+import '../../models/menu/product.dart';
+import '../../models/phone_number.dart';
 import '../../models/company/company.dart';
 import '../../models/order/order_item.dart';
 import '../../models/address/address.dart';
@@ -10,9 +10,9 @@ import '../base_model.dart';
 import 'order_status.dart';
 
 class Order extends BaseModel<Order> {
-  String userId;
+  BaseUser user;
   String userName;
-  String companyId;
+  Company company;
   String companyName;
   DateTime createdAt;
   DateTime updatedAt;
@@ -30,18 +30,17 @@ class Order extends BaseModel<Order> {
   PhoneNumber companyPhoneNumber;
   PhoneNumber userPhoneNumber;
 
-  Company company;
-
   Order() : super('Order') {
     items = List();
     status = OrderStatus();
   }
 
   Order.fromMap(Map<dynamic, dynamic>  map) : super('Order') {
-    id = map["objectId"];
-    userId = map["userId"];
+    objectId = map["objectId"];
+    id = objectId;
+    user = map["user"] == null ? null : BaseUser.fromMap(map["user"]);
     userName = map["userName"];
-    companyId = map["companyId"];
+    company = map["company"] == null ? null : Company.fromMap(map["company"]);
     companyName = map["companyName"];
     createdAt = map["createdAt"] == null ? null : DateTime.parse(map["createdAt"]);
     updatedAt = map["updatedAt"] == null ? null : DateTime.parse(map["updatedAt"]);
@@ -64,9 +63,9 @@ class Order extends BaseModel<Order> {
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
     map["objectId"] = id;
-    map["userId"] = userId;
+    map["user"] = user == null ? null : user.toPointer();
     map["userName"] = userName;
-    map["companyId"] = companyId;
+    map["company"] = company == null ? null : company.toPointer();
     map["companyName"] = companyName;
     map["createdAt"] = createdAt == null ? null : createdAt.toString();
     map["updatedAt"] = updatedAt == null ? null : updatedAt.toString();
@@ -112,9 +111,9 @@ class Order extends BaseModel<Order> {
 
   clear() {
     id = null;
-    userId = null;
+    user = null;
     userName = null;
-    companyId = null;
+    company = null;
     companyName = null;
     createdAt = null;
     updatedAt = null;
@@ -131,8 +130,6 @@ class Order extends BaseModel<Order> {
     preparationTime = null;
     companyPhoneNumber = null;
     userPhoneNumber = null;
-
-    company = null;
   }
 
 }

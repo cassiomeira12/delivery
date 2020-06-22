@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import '../../strings.dart';
 import '../../utils/preferences_util.dart';
@@ -17,11 +19,11 @@ class ParseLoginService implements LoginContractService {
 
   @override
   signIn(String email, String password) async {
-    var userLogin = ParseUser(email, password, email);
-    userLogin.login().then((value) {
+    var user = ParseUser(email, password, email);
+    user.login().then((value) {
       if (value.success) {
-        ParseUser parseUser = value.result;
-        BaseUser user = BaseUser.fromMap(parseUser.toJson());
+        var json = value.result.toJson();
+        BaseUser user = BaseUser.fromMap(json);
         PreferencesUtil.setUserData(user.toMap());
         presenter.onSuccess(user);
       } else {
@@ -38,13 +40,117 @@ class ParseLoginService implements LoginContractService {
       }
     }).catchError((error) {
       Log.e(error);
-      presenter.onFailure(error.message);
+      switch (error.code) {
+        case -1:
+          presenter.onFailure(ERROR_NETWORK);
+          break;
+        case 101:
+          presenter.onFailure(ERROR_LOGIN_PASSWORD);
+          break;
+        default:
+          presenter.onFailure(error.message);
+      }
     });
   }
 
   @override
-  signInWithGoogle() {
+  signInWithGoogle() async {
+    GoogleSignIn googleSignIn = GoogleSignIn();
+    GoogleSignInAccount googleSignInAccount;
+    GoogleSignInAuthentication googleSignInAuthentication;
+    AuthCredential credential;
+    try {
+      googleSignInAccount = await googleSignIn.signIn();
+      googleSignInAuthentication = await googleSignInAccount.authentication;
+      credential = GoogleAuthProvider.getCredential(
+        idToken: googleSignInAuthentication.idToken,
+        accessToken: googleSignInAuthentication.accessToken,
+      );
+    } catch (exception) {
+      Log.e(exception);
+      googleSignIn.signOut();
+      presenter.onFailure(SOME_ERROR);
+      return;
+    }
 
+    googleSignIn.signOut();
+
+    String email = googleSignInAccount.email;
+    String token = credential.toString();
+    String name = googleSignInAccount.displayName;
+
+    var user = ParseUser(email, token, email);
+
+    user.login().then((value) {
+      if (value.success) {
+        var json = value.result.toJson();
+        BaseUser user = BaseUser.fromMap(json);
+        PreferencesUtil.setUserData(user.toMap());
+        presenter.onSuccess(user);
+      } else {
+        switch (value.error.code) {
+          case -1:
+            presenter.onFailure(ERROR_NETWORK);
+            break;
+          case 101:
+            createNewUser(user, name);
+            break;
+          default:
+            presenter.onFailure(value.error.message);
+        }
+      }
+    });
+  }
+
+  void createNewUser(ParseUser item, String name) {
+    var user = ParseUser.clone(item.toJson());
+    user.set("name", name);
+    user.set("socialProvider", true);
+
+    user.create().then((value) {
+      if (value.success) {
+        var json = value.result.toJson();
+        user.set("objectId", json["objectId"]);
+
+        item.login().then((value) {
+          if (value.success) {
+            BaseUser userLogin = BaseUser.fromMap(user.toJson());
+            PreferencesUtil.setUserData(userLogin.toMap());
+            presenter.onSuccess(userLogin);
+          } else {
+            Log.e(value.error);
+            switch (value.error.code) {
+              case -1:
+                presenter.onFailure(ERROR_NETWORK);
+                break;
+              default:
+                presenter.onFailure(value.error.message);
+            }
+          }
+        });
+
+      } else {
+        print("1");
+        Log.e(value.error);
+        switch (value.error.code) {
+          case -1:
+            presenter.onFailure(ERROR_NETWORK);
+            break;
+          default:
+            presenter.onFailure(value.error.message);
+        }
+      }
+    }).catchError((error) {
+      print("2");
+      Log.e(error);
+      switch (error.code) {
+        case -1:
+          presenter.onFailure(ERROR_NETWORK);
+          break;
+        default:
+          presenter.onFailure(error.message);
+      }
+    });
   }
 
 }

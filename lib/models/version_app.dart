@@ -7,7 +7,8 @@ class VersionApp extends BaseModel<VersionApp> {
   String storeUrl;
 
   VersionApp.fromMap(Map<dynamic, dynamic> map) : super('VersionApp') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     name = map["name"];
     currentCode = (map["currentCode"] as num).toInt();
     minimumCode = (map["minimumCode"] as num).toInt();

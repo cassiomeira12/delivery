@@ -471,7 +471,7 @@ class _ProductPageState extends State<ProductPage> {
         ScaffoldSnackBar.failure(context, _scaffoldKey, "Selecione todas as opções obrigatórias");
       } else {
         OrderSingleton.instance.id = "temp";
-        OrderSingleton.instance.userId = SingletonUser.instance.id;
+        OrderSingleton.instance.user = SingletonUser.instance;
         OrderSingleton.instance.userName = SingletonUser.instance.name;
         OrderSingleton.instance.items.add(order);
         PageRouter.pop(context, OrderSingleton.instance);

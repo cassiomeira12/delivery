@@ -1,3 +1,6 @@
+import 'package:delivery/models/singleton/singleton_user.dart';
+import 'package:delivery/widgets/scaffold_snackbar.dart';
+
 import '../../widgets/loading_widget.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
@@ -29,6 +32,7 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
     super.initState();
     verifyNewOrder();
     presenter = OrdersPresenter(this);
+    presenter.findBy("user", SingletonUser.instance.toPointer());
     presenter.listUserOrders();
   }
 
@@ -56,12 +60,15 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
 
   @override
   onFailure(String error)  {
-    print(error);
+    setState(() {
+      ordersList = List();
+    });
+    ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override
   onSuccess(Order result) {
-    print("success");
+
   }
 
   @override
@@ -99,9 +106,9 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
                     return GestureDetector(
                       child: HistoricWidget(item: item,),
                       onTap: () async {
-                        presenter.pause();
+                        //presenter.pause();
                         await PageRouter.push(context, HistoricOrderPage(item: item,));
-                        presenter.resume();
+                        //presenter.resume();
                       },
                     );
                   }).toList()

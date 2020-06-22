@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'package:delivery/utils/log_util.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
+
 import '../../services/parse/parse_order_service.dart';
 import '../../models/singleton/singleton_user.dart';
 import '../../services/firebase/firebase_order_service.dart';
@@ -13,20 +16,21 @@ class OrdersPresenter implements OrderContractPresenter {
   //OrderContractService service = FirebaseOrderService("orders");
   OrderContractService service = ParseOrderService();
 
-  StreamSubscription _streamSubscription;
+  LiveQuery liveQuery;
+  Subscription subscription;
 
   void pause() {
-    if (_streamSubscription != null) _streamSubscription.pause();
+    if (liveQuery != null) liveQuery.client.disconnect();
   }
 
   void resume() {
-    if (_streamSubscription != null) _streamSubscription.resume();
+    if (liveQuery != null) liveQuery.client.reconnect();
   }
 
   @override
   dispose() {
     service = null;
-    if (_streamSubscription != null) _streamSubscription.cancel();
+    if (liveQuery != null) liveQuery.client.unSubscribe(subscription);
   }
 
   @override
@@ -97,22 +101,27 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   readSnapshot(Order item) async {
-    _streamSubscription = service.readSnapshot(item).listen((event) {
-      if (_view != null) _view.onSuccess(Order.fromMap(event.data));
+    liveQuery = LiveQuery();
+
+    QueryBuilder query = QueryBuilder(item)
+      ..whereEqualTo("objectId", item.id);
+
+    subscription = await liveQuery.client.subscribe(query);
+    subscription.on(LiveQueryEvent.update, (value) {
+      if (_view != null) _view.onSuccess(Order.fromMap(value.toJson()));
     });
   }
 
   @override
   listUserOrders() async {
-    _streamSubscription = service.listUserOrders(SingletonUser.instance.id).listen((event) {
-      if (_view != null) _view.listSuccess(
-        event.documents.map<Order>((e) {
-          return Order.fromMap(e.data);
-        }).toList()
-      );
+    liveQuery = LiveQuery();
+
+    QueryBuilder query = QueryBuilder(ParseObject("Order"))
+      ..whereEqualTo("user", SingletonUser.instance.toPointer());
+
+    subscription = await liveQuery.client.subscribe(query);
+    subscription.on(LiveQueryEvent.update, (value) {
+      if (_view != null) _view.listSuccess([Order.fromMap(value.toJson())]);
     });
   }
-
-
-
 }

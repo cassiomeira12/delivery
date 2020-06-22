@@ -19,7 +19,8 @@ class OrderItem extends BaseModel<OrderItem> {
   }
 
   OrderItem.fromMap(Map<dynamic, dynamic>  map) : super('OrderItem') {
-    id = map["objectId"];
+    objectId = map["objectId"];
+    id = objectId;
     name = map["name"];
     description = map["description"];
     cost = (map["cost"] as num).toDouble();
