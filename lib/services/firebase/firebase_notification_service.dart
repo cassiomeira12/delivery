@@ -90,7 +90,7 @@ class FirebaseNotificationService implements NotificationContractService {
     }
 
     list.sort((a, b) {
-      return b.createAt.compareTo(a.createAt);
+      return b.createdAt.compareTo(a.createdAt);
     });
 
     return list;

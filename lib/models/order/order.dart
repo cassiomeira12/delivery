@@ -14,8 +14,6 @@ class Order extends BaseModel<Order> {
   String userName;
   Company company;
   String companyName;
-  DateTime createdAt;
-  DateTime updatedAt;
   String note;
   Evaluation evaluation;
   Address deliveryAddress;

@@ -30,7 +30,7 @@ class _NotificationPageState extends State<NotificationPage> {
     message = widget.notification.message;
     observacao = widget.notification.observacao;
     imgURL = widget.notification.avatarURL;
-    data = DateUtil.formatDateMonth(widget.notification.createAt);
+    data = DateUtil.formatDateMonth(widget.notification.createdAt);
 
     if (!widget.notification.read) {
       widget.notification.read = true;

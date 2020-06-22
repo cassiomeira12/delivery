@@ -22,6 +22,8 @@ class ParseUserService implements UserContractService {
     return _service.create(item).then((response) {
       item.id = response["objectId"];
       item.objectId = response["objectId"];
+      item.createdAt = response["createdAt"];
+      item.updatedAt = response["updatedAt"];
       return response == null ? null : item;
     }).catchError((error) {
       Log.e(error);

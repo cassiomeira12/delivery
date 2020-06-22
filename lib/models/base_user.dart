@@ -11,8 +11,6 @@ class BaseUser extends BaseModel<BaseUser> {
   String email;
   bool emailVerified;
   String password;
-  DateTime createdAt;
-  DateTime updatedAt;
   PhoneNumber phoneNumber;
   bool socialProvider;
 

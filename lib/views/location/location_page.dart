@@ -27,11 +27,9 @@ class LocationPage extends StatefulWidget {
 class _LocationPageState extends State<LocationPage> {
   States state = States()
     ..id = "1bp6TfFPUE"
+    ..objectId = "1bp6TfFPUE"
     ..name = "Bahia"
     ..code = "BA"
-    ..idCountry = "AaBnNFM1U8l6isuYI1il"
-    ..nameCountry = "Brasil"
-    ..codeCountry = "BR"
     ..timeAPI = "http://worldtimeapi.org/api/timezone/america/bahia";
 
   List<City> cityList;
@@ -50,8 +48,7 @@ class _LocationPageState extends State<LocationPage> {
     statePresenter = StatesPresenter(null);
     cityPresenter = CityPresenter(null);
     smallTownPresenter = SmallTownPresenter(null);
-    //checkState();
-    listCities();
+    checkState();
   }
 
   void checkState() async {
@@ -76,12 +73,7 @@ class _LocationPageState extends State<LocationPage> {
     setState(() {
       cityList = null;
     });
-    var value = {
-      "__type": "Pointer",
-      "className": "State",
-      "objectId": "1bp6TfFPUE",
-    };
-    var result = await cityPresenter.findBy("state", value);
+    var result = await cityPresenter.findBy("state", state.toPointer());
     if (result == null) {
       setState(() => cityList = List());
     } else {
@@ -259,12 +251,7 @@ class _LocationPageState extends State<LocationPage> {
   void listSmallTowns(City city) async {
     dialogList = List();
     setState(() => _loading = true);
-    var value = {
-      "__type": "Pointer",
-      "className": "City",
-      "objectId": city.id,
-    };
-    List<SmallTown> result = await smallTownPresenter.findBy("city", value);
+    List<SmallTown> result = await smallTownPresenter.findBy("city", city.toPointer());
     if (result == null || result.isEmpty) {
       PreferencesUtil.setSmallTownData(null);
       PreferencesUtil.setCityData(city.toMap());
