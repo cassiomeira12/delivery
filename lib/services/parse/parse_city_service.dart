@@ -12,8 +12,7 @@ class ParseCityService extends CityContractService {
     return service.create(item).then((response) {
       item.id = response["objectId"];
       item.objectId = response["objectId"];
-      item.createdAt = response["createdAt"];
-      item.updatedAt = response["updatedAt"];
+      item.createdAt = DateTime.parse(response["createdAt"]).toLocal();
       return response == null ? null : item;
     }).catchError((error) {
       switch (error.code) {
@@ -44,6 +43,7 @@ class ParseCityService extends CityContractService {
   @override
   Future<City> update(City item) {
     return service.update(item).then((response) {
+      item.updatedAt = DateTime.parse(response["updatedAt"]).toLocal();
       return response == null ? null : City.fromMap(response);
     }).catchError((error) {
       switch (error.code) {

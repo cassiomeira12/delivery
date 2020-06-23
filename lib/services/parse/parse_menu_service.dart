@@ -12,8 +12,7 @@ class ParseMenuService extends MenuContractService {
     return service.create(item).then((response) {
       item.id = response["objectId"];
       item.objectId = response["objectId"];
-      item.createdAt = response["createdAt"];
-      item.updatedAt = response["updatedAt"];
+      item.createdAt = DateTime.parse(response["createdAt"]).toLocal();
       return response == null ? null : item;
     }).catchError((error) {
       switch (error.code) {
@@ -44,6 +43,7 @@ class ParseMenuService extends MenuContractService {
   @override
   Future<Menu> update(Menu item) {
     return service.update(item).then((response) {
+      item.updatedAt = DateTime.parse(response["updatedAt"]).toLocal();
       return response == null ? null : Menu.fromMap(response);
     }).catchError((error) {
       switch (error.code) {

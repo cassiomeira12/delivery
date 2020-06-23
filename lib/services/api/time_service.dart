@@ -4,10 +4,10 @@ import 'package:dio/dio.dart';
 class TimeService {
   Dio dio;
 
-  TimeService(String url) {
+  TimeService(String url, {timeout = 3000}) {
     dio = Dio(BaseOptions(
       baseUrl: url,
-      connectTimeout: 5000,
+      connectTimeout: timeout,
     ));
   }
 
@@ -17,6 +17,7 @@ class TimeService {
       var date = DateTime.parse(response.data["datetime"]);
       return date.toLocal();
     } catch (error) {
+      print(error);
       return null;
     }
   }

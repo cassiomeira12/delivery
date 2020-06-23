@@ -83,29 +83,29 @@ class Order extends BaseModel<Order> {
     return map;
   }
 
-//  @override
-//  update(Order item) {
-//    id = item.id;
-//    userId = item.userId;
-//    userName = item.userName;
-//    companyId = item.companyId;
-//    companyName = item.companyName;
-//    createdAt = item.createdAt;
-//    updatedAt = item.updatedAt;
-//    note = item.note;
-//    evaluation = item.evaluation;
-//    deliveryAddress = item.deliveryAddress;
-//    deliveryCost = item.deliveryCost;
-//    typePayment = item.typePayment;
-//    items = item.items;
-//    status = item.status;
-//    changeMoney = item.changeMoney;
-//    deliveryCost = item.deliveryCost;
-//    deliveryForecast = item.deliveryForecast;
-//    preparationTime = item.preparationTime;
-//    companyPhoneNumber = item.companyPhoneNumber;
-//    userPhoneNumber = item.userPhoneNumber;
-//  }
+  updateData(Order item) {
+    id = item.id;
+    objectId = item.objectId;
+    user = item.user;
+    userName = item.userName;
+    company = item.company;
+    companyName = item.companyName;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+    note = item.note;
+    evaluation = item.evaluation;
+    deliveryAddress = item.deliveryAddress;
+    deliveryCost = item.deliveryCost;
+    typePayment = item.typePayment;
+    items = item.items;
+    status = item.status;
+    changeMoney = item.changeMoney;
+    deliveryCost = item.deliveryCost;
+    deliveryForecast = item.deliveryForecast;
+    preparationTime = item.preparationTime;
+    companyPhoneNumber = item.companyPhoneNumber;
+    userPhoneNumber = item.userPhoneNumber;
+  }
 
   clear() {
     id = null;

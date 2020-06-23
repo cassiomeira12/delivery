@@ -1,3 +1,6 @@
+import 'package:delivery/models/singleton/notification_list_singleton.dart';
+import 'package:get_it/get_it.dart';
+
 import '../../contracts/user/notification_contract.dart';
 import '../../models/user_notification.dart';
 import '../../presenters/user/notification_presenter.dart';
@@ -28,7 +31,12 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
   void initState() {
     super.initState();
     presenter = NotificationPresenter(this);
-    presenter.list();
+    var temp = GetIt.instance<NotificationListSingleton>().list;
+    if (temp.isEmpty) {
+      presenter.list();
+    } else {
+      setState(() => notificationsList = temp);
+    }
   }
 
   @override
@@ -39,6 +47,7 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
 
   @override
   listSuccess(List<UserNotification> list) {
+    GetIt.instance<NotificationListSingleton>().list.addAll(list);
     setState(() {
       notificationsList = list;
     });

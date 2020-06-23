@@ -22,8 +22,7 @@ class ParseUserService implements UserContractService {
     return _service.create(item).then((response) {
       item.id = response["objectId"];
       item.objectId = response["objectId"];
-      item.createdAt = response["createdAt"];
-      item.updatedAt = response["updatedAt"];
+      item.createdAt = DateTime.parse(response["createdAt"]).toLocal();
       return response == null ? null : item;
     }).catchError((error) {
       Log.e(error);
@@ -63,6 +62,7 @@ class ParseUserService implements UserContractService {
     temp.email = null;
     temp.password = null;
     return _service.update(temp).then((response) {
+      item.updatedAt = DateTime.parse(response["updatedAt"]).toLocal();
       return response == null ? null : item;
     }).catchError((error) {
       switch (error.code) {

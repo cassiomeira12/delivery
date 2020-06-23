@@ -1,5 +1,7 @@
+import 'package:delivery/models/singleton/order_list_singleton.dart';
 import 'package:delivery/models/singleton/singleton_user.dart';
 import 'package:delivery/widgets/scaffold_snackbar.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../widgets/loading_widget.dart';
 import '../../contracts/order/order_contract.dart';
@@ -32,7 +34,7 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
     super.initState();
     verifyNewOrder();
     presenter = OrdersPresenter(this);
-    presenter.findBy("user", SingletonUser.instance.toPointer());
+    ordersList = GetIt.instance<OrderListSingleton>().list.reversed.toList();
     presenter.listUserOrders();
   }
 
@@ -53,9 +55,19 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
 
   @override
   listSuccess(List<Order> list) {
-    setState(() {
-      ordersList = list;
+    list.forEach((item) {
+      var temp = ordersList.singleWhere((element) => element.id == item.id, orElse: null);
+      setState(() {
+        if (temp == null) {
+          ordersList.insert(0, item);
+        } else {
+          temp.updateData(item);
+        }
+      });
     });
+//    setState(() {
+//      ordersList.insertAll(0, list);
+//    });
   }
 
   @override
@@ -87,7 +99,11 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
     final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     return RefreshIndicator(
       key: _refreshIndicatorKey,
-      onRefresh: () => presenter.listUserOrders(),
+      onRefresh: () {
+        ordersList = List();
+        GetIt.instance<OrderListSingleton>().list.clear();
+        return presenter.findBy("user", SingletonUser.instance.toPointer());
+      },
       child: Center(
         child: ordersList == null ?
         LoadingWidget()

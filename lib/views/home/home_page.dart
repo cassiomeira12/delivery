@@ -1,12 +1,17 @@
 import 'package:delivery/models/address/city.dart';
 import 'package:delivery/models/address/small_town.dart';
 import 'package:delivery/models/address/states.dart';
+import 'package:delivery/models/base_model.dart';
+import 'package:delivery/models/base_user.dart';
+import 'package:delivery/models/singleton/company_list_singleton.dart';
+import 'package:delivery/models/singleton/order_list_singleton.dart';
 import 'package:delivery/services/api/time_service.dart';
 import 'package:delivery/utils/log_util.dart';
 import 'package:delivery/utils/preferences_util.dart';
 import 'package:delivery/views/location/location_page.dart';
 import 'package:delivery/widgets/scaffold_snackbar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get_it/get_it.dart';
 import '../../contracts/company/company_contract.dart';
 import '../../models/company/company.dart';
 import '../../presenters/company/company_presenter.dart';
@@ -61,7 +66,39 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     companyPresenter.dispose();
   }
 
-  void verifiedCityTown() async {
+  void checkState() async {
+    var stateData = await PreferencesUtil.getStateData();
+    if (stateData != null) {
+      var state = States.fromMap(stateData);
+      var townData = await PreferencesUtil.getSmallTownData();
+      var cityData = await PreferencesUtil.getCityData();
+
+      if (townData != null) {
+        if (_initedState) {
+          setState(() {
+            smallTown = SmallTown.fromMap(townData);
+            city = smallTown.city;
+          });
+        }
+      } else {
+        if (cityData != null) {
+          if (_initedState) {
+            setState(() {
+              smallTown = null;
+              city = City.fromMap(cityData);
+            });
+          }
+        }
+      }
+
+      //var now = await TimeService(state.timeAPI).now();//demora resposta
+      //dateNow = now == null ? DateTime.now() : now;
+      dateNow = DateTime.now();
+    }
+    verifiedCityTown();
+  }
+
+  Future<void> verifiedCityTown() async {
     var townData = await PreferencesUtil.getSmallTownData();
     if (townData != null) {
       if (_initedState) {
@@ -88,45 +125,24 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     }
   }
 
-  void checkState() async {
-    var stateData = await PreferencesUtil.getStateData();
-    if (stateData != null) {
-      var state = States.fromMap(stateData);
-      var townData = await PreferencesUtil.getSmallTownData();
-      var cityData = await PreferencesUtil.getCityData();
-
-      if (townData != null) {
-        if (_initedState) {
-          setState(() {
-            smallTown = SmallTown.fromMap(townData);
-            city = smallTown.city;
-          });
-        }
-      } else {
-        if (cityData != null) {
-          if (_initedState) {
-            setState(() {
-              smallTown = null;
-              city = City.fromMap(cityData);
-            });
-          }
-        }
-      }
-
-      var now = await TimeService(state.timeAPI).now();//demora resposta
-      dateNow = now;
-    }
-    verifiedCityTown();
-  }
-
   void findCompaniesByCity() async {
     setState(() => list = null);
-    companyPresenter.listFromCity(city.id);
+    var temp = GetIt.instance<CompanyListSingleton>().list;
+    if (temp.isEmpty) {
+      companyPresenter.listFromCity(city.id);
+    } else {
+      setState(() => list = temp);
+    }
   }
 
   void findCompaniesBySmallTown() async {
     setState(() => list = null);
-    companyPresenter.listFromSmallTown(smallTown.id);
+    var temp = GetIt.instance<CompanyListSingleton>().list;
+    if (temp.isEmpty) {
+      companyPresenter.listFromSmallTown(smallTown.id);
+    } else {
+      setState(() => list = temp);
+    }
   }
 
   @override
@@ -225,7 +241,9 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
             ],
           ),
           onPressed: () async {
+            GetIt.instance<CompanyListSingleton>().list.clear();
             await PageRouter.push(context, LocationPage());
+            dateNow = DateTime.now();
             verifiedCityTown();
           },
         ),
@@ -248,6 +266,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   @override
   listSuccess(List<Company> list) {
+    GetIt.instance<CompanyListSingleton>().list.addAll(list);
     setState(() {
       this.list = list;
     });
@@ -258,7 +277,8 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       onRefresh: () {
-        return companyPresenter.list();
+        GetIt.instance<CompanyListSingleton>().list.clear();
+        return verifiedCityTown();
       },
       child: Center(
         child: list == null ?

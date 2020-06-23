@@ -3,10 +3,12 @@ import 'dart:math';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:delivery/contracts/user/user_contract.dart';
 import 'package:delivery/models/address/states.dart';
+import 'package:delivery/models/singleton/order_list_singleton.dart';
 import 'package:delivery/presenters/user/user_presenter.dart';
 import 'package:delivery/services/api/time_service.dart';
 import 'package:delivery/utils/preferences_util.dart';
 import 'package:delivery/views/settings/phone_number_page.dart';
+import 'package:get_it/get_it.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
@@ -106,6 +108,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       _loading = false;
     });
     OrderSingleton.instance.id = result.id;
+    GetIt.instance<OrderListSingleton>().list.add(result);
     widget.orderCallback();
     PageRouter.pop(context, true);
   }
@@ -884,7 +887,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   Future<DateTime> getTrueTime() async {
     var stateData = await PreferencesUtil.getStateData();
     var state = States.fromMap(stateData);
-    return await TimeService(state.timeAPI).now();
+    return await TimeService(state.timeAPI, timeout: 10000).now();
   }
 
   Future<bool> validatedOrder() async {

@@ -1,3 +1,5 @@
+import 'package:delivery/utils/log_util.dart';
+
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
 import '../../services/parse/base_parse_service.dart';
@@ -10,10 +12,10 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<Order> create(Order item) async {
     return service.create(item).then((response) {
+      Log.d(response);
       item.id = response["objectId"];
       item.objectId = response["objectId"];
-      item.createdAt = response["createdAt"];
-      item.updatedAt = response["updatedAt"];
+      item.createdAt = DateTime.parse(response["createdAt"]).toLocal();
       return response == null ? null : item;
     }).catchError((error) {
       switch (error.code) {
@@ -44,6 +46,7 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<Order> update(Order item) {
     return service.update(item).then((response) {
+      item.updatedAt = DateTime.parse(response["updatedAt"]).toLocal();
       return response == null ? null : Order.fromMap(response);
     }).catchError((error) {
       switch (error.code) {

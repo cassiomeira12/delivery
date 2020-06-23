@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:delivery/models/singleton/order_list_singleton.dart';
+import 'package:delivery/models/singleton/singleton_user.dart';
+import 'package:get_it/get_it.dart';
 import '../contracts/order/order_contract.dart';
 import '../models/singleton/order_singleton.dart';
 import '../presenters/order/order_presenter.dart';
@@ -21,8 +24,6 @@ class TabsPage extends StatefulWidget {
 }
 
 class _TabsPageState extends State<TabsPage> {
-  final PageStorageBucket bucket = PageStorageBucket();
-
   TabsView tabsView;
 
   int currentTab = 0;
@@ -53,8 +54,9 @@ class _TabsPageState extends State<TabsPage> {
   }
 
   void listOrders() async {
-    var result = await presenter.list();
+    var result = await presenter.findBy("user", SingletonUser.instance.toPointer());
     if (result != null) {
+      GetIt.instance<OrderListSingleton>().list.addAll(result);
       var temp = 0;
       result.forEach((element) {
         if (!element.status.isLast()) {

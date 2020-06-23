@@ -121,6 +121,7 @@ class OrdersPresenter implements OrderContractPresenter {
 
     subscription = await liveQuery.client.subscribe(query);
     subscription.on(LiveQueryEvent.update, (value) {
+      Log.d(value);
       if (_view != null) _view.listSuccess([Order.fromMap(value.toJson())]);
     });
   }

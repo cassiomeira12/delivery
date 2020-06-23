@@ -1,6 +1,5 @@
-import 'package:delivery/services/notifications/parse_push_notification.dart';
-import 'package:delivery/utils/log_util.dart';
-
+import '../models/singleton/singletons.dart';
+import '../services/notifications/parse_push_notification.dart';
 import '../services/notifications/firebase_push_notification.dart';
 import '../contracts/user/user_contract.dart';
 import '../models/base_user.dart';
@@ -55,6 +54,7 @@ class _RootPageState extends State<RootPage> {
   @override
   void initState() {
     super.initState();
+    Singletons.init();
     presenter = UserPresenter(null);
     updateCurrentTheme();
   }

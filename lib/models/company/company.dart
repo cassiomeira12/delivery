@@ -137,18 +137,15 @@ class Company extends BaseModel<Company> {
 
     var open = DateUtil.todayTime(openingHourToday.openHour, openingHourToday.openMinute);
     var close = DateUtil.todayTime(openingHourToday.closeHour, openingHourToday.closeMinute);
+    print("Agora ${date}");
+    print("Abre ${open}");
+    print("Fecha ${close}");
+    print(close.isBefore(open));
     if (close.isBefore(open)) {
       close = close.add(Duration(days: 1));
-    }
-
-    if (date.isBefore(open)) {
-      print("fechado");
     } else {
-      if (date.isBefore(close)) {
-        print("aberto");
+      if (date.isAfter(open)) {
         return null;
-      } else {
-        print("fechadp");
       }
     }
 
