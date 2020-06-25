@@ -17,9 +17,10 @@ Future showSilentNotification(
   {
     @required String title,
     @required String body,
+    String payload,
     //int id = DateTime.now().millisecondsSinceEpoch,
   }
-) => _showNotification(notifications, title: title, body: body, type: _noSound);
+) => _showNotification(notifications, title: title, body: body, type: _noSound, payload: payload);
 
 NotificationDetails get _ongoing {
   final androidChannelSpecifics = AndroidNotificationDetails(
@@ -41,9 +42,10 @@ Future showOngoingNotification(
   {
     @required String title,
     @required String body,
+    String payload,
     //int id = 0,
   }
-) => _showNotification(notifications, title: title, body: body, type: _ongoing);
+) => _showNotification(notifications, title: title, body: body, type: _ongoing, payload: payload);
 
 int notificationId() {
   var date = DateTime.now();
@@ -57,6 +59,7 @@ Future _showNotification(
     @required String title,
     @required String body,
     @required NotificationDetails type,
+    String payload,
     //int id = 0,
   }
-) => notifications.show(notificationId(), title, body, type);
+) => notifications.show(notificationId(), title, body, type, payload: payload);

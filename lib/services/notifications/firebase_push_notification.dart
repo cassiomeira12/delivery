@@ -14,6 +14,7 @@ class FirebaseNotifications {
   final notifications = FlutterLocalNotificationsPlugin();
 
   FirebaseNotifications() {
+
     var settingsAndroid = AndroidInitializationSettings("ic_stat_notification");
     var settingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: (id, title, body, payload) => onSelectNotification(payload)
@@ -65,37 +66,53 @@ class FirebaseNotifications {
         pushNotification(message);
       },
       onResume: (Map<String, dynamic> message) async {
-        print("onResume $message");
+        print("onResume $message");//Ação ao abrir app minimizado
+        _navigateToItemDetail(message);
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch $message");
+        print("onLaunch $message");//Ação ao abrir app Fechado
+        _navigateToItemDetail(message);
       },
     );
   }
 
+  void _navigateToItemDetail(Map<String, dynamic> message) {
+    //final Item item = _itemForMessage(message);
+    // Clear away dialogs
+//    Navigator.popUntil(context, (Route<dynamic> route) => route is PageRoute);
+//    if (!item.route.isCurrent) {
+//      Navigator.push(context, item.route);
+//    }
+  }
+
   Future onSelectNotification(String payload) async {
     print("onSelectNotification $payload");
+    if (payload.isNotEmpty) {
+//      switch (payload) {
+//        case "order"
+//      }
+    }
     //await Navigator.push(context, MaterialPageRoute(builder: (context) => SecondPage(payload: payload));
   }
 
   void pushNotification(Map<String, dynamic> message) {
     print("onMessage $message");
+    String title, body, payload = "";
+
     if (message.containsKey('data')) {
       final dynamic data = message['data'];
-      print(data);
+      payload = data["click_action"];
     }
     if (message.containsKey('notification')) {
       final dynamic notification = message['notification'];
-      String title = notification["title"];
-      String body = notification["body"];
-
-      print(title);
-      print(body);
+      title = notification["title"];
+      body = notification["body"];
 
       var user = SingletonUser.instance;
+
       if (user != null && user.notificationToken != null && user.notificationToken.active) {
-        showSilentNotification(notifications, title: title, body: body);
-        //showOngoingNotification(notifications, title: title, body: body);
+        showSilentNotification(notifications, title: title, body: body, payload: payload);
+        //showOngoingNotification(notifications, title: title, body: body, payload: payload);
       }
     }
   }
@@ -109,41 +126,6 @@ class FirebaseNotifications {
     });
   }
 
-  static Future<int> sendNotification(String title, String message, String token, String topic) async {
-    String serverToken = "AAAAWQPCwag:APA91bHIiaTWTTDxL0JMDhblA7du3MNcH-izSvMF20YrpeGiuWsWxzN_SBZe3zc9_1VnNJTFc3BBh50I93uRGNB6toeY4z2O0CHZjgT2YFbvC9UK_TfVgjpF5BJpdsVlP3Wjuf4wyQU-";
-
-    var dio = Dio(BaseOptions(
-      baseUrl: "https://fcm.googleapis.com/fcm/send",
-      connectTimeout: 5000,
-      headers: <String, String> {
-        'Content-Type': 'application/json',
-        'Authorization': 'key=$serverToken',
-      }
-    ));
-
-    Response response = await dio.post(
-      "",
-      data: jsonEncode(
-          <String, dynamic> {
-            "notification": <String, dynamic> {
-              "image": null,
-              "title": title,
-              "body": message,
-            },
-            "priority": "high",
-            "data": <String, dynamic> {
-              "click_action": "FLUTTER_NOTIFICATION_CLICK",
-              "id": "1",
-              "status": "done",
-            },
-            "to": token == null ? "/topics/$topic" : token,
-          }
-      ),
-    );
-
-    return response.statusCode;
-  }
-  
   static Future<bool> subscribeToTopic(String topic) async {
     var firebaseMessaging = FirebaseMessaging();
     return await firebaseMessaging.subscribeToTopic(topic).then((value) {

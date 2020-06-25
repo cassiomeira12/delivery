@@ -1,3 +1,5 @@
+import 'package:delivery/utils/log_util.dart';
+
 import '../models/singleton/singletons.dart';
 import '../services/notifications/parse_push_notification.dart';
 import '../services/notifications/firebase_push_notification.dart';
@@ -284,6 +286,7 @@ class _RootPageState extends State<RootPage> {
     var pushNotifications = FirebaseNotifications();
     await pushNotifications.setUpFirebase();
     String notificationToken = await PreferencesUtil.getNotificationToken();
+    Log.d(notificationToken);
     NotificationToken token = SingletonUser.instance.notificationToken;
     if (token == null || (token.token == null || token.token != notificationToken)) {
       if (token != null) {
