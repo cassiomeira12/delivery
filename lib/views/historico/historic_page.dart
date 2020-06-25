@@ -55,19 +55,23 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
 
   @override
   listSuccess(List<Order> list) {
-    list.forEach((item) {
-      var temp = ordersList.singleWhere((element) => element.id == item.id, orElse: null);
-      setState(() {
-        if (temp == null) {
-          ordersList.insert(0, item);
-        } else {
-          temp.updateData(item);
-        }
+    if (ordersList != null) {
+      list.forEach((item) {
+        var temp = ordersList.singleWhere((element) => element.id == item.id, orElse: null);
+        setState(() {
+          if (temp == null) {
+            ordersList.insert(0, item);
+          } else {
+            temp.updateData(item);
+          }
+        });
       });
-    });
-//    setState(() {
-//      ordersList.insertAll(0, list);
-//    });
+    } else {
+      setState(() {
+        ordersList = list;
+      });
+      GetIt.instance<OrderListSingleton>().list.addAll(list);
+    }
   }
 
   @override
@@ -100,7 +104,9 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       onRefresh: () {
-        ordersList = List();
+        setState(() {
+          ordersList = null;
+        });
         GetIt.instance<OrderListSingleton>().list.clear();
         return presenter.findBy("user", SingletonUser.instance.toPointer());
       },
