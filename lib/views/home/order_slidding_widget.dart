@@ -1,7 +1,6 @@
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:delivery/models/singleton/singletons.dart';
 
 import '../../models/order/order_item.dart';
-import '../../models/singleton/order_singleton.dart';
 import '../../views/home/confirm_order_page.dart';
 import '../../widgets/primary_button.dart';
 import 'package:flutter/material.dart';
@@ -53,11 +52,11 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
   }
 
   void listItens() {
-    if (OrderSingleton.instance.id != null) {
+    if (Singletons.order().id != null) {
       //total = deliveryCost;
       total = 0;
       setState(() {
-        listOrder = OrderSingleton.instance.items;
+        listOrder = Singletons.order().items;
       });
       listOrder.forEach((element) {
         total += element.getTotal();
@@ -142,7 +141,7 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
               listOrder.remove(item);
               listItens();
               if (listOrder.isEmpty) {
-                OrderSingleton.instance.clear();
+                Singletons.order().clear();
               }
               widget.updateOrders();
             });

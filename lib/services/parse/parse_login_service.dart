@@ -78,6 +78,7 @@ class ParseLoginService implements LoginContractService {
     String email = googleSignInAccount.email;
     String token = credential.toString();
     String name = googleSignInAccount.displayName;
+    String avatarURL = googleSignInAccount.photoUrl;
 
     var user = ParseUser(email, token, email);
 
@@ -93,7 +94,7 @@ class ParseLoginService implements LoginContractService {
             presenter.onFailure(ERROR_NETWORK);
             break;
           case 101:
-            createNewUser(user, name);
+            createNewUser(user, name, avatarURL);
             break;
           default:
             presenter.onFailure(value.error.message);
@@ -102,10 +103,11 @@ class ParseLoginService implements LoginContractService {
     });
   }
 
-  void createNewUser(ParseUser item, String name) {
+  void createNewUser(ParseUser item, String name, String avatarURL) {
     var user = ParseUser.clone(item.toJson());
     user.set("name", name);
     user.set("socialProvider", true);
+    user.set("avatarURL", avatarURL);
 
     user.create().then((value) {
       if (value.success) {
@@ -130,7 +132,6 @@ class ParseLoginService implements LoginContractService {
         });
 
       } else {
-        print("1");
         Log.e(value.error);
         switch (value.error.code) {
           case -1:
@@ -141,7 +142,6 @@ class ParseLoginService implements LoginContractService {
         }
       }
     }).catchError((error) {
-      print("2");
       Log.e(error);
       switch (error.code) {
         case -1:

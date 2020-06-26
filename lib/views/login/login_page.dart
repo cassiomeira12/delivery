@@ -1,12 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:delivery/views/settings/phone_number_page.dart';
+import '../../models/singleton/singletons.dart';
+import '../../views/settings/phone_number_page.dart';
 import 'package:flutter/material.dart';
 import 'package:keyboard_dismisser/keyboard_dismisser.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import '../../widgets/text_input_field.dart';
 import '../../contracts/login/login_contract.dart';
 import '../../models/base_user.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../presenters/login/login_presenter.dart';
 import '../../views/page_router.dart';
 import '../../widgets/background_card.dart';
@@ -70,11 +70,11 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   @override
   onSuccess(BaseUser result) async {
-    SingletonUser.instance.updateData(result);
+    Singletons.user().updateData(result);
     if (result.emailVerified) {
       if (result.phoneNumber == null) {
         var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
-        SingletonUser.instance.phoneNumber = phoneNumber;
+        Singletons.user().phoneNumber = phoneNumber;
       }
     }
     widget.loginCallback();

@@ -1,7 +1,6 @@
-import 'package:delivery/models/company/company.dart';
+import '../../models/singleton/singletons.dart';
+import '../../models/company/company.dart';
 import '../../models/order/order_item.dart';
-import '../../models/singleton/order_singleton.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
@@ -434,7 +433,7 @@ class _ProductPageState extends State<ProductPage> {
 
     bool foundError = false;
 
-    if (OrderSingleton.instance.id == null) {
+    if (Singletons.order().id == null) {
       var order = OrderItem();
       order.id = product.id;
 
@@ -470,11 +469,11 @@ class _ProductPageState extends State<ProductPage> {
         });
         ScaffoldSnackBar.failure(context, _scaffoldKey, "Selecione todas as opções obrigatórias");
       } else {
-        OrderSingleton.instance.id = "temp";
-        OrderSingleton.instance.user = SingletonUser.instance;
-        OrderSingleton.instance.userName = SingletonUser.instance.name;
-        OrderSingleton.instance.items.add(order);
-        PageRouter.pop(context, OrderSingleton.instance);
+        Singletons.order().id = "temp";
+        Singletons.order().user = Singletons.user();
+        Singletons.order().userName = Singletons.user().name;
+        Singletons.order().items.add(order);
+        PageRouter.pop(context, Singletons.order());
       }
 
     } else {
@@ -514,8 +513,8 @@ class _ProductPageState extends State<ProductPage> {
         });
         ScaffoldSnackBar.failure(context, _scaffoldKey, "Selecione todas as opções obrigatórias");
       } else {
-        OrderSingleton.instance.items.add(order);
-        PageRouter.pop(context, OrderSingleton.instance);
+        Singletons.order().items.add(order);
+        PageRouter.pop(context, Singletons.order());
       }
     }
   }

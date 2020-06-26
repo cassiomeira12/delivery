@@ -1,12 +1,10 @@
-import 'package:delivery/models/singleton/order_list_singleton.dart';
-import 'package:delivery/models/singleton/singleton_user.dart';
-import 'package:delivery/widgets/scaffold_snackbar.dart';
 import 'package:get_it/get_it.dart';
-
+import '../../models/singleton/order_list_singleton.dart';
+import '../../models/singleton/singletons.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/loading_widget.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
-import '../../models/singleton/order_singleton.dart';
 import '../../presenters/order/order_presenter.dart';
 import '../../views/historico/historic_order_page.dart';
 import '../../views/historico/historic_widget.dart';
@@ -45,11 +43,11 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
   }
 
   void verifyNewOrder() async {
-    if (OrderSingleton.instance.id != null) {
-      Order newOrder = Order.fromMap(OrderSingleton.instance.toMap());
+    if (Singletons.order().id != null) {
+      Order newOrder = Order.fromMap(Singletons.order().toMap());
       await Future.delayed(Duration(seconds: 1));
       PageRouter.push(context, HistoricOrderPage(item: newOrder,));
-      OrderSingleton.instance.clear();
+      Singletons.order().clear();
     }
   }
 
@@ -108,7 +106,7 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
           ordersList = null;
         });
         GetIt.instance<OrderListSingleton>().list.clear();
-        return presenter.findBy("user", SingletonUser.instance.toPointer());
+        return presenter.findBy("user", Singletons.user().toPointer());
       },
       child: Center(
         child: ordersList == null ?

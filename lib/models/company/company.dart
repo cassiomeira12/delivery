@@ -14,7 +14,6 @@ class Company extends BaseModel<Company> {
   String bannerURL;
   List<OpeningHour> openHours;
   Address address;
-  String idMenu;
   List<TypePayment> typePayments;
   Delivery delivery;
   PhoneNumber phoneNumber;
@@ -36,7 +35,6 @@ class Company extends BaseModel<Company> {
       List() :
       List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
     address = map["address"] == null ? null : Address.fromMap(map["address"]);
-//    idMenu = map["idMenu"];
     typePayments = map["typePayments"] == null ?
       List() :
       List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
@@ -55,7 +53,6 @@ class Company extends BaseModel<Company> {
     map["bannerURL"] = bannerURL;
     map["openHours"] = openHours.map<Map>((e) => e.toMap()).toList();
     map["address"] = address.toMap();
-    map["idMenu"] = idMenu;
     map["typePayments"] = typePayments.map<Map>((e) => e.toMap()).toList();
     map["delivery"] = delivery == null ? null : delivery.toMap();
     map["phoneNumber"] = phoneNumber == null ? null : phoneNumber.toMap();
@@ -137,10 +134,10 @@ class Company extends BaseModel<Company> {
 
     var open = DateUtil.todayTime(openingHourToday.openHour, openingHourToday.openMinute);
     var close = DateUtil.todayTime(openingHourToday.closeHour, openingHourToday.closeMinute);
-    print("Agora ${date}");
-    print("Abre ${open}");
-    print("Fecha ${close}");
-    print(close.isBefore(open));
+    //print("Agora ${date}");
+    //print("Abre ${open}");
+    //print("Fecha ${close}");
+    //print(close.isBefore(open));
     if (close.isBefore(open)) {
       close = close.add(Duration(days: 1));
     } else {

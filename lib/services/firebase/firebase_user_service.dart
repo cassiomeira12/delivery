@@ -1,11 +1,11 @@
 import 'dart:io';
+import '../../models/singleton/singletons.dart';
 import '../../utils/preferences_util.dart';
 import '../../utils/log_util.dart';
 import 'package:path/path.dart' as Path;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
-import '../../models/singleton/singleton_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -110,20 +110,20 @@ class FirebaseUserService implements UserContractService {
 
   @override
   Future<bool> changeName(String name) async {
-    SingletonUser.instance.name = name;
-    return await update(SingletonUser.instance) == null ? false : true;
+    Singletons.user().name = name;
+    return await update(Singletons.user()) == null ? false : true;
   }
 
   @override
   Future<String> changeUserPhoto(File image) async {
     String baseName = Path.basename(image.path);
-    String uID = SingletonUser.instance.id + baseName.substring(baseName.length - 4);
+    String uID = Singletons.user().id + baseName.substring(baseName.length - 4);
     StorageReference storageReference = FirebaseStorage.instance.ref().child("users/${uID}");
     StorageUploadTask uploadTask = storageReference.putFile(image);
     return await uploadTask.onComplete.then((value) async {
       return await storageReference.getDownloadURL().then((fileURL) async {
-        SingletonUser.instance.avatarURL = fileURL;
-        return await update(SingletonUser.instance) == null ? null : fileURL;
+        Singletons.user().avatarURL = fileURL;
+        return await update(Singletons.user()) == null ? null : fileURL;
       }).catchError((error) {
         print(error.message);
         return null;

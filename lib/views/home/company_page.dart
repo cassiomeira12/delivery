@@ -1,18 +1,10 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:delivery/contracts/company/company_contract.dart';
-import 'package:delivery/utils/log_util.dart';
-import 'package:delivery/utils/preferences_util.dart';
-import 'package:delivery/views/location/location_page.dart';
-import 'package:delivery/widgets/scaffold_snackbar.dart';
+import '../../models/singleton/singletons.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import '../../contracts/menu/menu_contract.dart';
-import '../../models/menu/additional.dart';
-import '../../models/menu/category.dart';
-import '../../models/menu/choice.dart';
-import '../../models/menu/item.dart';
 import '../../models/menu/product.dart';
 import '../../models/menu/menu.dart';
-import '../../models/singleton/order_singleton.dart';
 import '../../presenters/menu/menu_presenter.dart';
 import '../../views/home/order_slidding_widget.dart';
 import '../../views/home/product_widget.dart';
@@ -74,41 +66,27 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     openTime = widget.company.getOpenTime(DateTime.now()) != null ? "Fechado" : widget.company.getOpenTime(DateTime.now());
     sliddingPage = OrderSliddingWidget(orderCallback: widget.orderCallback, updateOrders: updateOrders,);
     menuPresenter = MenuPresenter(this);
-    menu = Menu()..id = widget.company.idMenu;
-    var value = {
-      "__type": "Pointer",
-      "className": "Company",
-      "objectId": widget.company.id,
-    };
-    menuPresenter.findBy("company", value);
+    menu = Singletons.menus()[widget.company.id];
+    if (menu == null) {
+      menuPresenter.findBy("company", widget.company.toPointer());
+    } else {
+      onSuccess(menu);
+    }
     updateOrders();
   }
 
   void updateOrders() async {
-//    final database = LocalDB.MemoryDatabaseAdapter().database();
-//    final query = LocalDB.Query(
-//      filter: NotFilter(ValueFilter('example')),
-//      skip: 0, // Start from the first result item
-//      take: 10, // Return 10 result items
-//    );
-//    var result = await database.collection("asdf").search(query: query, reach: LocalDB.Reach.local);
-//    print(result.count);
-//    result.items.forEach((element) {
-//      print(element.data);
-//    });
     setState(() {
-      orderSelected = OrderSingleton.instance.id != null;
+      orderSelected = Singletons.order().id != null;
     });
     if (orderSelected) {
-      OrderSingleton.instance.company = widget.company;
-      OrderSingleton.instance.companyName = widget.company.name;
-
-      OrderSingleton.instance.company = widget.company;
-
+      Singletons.order().company = widget.company;
+      Singletons.order().companyName = widget.company.name;
+      Singletons.order().company = widget.company;
       sliddingPage.listItens();
     }
     orderItens = 0;
-    OrderSingleton.instance.items.forEach((element) {
+    Singletons.order().items.forEach((element) {
       orderItens += element.amount;
     });
   }
@@ -137,7 +115,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     if (orderSelected && _pc.isPanelOpen) {
       _pc.close();
     } else {
-      if (OrderSingleton.instance.id != null) {
+      if (Singletons.order().id != null) {
         showDialog();
       } else {
         PageRouter.pop(context);
@@ -294,7 +272,10 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     return RefreshIndicator(
       key: _refreshIndicatorKey,
-      onRefresh: () => menuPresenter.read(menu),
+      onRefresh: () {
+        Singletons.menus()[widget.company.id] = null;
+        return menuPresenter.read(menu);
+      },
       child: Center(
         child: list == null ?
           LoadingShimmerList()
@@ -358,15 +339,9 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         this.list = [];
       });
     } else {
-      List<Product> temp = List();
       var menu = list[0];
-      menu.categories.forEach((product) {
-        temp.addAll(product.products);
-      });
-      setState(() {
-        menu = menu;
-        this.list = temp;
-      });
+      Singletons.menus()[widget.company.id] = menu;
+      onSuccess(menu);
     }
   }
 
@@ -374,7 +349,6 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   onFailure(String error)  {
     setState(() {
       list = [];
-      menu.id = widget.company.idMenu;
     });
     ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
@@ -520,7 +494,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     );
     switch(result) {
       case OkCancelResult.ok:
-        OrderSingleton.instance.clear();
+        Singletons.order().clear();
         PageRouter.pop(context);
         break;
       case OkCancelResult.cancel:

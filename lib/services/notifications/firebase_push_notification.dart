@@ -1,9 +1,8 @@
-import 'dart:convert';
 import 'dart:io';
-import '../../models/singleton/singleton_user.dart';
+import 'package:delivery/models/singleton/singletons.dart';
+
 import '../../services/notifications/local_notifications.dart';
 import '../../utils/preferences_util.dart';
-import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:package_info/package_info.dart';
@@ -31,8 +30,8 @@ class FirebaseNotifications {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String packageName = packageInfo.packageName + "-" + Platform.operatingSystem;
     topics.add(packageName);
-    if (SingletonUser.instance.notificationToken != null) {
-      topics.addAll(SingletonUser.instance.notificationToken.topics);
+    if (Singletons.user().notificationToken != null) {
+      topics.addAll(Singletons.user().notificationToken.topics);
     }
     subscribeTopicsList(topics);
   }
@@ -108,7 +107,7 @@ class FirebaseNotifications {
       title = notification["title"];
       body = notification["body"];
 
-      var user = SingletonUser.instance;
+      var user = Singletons.user();
 
       if (user != null && user.notificationToken != null && user.notificationToken.active) {
         showSilentNotification(notifications, title: title, body: body, payload: payload);

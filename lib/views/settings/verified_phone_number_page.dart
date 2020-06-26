@@ -1,18 +1,17 @@
+import 'package:flutter_masked_text/flutter_masked_text.dart';
+import 'package:flutter/material.dart';
+import '../../models/singleton/singletons.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../contracts/user/verified_sms_contract.dart';
 import '../../models/base_user.dart';
 import '../../models/phone_number.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../presenters/user/user_presenter.dart';
 import '../../presenters/user/verified_sms_presenter.dart';
 import '../../contracts/crud.dart';
-import 'package:flutter/material.dart';
 import '../../strings.dart';
 import '../../widgets/background_card.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/shape_round.dart';
-import 'package:flutter_masked_text/flutter_masked_text.dart';
-
 import '../page_router.dart';
 
 class VerifiedPhoneNumberPage extends StatefulWidget {
@@ -71,7 +70,7 @@ class _VerifiedPhoneNumberPageState extends State<VerifiedPhoneNumberPage> imple
 
   @override
   onSuccess(BaseUser user) async {
-    SingletonUser.instance.phoneNumber = user.phoneNumber;
+    Singletons.user().phoneNumber = user.phoneNumber;
     _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text(TELEFONE_ATUALIZADO),
       backgroundColor: Colors.green,
@@ -87,8 +86,8 @@ class _VerifiedPhoneNumberPageState extends State<VerifiedPhoneNumberPage> imple
       waitingSMS = false;
     });
     widget.phoneNumber.verified = true;
-    SingletonUser.instance.phoneNumber = widget.phoneNumber;
-    crud.update(SingletonUser.instance);
+    Singletons.user().phoneNumber = widget.phoneNumber;
+    crud.update(Singletons.user());
   }
 
   @override

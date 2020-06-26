@@ -1,11 +1,14 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:delivery/widgets/scaffold_snackbar.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import '../../widgets/background_card.dart';
+import '../../models/singleton/singletons.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import '../../views/image_view_page.dart';
 import '../../widgets/image_network_widget.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../presenters/user/user_presenter.dart';
 import '../../strings.dart';
 import '../../themes/my_themes.dart';
@@ -16,9 +19,6 @@ import '../../views/settings/about_app_page.dart';
 import '../../views/settings/disable_account_page.dart';
 import '../../views/settings/termos_app_page.dart';
 import '../../views/settings/user_page.dart';
-import '../../widgets/background_card.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class SettingsPage extends StatefulWidget {
   SettingsPage({this.logoutCallback});
@@ -43,8 +43,8 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
   void initState() {
     super.initState();
     presenter = UserPresenter(this);
-    userName = SingletonUser.instance.name;
-    userPhoto = SingletonUser.instance.avatarURL;
+    userName = Singletons.user().name;
+    userPhoto = Singletons.user().avatarURL;
   }
 
   @override
@@ -195,8 +195,8 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
           onPressed: () async {
             await PageRouter.push(context, UserPage());
             setState(() {
-              userName = SingletonUser.instance.name;
-              userPhoto = SingletonUser.instance.avatarURL;
+              userName = Singletons.user().name;
+              userPhoto = Singletons.user().avatarURL;
             });
           },
         ),

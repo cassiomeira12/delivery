@@ -1,12 +1,13 @@
+import 'package:parse_server_sdk/parse_server_sdk.dart';
+import 'base_parse_service.dart';
+import 'package:path/path.dart' as Path;
 import 'dart:io';
+import '../../models/singleton/singletons.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../strings.dart';
 import '../../utils/log_util.dart';
 import '../../utils/preferences_util.dart';
-import 'package:parse_server_sdk/parse_server_sdk.dart';
-import 'base_parse_service.dart';
 
 class ParseUserService implements UserContractService {
   ParseObject _object;
@@ -152,8 +153,8 @@ class ParseUserService implements UserContractService {
   Future<void> changePassword(String email, String password, String newPassword) async {
     return await ParseUser(email, password, email).login().then((response) async {
       if (response.success) {
-        SingletonUser.instance.password = newPassword;
-        _object.objectId = SingletonUser.instance.id;
+        Singletons.user().password = newPassword;
+        _object.objectId = Singletons.user().id;
         _object.set("password", newPassword);
         return await _object.update().then((value) {
           return value.success ? value.result.toJson() : throw value.error;
@@ -183,28 +184,49 @@ class ParseUserService implements UserContractService {
 
   @override
   Future<bool> changeName(String name) async {
-    SingletonUser.instance.name = name;
-    return await update(SingletonUser.instance) == null ? false : true;
+    Singletons.user().name = name;
+    return await update(Singletons.user()) == null ? false : true;
   }
 
   @override
   Future<String> changeUserPhoto(File image) async {
 //    String baseName = Path.basename(image.path);
-//    String uID = SingletonUser.instance.id + baseName.substring(baseName.length - 4);
-//    StorageReference storageReference = FirebaseStorage.instance.ref().child("users/${uID}");
-//    StorageUploadTask uploadTask = storageReference.putFile(image);
-//    return await uploadTask.onComplete.then((value) async {
-//      return await storageReference.getDownloadURL().then((fileURL) async {
-//        SingletonUser.instance.avatarURL = fileURL;
-//        return await update(SingletonUser.instance) == null ? null : fileURL;
-//      }).catchError((error) {
-//        print(error.message);
-//        return null;
-//      });
-//    }).catchError((error) {
-//      print(error.message);
-//      return null;
-//    });
+//    String uID = Singletons.user().id + baseName.substring(baseName.length - 4);
+//    String dir = Path.dirname(image.path);
+//    String newPath = Path.join(dir, uID);
+    image = image.renameSync(image.path);
+
+    var file = ParseFile(image);
+    var object = ParseObject("_User");
+    object.objectId = Singletons.user().id;
+
+    return await file.save().then((value) async {
+      if (value.success) {
+        var result = value.result;
+        object.set("avatarURL", result.url);
+        object.set("avatar", result);
+        return await object.update().then((value) {
+          if (value.success) {
+            Singletons.user().avatarURL = result.url;
+            return result.url;
+          } else {
+            throw value.error;
+          }
+        }).catchError((error) {
+          throw Exception(ERROR_NETWORK);
+        });
+      } else {
+        throw value.error;
+      }
+    }).catchError((error) {
+      switch (error.code) {
+        case -1:
+          throw Exception(ERROR_NETWORK);
+          break;
+        default:
+          throw error;
+      }
+    });
   }
 
   @override

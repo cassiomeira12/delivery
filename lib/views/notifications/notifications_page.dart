@@ -1,6 +1,6 @@
-import 'package:delivery/models/singleton/notification_list_singleton.dart';
-import 'package:get_it/get_it.dart';
+import 'package:delivery/models/singleton/singletons.dart';
 
+import '../../models/singleton/notification_list_singleton.dart';
 import '../../contracts/user/notification_contract.dart';
 import '../../models/user_notification.dart';
 import '../../presenters/user/notification_presenter.dart';
@@ -31,7 +31,7 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
   void initState() {
     super.initState();
     presenter = NotificationPresenter(this);
-    var temp = GetIt.instance<NotificationListSingleton>().list;
+    var temp = Singletons.notifications();
     if (temp.isEmpty) {
       presenter.list();
     } else {
@@ -47,7 +47,7 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
 
   @override
   listSuccess(List<UserNotification> list) {
-    GetIt.instance<NotificationListSingleton>().list.addAll(list);
+    Singletons.notifications().addAll(list);
     setState(() {
       notificationsList = list;
     });
@@ -87,6 +87,7 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () {
+          Singletons.notifications().clear();
           return presenter.list();
         },
         child: Center(

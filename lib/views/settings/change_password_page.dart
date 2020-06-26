@@ -1,8 +1,7 @@
-import 'package:delivery/widgets/scaffold_snackbar.dart';
-
+import '../../models/singleton/singletons.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../presenters/user/user_presenter.dart';
 import '../../widgets/background_card.dart';
 import '../../widgets/primary_button.dart';
@@ -250,8 +249,7 @@ class _ChangePasswordState extends State<ChangePasswordPage> implements UserCont
       setState(() {
         _isLoading = true;
       });
-      String email = SingletonUser.instance.email;
-      presenter.changePassword(email, _currentPassword, _newPassword);
+      presenter.changePassword(Singletons.user().email, _currentPassword, _newPassword);
     }
   }
 

@@ -1,10 +1,8 @@
-import 'dart:async';
-import 'package:delivery/utils/log_util.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
-
+import 'dart:async';
+import '../../models/singleton/singletons.dart';
+import '../../utils/log_util.dart';
 import '../../services/parse/parse_order_service.dart';
-import '../../models/singleton/singleton_user.dart';
-import '../../services/firebase/firebase_order_service.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
 
@@ -117,7 +115,7 @@ class OrdersPresenter implements OrderContractPresenter {
     liveQuery = LiveQuery();
 
     QueryBuilder query = QueryBuilder(ParseObject("Order"))
-      ..whereEqualTo("user", SingletonUser.instance.toPointer());
+      ..whereEqualTo("user", Singletons.user().toPointer());
 
     subscription = await liveQuery.client.subscribe(query);
     subscription.on(LiveQueryEvent.update, (value) {

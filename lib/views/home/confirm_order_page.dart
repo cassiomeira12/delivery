@@ -1,36 +1,31 @@
-import 'dart:math';
-
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:delivery/contracts/user/user_contract.dart';
-import 'package:delivery/models/address/states.dart';
-import 'package:delivery/models/singleton/order_list_singleton.dart';
-import 'package:delivery/presenters/user/user_presenter.dart';
-import 'package:delivery/services/api/time_service.dart';
-import 'package:delivery/utils/preferences_util.dart';
-import 'package:delivery/views/settings/phone_number_page.dart';
-import 'package:get_it/get_it.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:get_it/get_it.dart';
+import '../../contracts/user/user_contract.dart';
+import '../../models/address/states.dart';
+import '../../models/singleton/order_list_singleton.dart';
+import '../../models/singleton/singletons.dart';
+import '../../presenters/user/user_presenter.dart';
+import '../../services/api/time_service.dart';
+import '../../utils/preferences_util.dart';
+import '../../views/settings/phone_number_page.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/company/type_payment.dart';
 import '../../models/order/order.dart';
 import '../../models/order/order_item.dart';
-import '../../models/singleton/order_singleton.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../presenters/order/order_presenter.dart';
-import '../../utils/log_util.dart';
 import '../../views/home/delivery_address_page.dart';
 import '../../views/home/payment_type_page.dart';
 import '../../widgets/area_input_field.dart';
 import '../../widgets/image_network_widget.dart';
 import '../../widgets/light_button.dart';
 import '../../widgets/primary_button.dart';
-import '../../widgets/rounded_shape.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/secondary_button.dart';
-import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../strings.dart';
 import '../page_router.dart';
@@ -73,9 +68,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     orderPresenter = OrdersPresenter(this);
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
-    deliveryCost = OrderSingleton.instance.company.delivery == null ? 0 : OrderSingleton.instance.company.delivery.cost/100;
+    deliveryCost = Singletons.order().company.delivery == null ? 0 : Singletons.order().company.delivery.cost/100;
     setState(() {
-      listOrder.addAll(OrderSingleton.instance.items);
+      listOrder.addAll(Singletons.order().items);
     });
     listOrder.forEach((element) {
       total += element.getTotal();
@@ -107,7 +102,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     setState(() {
       _loading = false;
     });
-    OrderSingleton.instance.id = result.id;
+    Singletons.order().id = result.id;
     GetIt.instance<OrderListSingleton>().list.add(result);
     widget.orderCallback();
     PageRouter.pop(context, true);
@@ -163,7 +158,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  imageUser(OrderSingleton.instance.company.logoURL),
+                  imageUser(Singletons.order().company.logoURL),
                   textCompanyWidget(),
                 ],
               ),
@@ -388,8 +383,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   textDeliveryAddress(),
-                  OrderSingleton.instance.company.delivery != null ?
-                  OrderSingleton.instance.company.delivery.pickup ?
+                  Singletons.order().company.delivery != null ?
+                  Singletons.order().company.delivery.pickup ?
                     Container(
                       alignment: Alignment.center,
                       width: MediaQuery.of(context).size.width,
@@ -510,7 +505,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                     color: Colors.black54,
                   ),
                 ),
-              ) : addressDataWidget( deliveryAddress == null ? OrderSingleton.instance.company.address : deliveryAddress ),
+              ) : addressDataWidget( deliveryAddress == null ? Singletons.order().company.address : deliveryAddress ),
 
               pickup ?
               GestureDetector(
@@ -532,7 +527,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   ),
                 ),
                 onTap: () async {
-                  var address =  OrderSingleton.instance.company.address;
+                  var address =  Singletons.order().company.address;
                   var mapSchema = 'geo:${address.location["lat"]},${address.location["long"]}';
                   if (await canLaunch(mapSchema)) {
                   await launch(mapSchema);
@@ -544,7 +539,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 child: SecondaryButton(
                   text: "Escolher local",
                   onPressed: () async {
-                    Address companyAddress = OrderSingleton.instance.company.address;
+                    Address companyAddress = Singletons.order().company.address;
                     Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
                     if (result != null) {
                       setState(() {
@@ -655,7 +650,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
         LightButton(
           text: "Trocar",
           onPressed: () async {
-            Address companyAddress = OrderSingleton.instance.company.address;
+            Address companyAddress = Singletons.order().company.address;
             Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
             if (result != null) {
               setState(() {
@@ -701,12 +696,12 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 child: SecondaryButton(
                   text: "Escolher Pagamento",
                   onPressed: () async {
-                    var companyPayments = OrderSingleton.instance.company.typePayments;
+                    var companyPayments = Singletons.order().company.typePayments;
                     TypePayment result = await PageRouter.push(context, PaymentTypePage(paymentsType: companyPayments,));
                     await Future.delayed(Duration(milliseconds: 300));
                     if (result != null) {
                       if (result.paymentType == Type.MONEY) {
-                        OrderSingleton.instance.changeMoney = await getTroco();
+                        Singletons.order().changeMoney = await getTroco();
                       }
                     }
                     setState(() {
@@ -723,7 +718,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   Padding(
                     padding: EdgeInsets.all(10),
                     child: Text(
-                      OrderSingleton.instance.changeMoney == null ? "Sem troco" : "Troco para ${OrderSingleton.instance.changeMoney}",
+                      Singletons.order().changeMoney == null ? "Sem troco" : "Troco para ${Singletons.order().changeMoney}",
                       style: TextStyle(
                         fontSize: 20,
                         color: Colors.green,
@@ -769,12 +764,12 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             LightButton(
               text: "Trocar",
               onPressed: () async {
-                var companyPayments = OrderSingleton.instance.company.typePayments;
+                var companyPayments = Singletons.order().company.typePayments;
                 TypePayment result = await PageRouter.push(context, PaymentTypePage(paymentsType: companyPayments,));
                 await Future.delayed(Duration(milliseconds: 300));
                 if (result != null) {
                   if (result.paymentType == Type.MONEY) {
-                    OrderSingleton.instance.changeMoney = await getTroco();
+                    Singletons.order().changeMoney = await getTroco();
                   }
                 }
                 setState(() {
@@ -871,10 +866,10 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   void showCompanyClosed() async {
     String message;
-    if (OrderSingleton.instance.company.isTodayOpen()) {
-      message = "${OrderSingleton.instance.company.name} abre às ${OrderSingleton.instance.company.openTime()}";
+    if (Singletons.order().company.isTodayOpen()) {
+      message = "${Singletons.order().company.name} abre às ${Singletons.order().company.openTime()}";
     } else {
-      message = "${OrderSingleton.instance.company.name} não abre hoje.";
+      message = "${Singletons.order().company.name} não abre hoje.";
     }
     await showOkAlertDialog(
       context: context,
@@ -903,8 +898,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       return false;
     }
 
-    bool openToday = OrderSingleton.instance.company.isTodayOpen();
-    var opened = OrderSingleton.instance.company.getOpenTime(timeNow);
+    bool openToday = Singletons.order().company.isTodayOpen();
+    var opened = Singletons.order().company.getOpenTime(timeNow);
 
     if (!openToday || opened != null) {
       showCompanyClosed();
@@ -913,10 +908,10 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     
     if (checkDelevieryAddress()) {
       if (pickup) {
-        var companyAddress = OrderSingleton.instance.company.address;
-        OrderSingleton.instance.deliveryAddress = companyAddress;
+        var companyAddress = Singletons.order().company.address;
+        Singletons.order().deliveryAddress = companyAddress;
       } else {
-        OrderSingleton.instance.deliveryAddress = deliveryAddress;
+        Singletons.order().deliveryAddress = deliveryAddress;
       }
     } else {
       ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha um local para entrega!");
@@ -924,17 +919,17 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     }
 
     if (checkPaymentType()) {
-      OrderSingleton.instance.typePayment = typePayment;
+      Singletons.order().typePayment = typePayment;
     } else {
       ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha uma forma de pagamento!");
       return false;
     }
 
-    if (SingletonUser.instance.phoneNumber == null) {
+    if (Singletons.user().phoneNumber == null) {
       var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
       if (phoneNumber != null) {
-        SingletonUser.instance.phoneNumber = phoneNumber;
-        userPresenter.update(SingletonUser.instance);
+        Singletons.user().phoneNumber = phoneNumber;
+        userPresenter.update(Singletons.user());
         return true;
       }
       return false;
@@ -957,17 +952,17 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             return;
           }
 
-          OrderSingleton.instance.id = null;
-          OrderSingleton.instance.user = SingletonUser.instance;
-          OrderSingleton.instance.status.values[0].date = DateTime.now();
-          OrderSingleton.instance.status.current = OrderSingleton.instance.status.values[0];
-          OrderSingleton.instance.note = _observacaoController.text;
-          OrderSingleton.instance.deliveryCost = pickup ? 0 : deliveryCost;
-          OrderSingleton.instance.delivery = !pickup;
-          OrderSingleton.instance.companyPhoneNumber = OrderSingleton.instance.company.phoneNumber;
-          OrderSingleton.instance.userPhoneNumber = SingletonUser.instance.phoneNumber;
+          Singletons.order().id = null;
+          Singletons.order().user = Singletons.user();
+          Singletons.order().status.values[0].date = DateTime.now();
+          Singletons.order().status.current = Singletons.order().status.values[0];
+          Singletons.order().note = _observacaoController.text;
+          Singletons.order().deliveryCost = pickup ? 0 : deliveryCost;
+          Singletons.order().delivery = !pickup;
+          Singletons.order().companyPhoneNumber = Singletons.order().company.phoneNumber;
+          Singletons.order().userPhoneNumber = Singletons.user().phoneNumber;
 
-          orderPresenter.create(OrderSingleton.instance);
+          orderPresenter.create(Singletons.order());
         },
       ),
     );

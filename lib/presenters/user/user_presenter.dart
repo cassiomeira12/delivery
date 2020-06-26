@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'package:delivery/models/singleton/singletons.dart';
+import 'package:delivery/utils/log_util.dart';
+
 import '../../services/parse/parse_user_service.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../contracts/crud.dart';
 import '../../services/firebase/firebase_user_service.dart';
 import '../../strings.dart';
@@ -78,22 +80,25 @@ class UserPresenter implements UserContractPresenter, Crud<BaseUser> {
 
   @override
   Future<bool> changeName(String name) async {
-    await service.changeName(name).then((value) {
+    return await service.changeName(name).then((value) {
       if (value) {
-        if (_view != null) _view.onSuccess(SingletonUser.instance);
+        if (_view != null) _view.onSuccess(Singletons.user());
       } else {
         if (_view != null) _view.onFailure(CHANGE_NAME_FAILURE);
       }
+      return value;
     });
   }
 
   @override
   Future<String> changeUserPhoto(File image) async {
-    await service.changeUserPhoto(image).then((URL) {
-      SingletonUser.instance.avatarURL = URL;
-      if (_view != null) _view.onSuccess(SingletonUser.instance);
+    return await service.changeUserPhoto(image).then((URL) {
+      Singletons.user().avatarURL = URL;
+      if (_view != null) _view.onSuccess(Singletons.user());
+      return URL;
     }).catchError((error) {
       if (_view != null) _view.onFailure(error.message);
+      return null;
     });
   }
 

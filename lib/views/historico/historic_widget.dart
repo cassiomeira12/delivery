@@ -2,8 +2,6 @@ import '../../models/order/order.dart';
 import '../../utils/date_util.dart';
 import '../../widgets/stars_widget.dart';
 import 'package:flutter/material.dart';
-import '../page_router.dart';
-import 'historic_order_page.dart';
 
 class HistoricWidget extends StatefulWidget {
   final dynamic item;

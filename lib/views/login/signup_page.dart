@@ -1,15 +1,12 @@
-import 'package:auto_size_text/auto_size_text.dart';
-import 'package:delivery/contracts/login/login_contract.dart';
-import 'package:delivery/models/phone_number.dart';
-import 'package:delivery/models/singleton/singleton_user.dart';
-import 'package:delivery/presenters/login/login_presenter.dart';
-import 'package:delivery/services/parse/parse_create_account_service.dart';
-import 'package:delivery/utils/log_util.dart';
-import 'package:delivery/views/settings/phone_number_page.dart';
-import 'package:delivery/widgets/scaffold_snackbar.dart';
-import 'package:delivery/widgets/secondary_button.dart';
-import 'package:flutter/material.dart';
+import 'package:delivery/models/singleton/singletons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+import '../../contracts/login/login_contract.dart';
+import '../../presenters/login/login_presenter.dart';
+import '../../views/settings/phone_number_page.dart';
+import '../../widgets/scaffold_snackbar.dart';
+import '../../widgets/secondary_button.dart';
 import '../../widgets/text_input_field.dart';
 import '../../models/base_user.dart';
 import '../../strings.dart';
@@ -285,10 +282,10 @@ class _SignUpPageState extends State<SignUpPage> implements LoginContractView{
 
   @override
   onSuccess(BaseUser result) async {
-    SingletonUser.instance.updateData(result);
+    Singletons.user().updateData(result);
     if (result.phoneNumber == null) {
       var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
-      SingletonUser.instance.phoneNumber = phoneNumber;
+      Singletons.user().phoneNumber = phoneNumber;
     }
     widget.loginCallback();
     PageRouter.pop(context);

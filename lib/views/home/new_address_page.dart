@@ -1,17 +1,16 @@
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:flutter/material.dart';
+import '../../models/singleton/singletons.dart';
 import '../../widgets/area_input_field.dart';
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/address/city.dart';
 import '../../models/address/small_town.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../presenters/address/address_presenter.dart';
 import '../../strings.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/text_input_field.dart';
-import 'package:flutter/material.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
-
 import '../page_router.dart';
 
 class NewAddressPage extends StatefulWidget {
@@ -234,7 +233,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
 
   Address create() {
     Address address = Address()
-      ..user = SingletonUser.instance
+      ..user = Singletons.user()
       ..neighborhood = bairro
       ..street = rua
       ..number = numero.isEmpty ? null : numero

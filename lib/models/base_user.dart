@@ -1,5 +1,3 @@
-import 'package:delivery/utils/log_util.dart';
-
 import '../models/status.dart';
 import 'base_model.dart';
 import 'phone_number.dart';
@@ -82,7 +80,6 @@ class NotificationToken extends BaseModel<NotificationToken> {
   NotificationToken.fromMap(Map<dynamic, dynamic> map) : super('NotificationToken') {
     id = map["objectId"];
     token = map["token"];
-    Log.d(map["active"]);
     active = map["active"] as bool;
     topics = map["topics"] == null ? List() : List.from(map["topics"]);
   }

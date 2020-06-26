@@ -1,8 +1,7 @@
+import '../../models/singleton/singletons.dart';
 import '../../services/parse/parse_address_service.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
-import '../../services/firebase/firebase_address_service.dart';
 
 class AddressPresenter implements AddressContractPresenter {
   AddressContractView _view;
@@ -87,12 +86,7 @@ class AddressPresenter implements AddressContractPresenter {
 
   @override
   listUsersAddress() async {
-    var value = {
-      "__type": "Pointer",
-      "className": "_User",
-      "objectId": SingletonUser.instance.id,
-    };
-    return await service.findBy("user", value).then((value) {
+    return await service.findBy("user", Singletons.user().toPointer()).then((value) {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {

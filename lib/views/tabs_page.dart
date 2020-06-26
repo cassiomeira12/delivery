@@ -1,9 +1,8 @@
 import 'dart:io';
-import 'package:delivery/models/singleton/order_list_singleton.dart';
-import 'package:delivery/models/singleton/singleton_user.dart';
+import '../models/singleton/order_list_singleton.dart';
+import '../models/singleton/singletons.dart';
 import 'package:get_it/get_it.dart';
 import '../contracts/order/order_contract.dart';
-import '../models/singleton/order_singleton.dart';
 import '../presenters/order/order_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -54,7 +53,7 @@ class _TabsPageState extends State<TabsPage> {
   }
 
   void listOrders() async {
-    var result = await presenter.findBy("user", SingletonUser.instance.toPointer());
+    var result = await presenter.findBy("user", Singletons.user().toPointer());
     if (result != null) {
       GetIt.instance<OrderListSingleton>().list.addAll(result);
       var temp = 0;
@@ -200,7 +199,7 @@ class _TabsPageState extends State<TabsPage> {
                       FaIcon(FontAwesomeIcons.shoppingCart, color: currentTab == 3 ? Theme.of(context).backgroundColor : Colors.grey,),
                       Padding(
                         padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
-                        child: notificationCount( OrderSingleton.instance.id == null ? orderCount : OrderSingleton.instance.items.length ),
+                        child: notificationCount( Singletons.order().id == null ? orderCount : Singletons.order().items.length ),
                       ),
                     ],
                   ),

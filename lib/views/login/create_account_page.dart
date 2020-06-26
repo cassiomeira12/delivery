@@ -1,11 +1,11 @@
+import 'package:flutter/material.dart';
+import '../../models/singleton/singletons.dart';
 import '../../widgets/loading_widget.dart';
 import '../../contracts/login/create_account_contract.dart';
 import '../../models/base_user.dart';
-import '../../models/singleton/singleton_user.dart';
 import '../../presenters/login/create_account_presenter.dart';
 import '../../widgets/background_card.dart';
 import '../../widgets/shape_round.dart';
-import 'package:flutter/material.dart';
 import '../../strings.dart';
 import '../page_router.dart';
 
@@ -128,7 +128,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> implements Create
       _imgURL = "assets/sucesso.png";
       _textMessage = CONTA_CRIADA_SUCESSO;
     });
-    SingletonUser.instance.updateData(user);
+    Singletons.user().updateData(user);
     await Future.delayed(const Duration(seconds: 2));
     PageRouter.pop(context);
     widget.loginCallback();
