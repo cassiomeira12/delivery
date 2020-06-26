@@ -190,64 +190,6 @@ class _UserState extends State<UserPage> implements UserContractView {
     );
   }
 
-//  Widget imageUserFile() {
-//    return Container(
-//      height: 160,
-//      width: 160,
-//      decoration: BoxDecoration(
-//        image: DecorationImage(
-//          image: FileImage(pickedImage),
-//          fit: BoxFit.cover,
-//        ),
-//      ),
-//    );
-//  }
-//
-//  Widget loadImage2() {
-//    return (userPhoto == null || userPhoto.isEmpty) ?
-//      pickedImage == null ?
-//        defaultImageUser()
-//          :
-//        imageUserFile()
-//        :
-//      imageUserURL();
-//  }
-
-//  Widget loadImage() {
-//    return (userPhoto == null || userPhoto.isEmpty) ?
-//    CircleAvatar(
-//      backgroundColor: Colors.transparent,
-//      radius: 80,
-//      child:
-//      pickedImage == null ? Image.asset("assets/user_default_img_white.png")
-//          :
-//      Container(
-//        //height: 160.0,
-//        //width: 160.0,
-//        decoration: BoxDecoration(
-//          image: DecorationImage(
-//            image: FileImage(pickedImage),
-//            fit: BoxFit.cover,
-//          ),
-//        ),
-//      ),
-//
-//    )
-//        :
-//    Image.network(userPhoto,fit: BoxFit.cover, width: 150,
-//      loadingBuilder:(BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-//        if (loadingProgress == null) return child;
-//        return Center(
-//          child: CircularProgressIndicator(
-//            value: loadingProgress.expectedTotalBytes != null ?
-//            loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-//                : null,
-//          ),
-//        );
-//      },
-//    );
-//  }
-
   Widget txtChangePhoto() {
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 4, 0, 4),

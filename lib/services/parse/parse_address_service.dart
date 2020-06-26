@@ -74,7 +74,7 @@ class ParseAddressService extends AddressContractService {
 
   @override
   Future<List<Address>> findBy(String field, value) async {
-    var query = QueryBuilder<ParseObject>(service.object)
+    var query = QueryBuilder<ParseObject>(service.getObject())
       ..whereEqualTo(field, value)
       ..includeObject(["city", "smallTown", "smallTown.city"]);
 

@@ -1,4 +1,8 @@
 import 'package:delivery/models/singleton/singletons.dart';
+import 'package:delivery/utils/log_util.dart';
+import 'package:delivery/utils/preferences_util.dart';
+import 'package:delivery/widgets/scaffold_snackbar.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
@@ -13,10 +17,11 @@ class NotificationsSettingsPage extends StatefulWidget {
 }
 
 class _NotificationsSettingsState extends State<NotificationsSettingsPage> implements UserContractView {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool notifications = Singletons.user().notificationToken.active;
-
+  bool _loading = false;
   UserContractPresenter presenter;
 
   @override
@@ -28,22 +33,30 @@ class _NotificationsSettingsState extends State<NotificationsSettingsPage> imple
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //key: _scaffoldKey,
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text(TAB2, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-            SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  notificacoesButton(),
-                ],
+      body: ModalProgressHUD(
+        inAsyncCall: _loading,
+        progressIndicator: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),
+          child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(),),
+        ),
+        child: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
+                    notificacoesButton(),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -51,12 +64,21 @@ class _NotificationsSettingsState extends State<NotificationsSettingsPage> imple
 
   @override
   onFailure(String error) {
-
+    setState(() {
+      notifications = !notifications;
+      Singletons.user().notificationToken.active = notifications;
+      _loading = false;
+    });
+    ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override
   onSuccess(BaseUser user) {
-
+    setState(() {
+      _loading = false;
+    });
+    PreferencesUtil.setUserData(user.toMap());
+    ScaffoldSnackBar.success(context, _scaffoldKey, SUCCESS_UPDATE_DATA);
   }
 
   Widget notificacoesButton() {
@@ -99,8 +121,9 @@ class _NotificationsSettingsState extends State<NotificationsSettingsPage> imple
             setState(() {
               notifications = !notifications;
               Singletons.user().notificationToken.active = notifications;
-              presenter.update(Singletons.user());
+              _loading = true;
             });
+            presenter.update(Singletons.user());
           },
         ),
       ),

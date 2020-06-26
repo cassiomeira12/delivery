@@ -96,7 +96,7 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
                 child: Stack(
                   children: <Widget>[
                     defaultImageUser(),
-                    userPhoto == null ? Container() : ImageNetworkWidget(url: userPhoto, size: 120,),//imageUserURL()
+                    userPhoto == null ? Container() : ImageNetworkWidget(url: userPhoto, size: 120,),
                   ],
                 ),
                 onTap: () {

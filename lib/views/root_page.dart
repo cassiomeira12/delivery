@@ -96,7 +96,7 @@ class _RootPageState extends State<RootPage> {
       case AuthStatus.LOGGED_IN:
         return TabsPage(logoutCallback: logoutCallback,);
       case AuthStatus.EMAIL_NOT_VERIFIED:
-        return VerifiedEmailPage(logoutCallback: logoutCallback,);
+        return VerifiedEmailPage(loginCallback: loginCallback, logoutCallback: logoutCallback,);
       case AuthStatus.UPDATE_APP:
         return updateAppScreen();
       default:

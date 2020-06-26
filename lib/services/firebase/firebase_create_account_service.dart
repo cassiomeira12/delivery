@@ -1,34 +1,34 @@
-import 'package:firebase_auth/firebase_auth.dart';
-import '../../contracts/login/create_account_contract.dart';
-import '../../models/base_user.dart';
-import '../../services/firebase/firebase_user_service.dart';
-import '../../strings.dart';
-import '../../contracts/crud.dart';
-
-class FirebaseCreateAccountService extends CreateAccountContractService {
-  CreateAccountContractPresenter presenter;
-
-  FirebaseCreateAccountService(this.presenter);
-
-  @override
-  dispose() {
-    presenter = null;
-  }
-
-  @override
-  Future<BaseUser> createAccount(BaseUser user) async {
-    return FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.email, password: user.password).then((AuthResult authResult) async {
-      user.emailVerified = authResult.user.isEmailVerified;
-      Crud<BaseUser> crud = FirebaseUserService("users");
-      BaseUser result = await crud.create(user);
-      if (result == null) {
-        presenter.onFailure(ERROR_CRIAR_USUARIO);
-      } else {
-        presenter.onSuccess(result);
-      }
-    }).catchError((error) {
-      presenter.onFailure(error.toString());
-    });
-  }
-
-}
+//import 'package:firebase_auth/firebase_auth.dart';
+//import '../../contracts/login/create_account_contract.dart';
+//import '../../models/base_user.dart';
+//import '../../services/firebase/firebase_user_service.dart';
+//import '../../strings.dart';
+//import '../../contracts/crud.dart';
+//
+//class FirebaseCreateAccountService extends CreateAccountContractService {
+//  CreateAccountContractPresenter presenter;
+//
+//  FirebaseCreateAccountService(this.presenter);
+//
+//  @override
+//  dispose() {
+//    presenter = null;
+//  }
+//
+//  @override
+//  Future<BaseUser> createAccount(BaseUser user) async {
+//    return FirebaseAuth.instance.createUserWithEmailAndPassword(email: user.email, password: user.password).then((AuthResult authResult) async {
+//      user.emailVerified = authResult.user.isEmailVerified;
+//      Crud<BaseUser> crud = FirebaseUserService("users");
+//      BaseUser result = await crud.create(user);
+//      if (result == null) {
+//        presenter.onFailure(ERROR_CRIAR_USUARIO);
+//      } else {
+//        presenter.onSuccess(result);
+//      }
+//    }).catchError((error) {
+//      presenter.onFailure(error.toString());
+//    });
+//  }
+//
+//}

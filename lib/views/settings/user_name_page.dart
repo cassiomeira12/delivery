@@ -1,3 +1,4 @@
+import 'package:delivery/utils/preferences_util.dart';
 import 'package:flutter/material.dart';
 import '../../models/singleton/singletons.dart';
 import '../../contracts/user/user_contract.dart';
@@ -60,6 +61,7 @@ class _UserNamePageState extends State<UserNamePage> implements UserContractView
       _loading = false;
     });
     Singletons.user().name = user.name;
+    PreferencesUtil.setUserData(Singletons.user().toMap());
     ScaffoldSnackBar.success(context, _scaffoldKey, CHANGE_NAME_SUCCESS);
     await Future.delayed(const Duration(seconds: 2));
     PageRouter.pop(context);

@@ -530,7 +530,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   var address =  Singletons.order().company.address;
                   var mapSchema = 'geo:${address.location["lat"]},${address.location["long"]}';
                   if (await canLaunch(mapSchema)) {
-                  await launch(mapSchema);
+                    await launch(mapSchema);
                   }
                 },
               ) : deliveryAddress == null ?

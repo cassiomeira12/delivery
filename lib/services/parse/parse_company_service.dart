@@ -115,7 +115,7 @@ class ParseCompanyService extends CompanyContractService {
     var address = QueryBuilder<ParseObject>(ParseObject('Address'))
       ..whereMatchesQuery("city", city);
 
-    var company = QueryBuilder<ParseObject>(service.object)
+    var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
       ..includeObject(["address", "address.city"]);
 
@@ -159,7 +159,7 @@ class ParseCompanyService extends CompanyContractService {
     var address = QueryBuilder<ParseObject>(ParseObject('Address'))
       ..whereMatchesQuery("smallTown", smallTown);
 
-    var company = QueryBuilder<ParseObject>(service.object)
+    var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
       ..includeObject(["address", "address.smallTown", "address.smallTown.city"]);
 

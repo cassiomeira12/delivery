@@ -1,7 +1,6 @@
 import 'dart:io';
-import 'package:delivery/models/singleton/singletons.dart';
+import '../../models/singleton/singletons.dart';
 import 'package:delivery/utils/log_util.dart';
-
 import '../../services/parse/parse_user_service.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';

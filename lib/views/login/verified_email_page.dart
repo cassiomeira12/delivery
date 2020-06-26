@@ -1,3 +1,5 @@
+import 'package:delivery/utils/log_util.dart';
+import 'package:delivery/utils/preferences_util.dart';
 import '../../models/singleton/singletons.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
@@ -11,8 +13,9 @@ import 'package:flutter/material.dart';
 import '../../strings.dart';
 
 class VerifiedEmailPage extends StatefulWidget {
-  VerifiedEmailPage({this.logoutCallback});
+  VerifiedEmailPage({this.loginCallback, this.logoutCallback});
 
+  final VoidCallback loginCallback;
   final VoidCallback logoutCallback;
 
   @override
@@ -142,11 +145,11 @@ class _VerifiedEmailPageState extends State<VerifiedEmailPage> implements UserCo
       padding: EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
       child: SecondaryButton(
         text: REENVIAR_EMAIL,
-        onPressed: () {
+        onPressed: () async {
           setState(() {
             sendingEmail = true;
           });
-          presenter.sendEmailVerification();
+          presenter.currentUser();
         },
       ),
     );
@@ -175,11 +178,21 @@ class _VerifiedEmailPageState extends State<VerifiedEmailPage> implements UserCo
 
   @override
   onSuccess(BaseUser user) {
-    setState(() {
-      sendingEmail = false;
-      this.textMessage = EMAIL_VERIFICACAO_ENVIADO;
-      this.imgEmail = "assets/email.png";
-    });
+    if (user == null) {
+      setState(() {
+        sendingEmail = false;
+        this.textMessage = EMAIL_VERIFICACAO_ENVIADO;
+        this.imgEmail = "assets/email.png";
+      });
+    } else {
+      if (user.emailVerified) {
+        Singletons.user().updateData(user);
+        PreferencesUtil.setUserData(Singletons.user().toMap());
+        widget.loginCallback();
+      } else {
+        presenter.sendEmailVerification();
+      }
+    }
   }
 
 }

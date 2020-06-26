@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:delivery/views/historico/evalutation_dialog.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/order/order.dart';
@@ -114,6 +115,28 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       appBar: AppBar(
         title: Text("Pedido", style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) {
+              return ["Contato"].map((String choice) {
+                return PopupMenuItem(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+            onSelected: (value) async {
+              switch (value) {
+                case "Contato":
+                  var whatsAppLink = order.companyPhoneNumber.whatsAppLink();
+                  if (await canLaunch(whatsAppLink)) {
+                    await launch(whatsAppLink);
+                  }
+                  break;
+              }
+            },
+          ),
+        ],
       ),
       body: nestedScrollView(),
     );
@@ -194,8 +217,10 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: Column(
         children: [
-
-          Column(
+          order.canceled ?
+            orderCanceled()
+            :
+            Column(
             children: [
               AutoSizeText(
                 "Previsão de entrega",
@@ -229,8 +254,6 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 ),
             ],
           ),
-
-
         ],
       ),
     );
@@ -345,6 +368,17 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
   Widget body() {
     return Center(
       child: listView(),
+    );
+  }
+
+  Widget orderCanceled() {
+    return Text(
+      "Esse pedido foi cancelado",
+      style: TextStyle(
+        fontSize: 22,
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
+      ),
     );
   }
 

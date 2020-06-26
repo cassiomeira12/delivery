@@ -27,6 +27,10 @@ class PhoneNumber extends BaseModel<PhoneNumber> {
     return map;
   }
 
+  String whatsAppLink() {
+    return "https://api.whatsapp.com/send?phone=$countryCode$ddd$number";
+  }
+
   @override
   String toString() {
     return countryCode+" ("+ddd+") "+number;

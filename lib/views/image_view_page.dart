@@ -24,9 +24,9 @@ class _ImageViewPageState extends State<ImageViewPage> {
         child: Container(
           child: PhotoView(
             imageProvider: widget.assetsImage == null ?
-            NetworkImage(widget.networkImage)
+              NetworkImage(widget.networkImage)
                 :
-            ExactAssetImage(widget.assetsImage),
+              ExactAssetImage(widget.assetsImage),
           ),
         ),
       ),

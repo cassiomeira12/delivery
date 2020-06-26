@@ -10,12 +10,10 @@ import '../../utils/log_util.dart';
 import '../../utils/preferences_util.dart';
 
 class ParseUserService implements UserContractService {
-  ParseObject _object;
   BaseParseService _service;
 
   ParseUserService() {
     _service = BaseParseService("_User");
-    _object = _service.object;
   }
 
   @override
@@ -154,9 +152,10 @@ class ParseUserService implements UserContractService {
     return await ParseUser(email, password, email).login().then((response) async {
       if (response.success) {
         Singletons.user().password = newPassword;
-        _object.objectId = Singletons.user().id;
-        _object.set("password", newPassword);
-        return await _object.update().then((value) {
+        var object = _service.getObject();
+        object.objectId = Singletons.user().id;
+        object.set("password", newPassword);
+        return await object.update().then((value) {
           return value.success ? value.result.toJson() : throw value.error;
         });
       } else {
@@ -236,7 +235,16 @@ class ParseUserService implements UserContractService {
       return null;
     } else {
       var userData = await PreferencesUtil.getUserData();
-      return userData == null ? null : BaseUser.fromMap(userData);
+      var user = BaseUser.fromMap(userData);
+      if (!user.emailVerified || user.notificationToken == null || user.phoneNumber == null) {
+        return read(BaseUser(id: currentUser.objectId)).then((value) {
+          return value;
+        }).catchError((error) async {
+          return user;
+        });
+      } else {
+        return user;
+      }
     }
   }
 
@@ -251,14 +259,6 @@ class ParseUserService implements UserContractService {
   Future<bool> isEmailVerified() async {
     ParseUser currentUser = await ParseUser.currentUser();
     return currentUser.emailVerified;
-//    FirebaseUser currentUser = await FirebaseAuth.instance.currentUser();
-//    bool emailVerified = currentUser.isEmailVerified;
-//    BaseUser user = await findUserByEmail(currentUser.email);
-//    if (user != null) {
-//      user.emailVerified = emailVerified;
-//      _collection.document(user.id).updateData(user.toMap());
-//    }
-//    return emailVerified;
   }
 
   @override

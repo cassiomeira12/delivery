@@ -27,6 +27,7 @@ class Order extends BaseModel<Order> {
   PreparationTime preparationTime;
   PhoneNumber companyPhoneNumber;
   PhoneNumber userPhoneNumber;
+  bool canceled;
 
   Order() : super('Order') {
     items = List();
@@ -55,6 +56,7 @@ class Order extends BaseModel<Order> {
     preparationTime = map["preparationTime"] == null ? null : PreparationTime.fromMap(map["preparationTime"]);
     companyPhoneNumber = map["companyPhoneNumber"] == null ? null : PhoneNumber.fromMap(map["companyPhoneNumber"]);
     userPhoneNumber = map["userPhoneNumber"] == null ? null : PhoneNumber.fromMap(map["userPhoneNumber"]);
+    canceled = map["canceled"] == null ? false : map["canceled"] as bool;
   }
 
   @override
@@ -80,6 +82,7 @@ class Order extends BaseModel<Order> {
     map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
     map["companyPhoneNumber"] = companyPhoneNumber == null ? null : companyPhoneNumber.toMap();
     map["userPhoneNumber"] = userPhoneNumber == null ? null : userPhoneNumber.toMap();
+    map["canceled"] = canceled == null ? false : canceled;
     return map;
   }
 
@@ -105,6 +108,7 @@ class Order extends BaseModel<Order> {
     preparationTime = item.preparationTime;
     companyPhoneNumber = item.companyPhoneNumber;
     userPhoneNumber = item.userPhoneNumber;
+    canceled = item.canceled;
   }
 
   clear() {
@@ -128,6 +132,7 @@ class Order extends BaseModel<Order> {
     preparationTime = null;
     companyPhoneNumber = null;
     userPhoneNumber = null;
+    canceled = false;
   }
 
 }

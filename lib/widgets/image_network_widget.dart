@@ -31,6 +31,7 @@ class ImageNetworkWidget extends StatelessWidget {
         ),
         progressIndicatorBuilder: (context, url, downloadProgress) {
           return Container(
+            margin: EdgeInsets.all(size / 5),
             child: CircularProgressIndicator(value: downloadProgress.progress),
           );
         },

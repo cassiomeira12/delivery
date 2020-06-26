@@ -6,7 +6,7 @@ class VerifiedSMSPresenter extends VerifiedSMSContractPresenter {
   VerifiedSMSContractService service;
 
   VerifiedSMSPresenter(this._view) {
-    service = FirebaseVerifiedSMSService(this);
+    //service = FirebaseVerifiedSMSService(this);
   }
 
   @override

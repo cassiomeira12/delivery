@@ -32,10 +32,8 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
     super.initState();
     verifyNewOrder();
     presenter = OrdersPresenter(this);
+    presenter.listUserOrders();
     ordersList = Singletons.orders();
-    ordersList.forEach((element) {
-      print(element.toMap());
-    });
   }
 
   @override
@@ -55,12 +53,13 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
 
   @override
   listSuccess(List<Order> list) {
-    if (ordersList != null) {
+    print(list.length);
+    if (ordersList != null && ordersList.isNotEmpty) {
       list.forEach((item) {
         var temp = ordersList.singleWhere((element) => element.id == item.id, orElse: null);
         setState(() {
           if (temp == null) {
-            ordersList.insert(0, item);
+            ordersList.add(item);
           } else {
             temp.updateData(item);
           }
@@ -84,7 +83,10 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
 
   @override
   onSuccess(Order result) {
-
+    Singletons.orders().add(result);
+    setState(() {
+      ordersList.insert(0, result);
+    });
   }
 
   @override
@@ -116,8 +118,14 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
             :
         ordersList.isEmpty ?
         EmptyListWidget(
-          message: "Você ainda não fez pedidos",
-          //assetsImage: "assets/notification.png",
+          message: "Nenhum pedido foi encontrado",
+          onPressed: () async {
+            setState(() {
+              ordersList = null;
+            });
+            Singletons.orders().clear();
+            presenter.findBy("user", Singletons.user().toPointer());
+          },
         )
             :
         CustomScrollView(
@@ -128,9 +136,7 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
                     return GestureDetector(
                       child: HistoricWidget(item: item,),
                       onTap: () async {
-                        //presenter.pause();
                         await PageRouter.push(context, HistoricOrderPage(item: item,));
-                        //presenter.resume();
                       },
                     );
                   }).toList()

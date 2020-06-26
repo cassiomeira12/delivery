@@ -33,8 +33,8 @@ class _HistoricWidgetState extends State<HistoricWidget> {
     return Card(
       margin: EdgeInsets.fromLTRB(5, 5, 5, 10),
       elevation: 5,
-      shadowColor: order.status.isLast() ? order.evaluation == null ? Colors.amber : Colors.white : Colors.green,
-      color: order.status.isLast() ? order.evaluation == null ? Colors.amber[100] : Colors.white : Colors.green[50],
+      shadowColor: order.canceled ? Colors.red : (order.status.isLast() ? order.evaluation == null ? Colors.amber : Colors.white : Colors.green),
+      color: order.canceled ? Colors.white : (order.status.isLast() ? order.evaluation == null ? Colors.amber[100] : Colors.white : Colors.green[50]),
       borderOnForeground: true,
       child: Container(
         padding: EdgeInsets.all(10),
@@ -52,9 +52,12 @@ class _HistoricWidgetState extends State<HistoricWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 order.evaluation == null ?
-                Text(order.status.current.name, style: Theme.of(context).textTheme.body2,)
+                  Text(
+                    order.canceled ? "Esse pedido foi cancelado" : order.status.current.name,
+                    style: Theme.of(context).textTheme.body2,
+                  )
                     :
-                StarsWidget(initialStar: order.evaluation.stars, size: 30,),
+                  StarsWidget(initialStar: order.evaluation.stars, size: 30,),
                 costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
               ],
             ),

@@ -17,7 +17,7 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordState extends State<ChangePasswordPage> implements UserContractView {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool _isLoading = false;

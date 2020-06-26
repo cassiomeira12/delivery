@@ -14,7 +14,10 @@ class BaseUser extends BaseModel<BaseUser> {
   PhoneNumber phoneNumber;
   bool socialProvider;
 
-  BaseUser() : super('_User');
+  BaseUser({String id}) : super('_User') {
+    this.id = id;
+    objectId = id;
+  }
 
   BaseUser.fromMap(Map<dynamic, dynamic>  map) : super('_User') {
     objectId = map["objectId"];
