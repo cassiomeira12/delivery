@@ -55,7 +55,7 @@ class _TabsPageState extends State<TabsPage> {
   void listOrders() async {
     var result = await presenter.findBy("user", Singletons.user().toPointer());
     if (result != null) {
-      GetIt.instance<OrderListSingleton>().list.addAll(result);
+      Singletons.orders().addAll(result);
       var temp = 0;
       result.forEach((element) {
         if (!element.status.isLast()) {
@@ -199,7 +199,7 @@ class _TabsPageState extends State<TabsPage> {
                       FaIcon(FontAwesomeIcons.shoppingCart, color: currentTab == 3 ? Theme.of(context).backgroundColor : Colors.grey,),
                       Padding(
                         padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
-                        child: notificationCount( Singletons.order().id == null ? orderCount : Singletons.order().items.length ),
+                        child: notificationCount(Singletons.orders().length),
                       ),
                     ],
                   ),

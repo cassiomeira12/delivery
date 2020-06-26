@@ -103,7 +103,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       _loading = false;
     });
     Singletons.order().id = result.id;
-    GetIt.instance<OrderListSingleton>().list.add(result);
+    Singletons.orders().add(Order.fromMap(Singletons.order().toMap()));
     widget.orderCallback();
     PageRouter.pop(context, true);
   }
@@ -929,6 +929,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
       if (phoneNumber != null) {
         Singletons.user().phoneNumber = phoneNumber;
+        PreferencesUtil.setUserData(Singletons.user().toMap());
         userPresenter.update(Singletons.user());
         return true;
       }

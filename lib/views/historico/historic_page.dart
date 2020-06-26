@@ -32,8 +32,10 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
     super.initState();
     verifyNewOrder();
     presenter = OrdersPresenter(this);
-    ordersList = GetIt.instance<OrderListSingleton>().list.reversed.toList();
-    presenter.listUserOrders();
+    ordersList = Singletons.orders();
+    ordersList.forEach((element) {
+      print(element.toMap());
+    });
   }
 
   @override
@@ -68,7 +70,7 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
       setState(() {
         ordersList = list;
       });
-      GetIt.instance<OrderListSingleton>().list.addAll(list);
+      Singletons.orders().addAll(list);
     }
   }
 
@@ -105,7 +107,7 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
         setState(() {
           ordersList = null;
         });
-        GetIt.instance<OrderListSingleton>().list.clear();
+        Singletons.orders().clear();
         return presenter.findBy("user", Singletons.user().toPointer());
       },
       child: Center(
