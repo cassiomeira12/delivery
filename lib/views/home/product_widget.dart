@@ -55,7 +55,7 @@ class _ProductWidgetState extends State<ProductWidget> {
         ),
         onPressed: () {
           widget.onPressed(product);
-        }
+        },
       ),
     );
   }

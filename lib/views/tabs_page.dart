@@ -12,9 +12,13 @@ import '../views/notifications/notifications_page.dart';
 import '../views/settings/settings_page.dart';
 
 class TabsPage extends StatefulWidget {
-  TabsPage({this.logoutCallback});
-
+  final VoidCallback loginCallback;
   final VoidCallback logoutCallback;
+
+  TabsPage({
+    this.loginCallback,
+    this.logoutCallback
+  });
 
   @override
   _TabsPageState createState() => _TabsPageState();
@@ -33,7 +37,7 @@ class _TabsPageState extends State<TabsPage> {
   void initState() {
     super.initState();
     screens = [
-      HomePage(orderCallback: orderCallback,),
+      HomePage(loginCallback: widget.loginCallback, orderCallback: orderCallback,),
       NotificationsPage(),
       ComandaPage(),
       HistoricPage(),

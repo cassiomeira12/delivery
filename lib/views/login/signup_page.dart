@@ -70,8 +70,8 @@ class _SignUpPageState extends State<SignUpPage> implements LoginContractView{
                   ShapeRound(
                       _showForm()
                   ),
-                  textOU(),
-                  googleButton(),
+                  //textOU(),
+                  //googleButton(),
                 ],
               ),
             ],

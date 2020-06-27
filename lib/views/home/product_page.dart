@@ -1,3 +1,4 @@
+import '../../views/login/login_page.dart';
 import '../../models/singleton/singletons.dart';
 import '../../models/company/company.dart';
 import '../../models/order/order_item.dart';
@@ -21,10 +22,12 @@ import '../page_router.dart';
 import 'choice_widget.dart';
 
 class ProductPage extends StatefulWidget {
+  final VoidCallback loginCallback;
   final dynamic item;
   final Company company;
 
   const ProductPage({
+    this.loginCallback,
     this.item,
     this.company,
   });
@@ -395,7 +398,24 @@ class _ProductPageState extends State<ProductPage> {
             ),
           ],
         ),
-        onPressed: () {
+        onPressed: () async {
+          if (Singletons.user().isAnonymous()) {
+            final result = await showOkCancelAlertDialog(
+              context: context,
+              title: "Criar conta",
+              message: "Você precisa criar uma conta para fazer pedido",
+              okLabel: CRIAR_CONTA,
+              cancelLabel: CANCELAR,
+            );
+            switch(result) {
+              case OkCancelResult.ok:
+                PageRouter.push(context, LoginPage(loginCallback: widget.loginCallback, anonymousLogin: true,));
+                break;
+              case OkCancelResult.cancel:
+                break;
+            }
+            return;
+          }
           saveOrderItem();
         },
       ),

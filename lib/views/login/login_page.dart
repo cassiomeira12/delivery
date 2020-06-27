@@ -21,9 +21,13 @@ import 'forgot_password_page.dart';
 import 'signup_page.dart';
 
 class LoginPage extends StatefulWidget {
-  LoginPage({this.loginCallback});
-
   final VoidCallback loginCallback;
+  final bool anonymousLogin;
+  
+  LoginPage({
+    this.loginCallback,
+    this.anonymousLogin = false,
+  });
 
   @override
   State<StatefulWidget> createState() => _LoginPageState();
@@ -77,7 +81,11 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
         Singletons.user().phoneNumber = phoneNumber;
       }
     }
-    widget.loginCallback();
+    if (widget.anonymousLogin) {
+      PageRouter.pop(context);
+    } else {
+      widget.loginCallback();
+    }
   }
 
   @override
@@ -125,7 +133,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
               _showForm()
           ),
           textOU(),
-          googleButton(),
+          //googleButton(),
           signupButton(),
           Padding(
             padding: EdgeInsets.fromLTRB(10, 12, 10, 30),

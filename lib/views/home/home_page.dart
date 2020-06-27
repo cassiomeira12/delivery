@@ -22,9 +22,11 @@ import '../page_router.dart';
 import 'company_page.dart';
 
 class HomePage extends StatefulWidget {
+  final VoidCallback loginCallback;
   final VoidCallback orderCallback;
 
   HomePage({
+    @required this.loginCallback,
     @required this.orderCallback
   });
 
@@ -314,7 +316,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
           item: item,
           dateTime: dateNow,
           onPressed: (value) {
-            PageRouter.push(context, CompanyPage(company: item, orderCallback: widget.orderCallback,));
+            PageRouter.push(context, CompanyPage(loginCallback: widget.loginCallback, company: item, orderCallback: widget.orderCallback,));
           },
         ),
       ),

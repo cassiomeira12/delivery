@@ -23,12 +23,14 @@ import '../page_router.dart';
 import 'product_page.dart';
 
 class CompanyPage extends StatefulWidget {
+  final VoidCallback loginCallback;
   final VoidCallback orderCallback;
   Company company;
 
   CompanyPage({
-    @required this.company,
+    @required this.loginCallback,
     @required this.orderCallback,
+    @required this.company,
   });
 
   @override
@@ -322,7 +324,11 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         child: ProductWidget(
           item: item,
           onPressed: (value) async {
-            var result = await PageRouter.push(context, ProductPage(item: item, company: widget.company,));
+            var result = await PageRouter.push(context, ProductPage(
+              loginCallback: widget.loginCallback,
+              item: item,
+              company: widget.company,
+            ));
             if (result != null) {
               updateOrders();
             }
