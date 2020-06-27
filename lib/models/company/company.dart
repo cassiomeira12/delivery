@@ -26,11 +26,11 @@ class Company extends BaseModel<Company> {
   Company.fromMap(Map<dynamic, dynamic>  map) : super('Company') {
     objectId = map["objectId"];
     id = objectId;
-    //topic = map["topic"];
+    topic = map["topic"];
     name = map["name"];
     cnpj = map["cnpj"];
     logoURL = map["logo"] == null ? null : (map["logo"] as dynamic)["url"];
-    bannerURL = map["banner"] == null ? null : (map["logo"] as dynamic)["url"];
+    bannerURL = map["banner"] == null ? null : (map["banner"] as dynamic)["url"];
     openHours = map["openHours"] == null ?
       List() :
       List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();

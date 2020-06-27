@@ -1,3 +1,5 @@
+import 'package:latlong/latlong.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
 import '../../models/base_user.dart';
 import '../../models/address/small_town.dart';
 import '../base_model.dart';
@@ -11,7 +13,7 @@ class Address extends BaseModel<Address> {
   String number;
   String reference;
   City city;
-  Map location;
+  ParseGeoPoint location;
   SmallTown smallTown;
 
   Address() : super('Address');
@@ -26,7 +28,7 @@ class Address extends BaseModel<Address> {
     number = map["number"];
     reference = map["reference"];
     city = map["city"] == null ? null : City.fromMap(map["city"]);
-    location = map["location"] == null ? null : Map.from(map["location"]);
+    location = map["location"];
     smallTown = map["smallTown"] == null ? null : SmallTown.fromMap(map["smallTown"]);
   }
 

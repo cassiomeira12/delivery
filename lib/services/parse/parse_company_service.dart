@@ -112,7 +112,8 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
-      ..includeObject(["address", "address.city"]);
+      ..includeObject(["address", "address.city"])
+      ..orderByDescending("createdAt");
 
     return await company.query().then((value) async {
       if (value.success) {
@@ -156,7 +157,8 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
-      ..includeObject(["address", "address.smallTown", "address.smallTown.city"]);
+      ..includeObject(["address", "address.smallTown", "address.smallTown.city"])
+      ..orderByDescending("createdAt");
 
     return await company.query().then((value) async {
       if (value.success) {

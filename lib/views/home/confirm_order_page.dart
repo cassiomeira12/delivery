@@ -1,4 +1,5 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -527,10 +528,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 ),
                 onTap: () async {
                   var address =  Singletons.order().company.address;
-                  var mapSchema = 'geo:${address.location["lat"]},${address.location["long"]}';
-                  if (await canLaunch(mapSchema)) {
-                    await launch(mapSchema);
+                  if (address != null) {
+                    MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
                   }
+//                  var mapSchema = 'geo:${address.location.latitude},${address.location.longitude}';
+//                  if (await canLaunch(mapSchema)) {
+//                    await launch(mapSchema);
+//                  }
                 },
               ) : deliveryAddress == null ?
               Padding(

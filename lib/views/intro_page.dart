@@ -15,18 +15,22 @@ class IntroPage extends StatefulWidget {
 class _IntroPageState extends State<IntroPage> {
   List<Slide> slides = List();
 
-  @override
-  void initState() {
-    super.initState();
+  Color colorBegin;
+  Color colorEnd;
+
+  void slidesPage() {
+    colorBegin = Color(0xffFFDAB9);
+    colorEnd = Color(0xff40E0D0);
     slides.add(slideStart());
     //slides.add(slide1());
-    //slides.add(slide2());
-    //slides.add(slide3());
+    slides.add(slide2());
+    slides.add(slide3());
     slides.add(slideFinish());
   }
 
   @override
   Widget build(BuildContext context) {
+    slidesPage();
     return IntroSlider(
       slides: slides,
       colorSkipBtn: Color(0x33000000),
@@ -54,11 +58,11 @@ class _IntroPageState extends State<IntroPage> {
     return Slide(
       title: APP_NAME,
       styleTitle: styleTitle(),
-      description:"Bem-vindo ao ${APP_NAME}",
+      description:"Chegou o ${APP_NAME}, sua mais nova forma de pedir comida",
       styleDescription: styleDescription(),
       pathImage: "assets/logo_app.png",
-      colorBegin: Color(0xffFFDAB9),
-      colorEnd: Color(0xff40E0D0),
+      colorBegin: colorBegin,
+      colorEnd: colorEnd,
       directionColorBegin: Alignment.topLeft,
       directionColorEnd: Alignment.bottomRight,
     );
@@ -68,11 +72,11 @@ class _IntroPageState extends State<IntroPage> {
     return Slide(
       //title: "Login",
       //styleTitle: styleTitle(),
-      description:"Crie uma conta e aproveite todos os recurso do ${APP_NAME}",
+      description:"Crie sua conta e aproveite todos os recurso do ${APP_NAME}",
       styleDescription: styleDescription(),
       pathImage: "assets/logo_app.png",
-      colorBegin: Color(0xffFFDAB9),
-      colorEnd: Color(0xff40E0D0),
+      colorBegin: colorEnd,
+      colorEnd: colorBegin,
       directionColorBegin: Alignment.topLeft,
       directionColorEnd: Alignment.bottomRight,
     );
@@ -89,7 +93,7 @@ class _IntroPageState extends State<IntroPage> {
 
   TextStyle styleDescription() {
     return TextStyle(
-      fontSize: 20,
+      fontSize: 25,
       color: Colors.black45,
       fontWeight: FontWeight.bold,
       fontFamily: 'Raleway',
@@ -100,11 +104,11 @@ class _IntroPageState extends State<IntroPage> {
     return Slide(
       title: "Gerenciar",
       styleTitle: styleTitle(),
-      description:"Controle todos os gastos com seu veículo",
+      description:"Chegou o ${APP_NAME}, sua mais nova forma de pedir comida",
       styleDescription: styleDescription(),
       pathImage: "assets/produto.png",
-      colorBegin: Color(0xffFFDAB9),
-      colorEnd: Color(0xff40E0D0),
+      colorBegin: colorBegin,
+      colorEnd: colorEnd,
       directionColorBegin: Alignment.topRight,
       directionColorEnd: Alignment.bottomLeft,
     );
@@ -112,13 +116,13 @@ class _IntroPageState extends State<IntroPage> {
 
   Slide slide2() {
     return Slide(
-      title: "Combustível",
+      title: "",
       styleTitle: styleTitle(),
-      description:"Anote todos os gastos com combustível",
+      description:"Escolha sua cidade e veja os estabelecimentos disponíveis",
       styleDescription: styleDescription(),
-      pathImage: "assets/combustivel.png",
-      colorBegin: Color(0xffFFDAB9),
-      colorEnd: Color(0xff40E0D0),
+      pathImage: "assets/user_location.png",
+      colorBegin: colorBegin,
+      colorEnd: colorEnd,
       directionColorBegin: Alignment.topLeft,
       directionColorEnd: Alignment.bottomRight,
     );
@@ -126,13 +130,13 @@ class _IntroPageState extends State<IntroPage> {
 
   Slide slide3() {
     return Slide(
-      title: "Manutenção",
+      title: "",
       styleTitle: styleTitle(),
-      description:"Gerencie as manutenções e revisões do seu veículo",
+      description:"Depois é só fazer seu pedido e aguardar a entrega",
       styleDescription: styleDescription(),
-      pathImage: "assets/manutencao.png",
-      colorBegin: Color(0xffFFDAB9),
-      colorEnd: Color(0xff40E0D0),
+      pathImage: "assets/delivery.png",
+      colorBegin: colorBegin,
+      colorEnd: colorEnd,
       directionColorBegin: Alignment.topRight,
       directionColorEnd: Alignment.bottomLeft,
     );

@@ -13,7 +13,7 @@ class SmallTown extends BaseModel<SmallTown> {
     objectId = map["objectId"];
     id = objectId;
     name = map["name"];
-    city = map["city"] == null ? null : City.fromMap(map["city"]);//City().fromJson(map["city"]);
+    city = map["city"] == null ? null : City.fromMap(map["city"]);
   }
 
   @override
