@@ -1,4 +1,4 @@
-package com.navan.delivery
+package com.navan.kideliver
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

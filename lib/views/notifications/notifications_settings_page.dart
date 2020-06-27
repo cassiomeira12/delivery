@@ -1,9 +1,7 @@
-import 'package:delivery/models/singleton/singletons.dart';
-import 'package:delivery/utils/log_util.dart';
-import 'package:delivery/utils/preferences_util.dart';
-import 'package:delivery/widgets/scaffold_snackbar.dart';
+import '../../models/singleton/singletons.dart';
+import '../../utils/preferences_util.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
 import '../../presenters/user/user_presenter.dart';

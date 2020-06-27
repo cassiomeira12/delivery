@@ -236,7 +236,7 @@ class ParseUserService implements UserContractService {
     } else {
       var userData = await PreferencesUtil.getUserData();
       var user = BaseUser.fromMap(userData);
-      if (!user.emailVerified || user.notificationToken == null || user.phoneNumber == null) {
+      if (!user.isAnonymous() && (!user.emailVerified || user.notificationToken == null || user.phoneNumber == null)) {
         return read(BaseUser(id: currentUser.objectId)).then((value) {
           return value;
         }).catchError((error) async {

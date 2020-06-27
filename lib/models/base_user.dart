@@ -69,6 +69,10 @@ class BaseUser extends BaseModel<BaseUser> {
     return map;
   }
 
+  bool isAnonymous() {
+    return name.isEmpty && username.isEmpty && email.isEmpty && password.isEmpty;
+  }
+
 }
 
 class NotificationToken extends BaseModel<NotificationToken> {

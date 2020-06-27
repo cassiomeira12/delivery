@@ -1,4 +1,4 @@
-import 'package:delivery/widgets/text_input_field.dart';
+import '../../widgets/text_input_field.dart';
 import 'package:flutter/material.dart';
 import '../../models/phone_number.dart';
 import '../../strings.dart';

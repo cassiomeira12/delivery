@@ -1,5 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:delivery/views/historico/evalutation_dialog.dart';
+import '../../views/historico/evalutation_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';

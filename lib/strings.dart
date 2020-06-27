@@ -1,6 +1,6 @@
-const APP_NAME = "Delivery App";
+const APP_NAME = "Kideliver";
 
-const TAB1 = "Delivery";
+const TAB1 = APP_NAME;
 const TAB2 = "Notificações";
 const TAB3 = "Histórico de pedidos";
 const TAB4 = "Ajustes";
@@ -35,6 +35,7 @@ const EMAIL_VERIFICACAO = "Email de verificação";
 const REENVIAR_EMAIL = "Reenviar email";
 
 const TRY_AGAIN = "Tentar novamente";
+const USER_ANONYMOUS = "Você precisa criar uma conta";
 
 const SUCCESS_EMAIL_SEND = "Email enviado com sucesso!";
 const SUCCESS_UPDATE_DATA = "Dados alterados com sucesso!";

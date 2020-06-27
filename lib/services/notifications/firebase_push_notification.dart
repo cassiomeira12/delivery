@@ -1,6 +1,5 @@
 import 'dart:io';
-import 'package:delivery/models/singleton/singletons.dart';
-
+import '../../models/singleton/singletons.dart';
 import '../../services/notifications/local_notifications.dart';
 import '../../utils/preferences_util.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -62,6 +61,7 @@ class FirebaseNotifications {
 
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
+        print("onMessage $message");
         pushNotification(message);
       },
       onResume: (Map<String, dynamic> message) async {
@@ -95,7 +95,6 @@ class FirebaseNotifications {
   }
 
   void pushNotification(Map<String, dynamic> message) {
-    print("onMessage $message");
     String title, body, payload = "";
 
     if (message.containsKey('data')) {
@@ -108,10 +107,13 @@ class FirebaseNotifications {
       body = notification["body"];
 
       var user = Singletons.user();
-
-      if (user != null && user.notificationToken != null && user.notificationToken.active) {
+      if (user.isAnonymous()) {
         showSilentNotification(notifications, title: title, body: body, payload: payload);
-        //showOngoingNotification(notifications, title: title, body: body, payload: payload);
+      } else {
+        if (user != null && user.notificationToken != null && user.notificationToken.active) {
+          showSilentNotification(notifications, title: title, body: body, payload: payload);
+          //showOngoingNotification(notifications, title: title, body: body, payload: payload);
+        }
       }
     }
   }

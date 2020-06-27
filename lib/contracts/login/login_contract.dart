@@ -10,6 +10,7 @@ abstract class LoginContractPresenter {
   dispose();
   signIn(String email, String password);
   signInWithGoogle();
+  signAnonymous();
   onFailure(String error);
   onSuccess(BaseUser user);
 }
@@ -17,5 +18,6 @@ abstract class LoginContractPresenter {
 abstract class LoginContractService {
   dispose();
   signIn(String email, String password);
+  signAnonymous();
   signInWithGoogle();
 }

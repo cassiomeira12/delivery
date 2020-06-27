@@ -72,7 +72,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
   onSuccess(BaseUser result) async {
     Singletons.user().updateData(result);
     if (result.emailVerified) {
-      if (result.phoneNumber == null) {
+      if (result.phoneNumber == null && !result.isAnonymous()) {
         var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
         Singletons.user().phoneNumber = phoneNumber;
       }
@@ -127,6 +127,15 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
           textOU(),
           googleButton(),
           signupButton(),
+          Padding(
+            padding: EdgeInsets.fromLTRB(10, 12, 10, 30),
+            child: LightButton(
+              text: "Entrar como convidado".toUpperCase(),
+              onPressed: () {
+                presenter.signAnonymous();
+              },
+            ),
+          ),
         ],
       ),
     );
@@ -228,7 +237,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   Widget googleButton() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(60.0, 12.0, 60.0, 0.0),
+      padding: EdgeInsets.fromLTRB(60, 12, 60, 0),
       child: SecondaryButton(
         child: Row(
           children: <Widget>[
@@ -267,7 +276,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   Widget signupButton() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(60, 12, 60, 16),
+      padding: EdgeInsets.fromLTRB(60, 12, 60, 0),
       child: SecondaryButton(
         text: CRIAR_CONTA,
         onPressed: () {

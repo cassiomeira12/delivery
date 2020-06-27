@@ -1,5 +1,4 @@
-import 'package:delivery/utils/log_util.dart';
-import 'package:delivery/widgets/scaffold_snackbar.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../contracts/address/address_contract.dart';
 import '../../models/address/address.dart';
@@ -320,9 +319,6 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
   listSuccess(List<Address> list) async {
     setState(() {
       addressList = list;
-    });
-    list.forEach((element) {
-      Log.d(element.toMap());
     });
     if (addressList.isEmpty) {
       try {

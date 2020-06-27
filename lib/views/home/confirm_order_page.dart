@@ -26,7 +26,6 @@ import '../../widgets/light_button.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/secondary_button.dart';
-
 import '../../strings.dart';
 import '../page_router.dart';
 

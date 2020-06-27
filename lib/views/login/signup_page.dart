@@ -1,4 +1,4 @@
-import 'package:delivery/models/singleton/singletons.dart';
+import '../../models/singleton/singletons.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';

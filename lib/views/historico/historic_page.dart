@@ -1,5 +1,3 @@
-import 'package:get_it/get_it.dart';
-import '../../models/singleton/order_list_singleton.dart';
 import '../../models/singleton/singletons.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/loading_widget.dart';

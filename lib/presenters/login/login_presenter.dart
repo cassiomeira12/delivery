@@ -32,6 +32,12 @@ class LoginPresenter extends LoginContractPresenter {
   }
 
   @override
+  signAnonymous() {
+    if (_view != null) _view.showProgress();
+    if (service != null) service.signAnonymous();
+  }
+
+  @override
   onFailure(String error) {
     if (_view != null) _view.hideProgress();
     if (_view != null) _view.onFailure(error);

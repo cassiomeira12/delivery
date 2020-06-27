@@ -1,5 +1,4 @@
-import 'package:delivery/utils/log_util.dart';
-
+import '../../utils/log_util.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
 import '../../services/parse/base_parse_service.dart';

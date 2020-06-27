@@ -1,5 +1,5 @@
-import 'package:delivery/models/menu/menu.dart';
-import 'package:delivery/models/singleton/menu_map_singleton.dart';
+import '../../models/menu/menu.dart';
+import '../../models/singleton/menu_map_singleton.dart';
 import 'package:get_it/get_it.dart';
 import 'company_list_singleton.dart';
 import 'order_list_singleton.dart';

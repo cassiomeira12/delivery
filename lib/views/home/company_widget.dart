@@ -1,9 +1,6 @@
-import '../../models/company/opening_hour.dart';
 import '../../widgets/image_network_widget.dart';
-import '../../widgets/list_view_body.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/company/company.dart';
-import '../../utils/date_util.dart';
 import 'package:flutter/material.dart';
 
 class CompanyWidget extends StatefulWidget {

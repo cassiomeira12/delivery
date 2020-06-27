@@ -1,7 +1,5 @@
 import 'dart:io';
-import '../models/singleton/order_list_singleton.dart';
 import '../models/singleton/singletons.dart';
-import 'package:get_it/get_it.dart';
 import '../contracts/order/order_contract.dart';
 import '../presenters/order/order_presenter.dart';
 import 'package:flutter/material.dart';

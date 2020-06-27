@@ -1,5 +1,4 @@
-import 'package:delivery/services/parse/parse_notification_service.dart';
-
+import '../../services/parse/parse_notification_service.dart';
 import '../../contracts/user/notification_contract.dart';
 import '../../models/user_notification.dart';
 import '../../services/firebase/firebase_notification_service.dart';

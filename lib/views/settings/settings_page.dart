@@ -100,6 +100,10 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
                   ],
                 ),
                 onTap: () {
+                  if (Singletons.user().isAnonymous()) {
+                    ScaffoldSnackBar.failure(context, _scaffoldKey, USER_ANONYMOUS);
+                    return;
+                  }
                   PageRouter.push(context, UserPage());
                 },
               ),
@@ -193,6 +197,10 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
             ],
           ),
           onPressed: () async {
+            if (Singletons.user().isAnonymous()) {
+              ScaffoldSnackBar.failure(context, _scaffoldKey, USER_ANONYMOUS);
+              return;
+            }
             await PageRouter.push(context, UserPage());
             setState(() {
               userName = Singletons.user().name;
@@ -237,6 +245,10 @@ class _SettingsPageState extends State<SettingsPage> implements UserContractView
             ],
           ),
           onPressed: () {
+            if (Singletons.user().isAnonymous()) {
+              ScaffoldSnackBar.failure(context, _scaffoldKey, USER_ANONYMOUS);
+              return;
+            }
             PageRouter.push(context, NotificationsSettingsPage());
           },
         ),

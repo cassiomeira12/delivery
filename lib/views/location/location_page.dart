@@ -1,5 +1,5 @@
-import 'package:delivery/contracts/address/states_contract.dart';
-import 'package:delivery/presenters/address/states_presenter.dart';
+import '../../contracts/address/states_contract.dart';
+import '../../presenters/address/states_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

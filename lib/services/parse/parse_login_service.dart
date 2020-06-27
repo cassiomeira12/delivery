@@ -153,4 +153,29 @@ class ParseLoginService implements LoginContractService {
     });
   }
 
+  @override
+  signAnonymous() async {
+    var user = ParseUser("", "", "");
+    user.loginAnonymous().then((value) async {
+      if (value.success) {
+        var json = value.result.toJson();
+        BaseUser user = BaseUser.fromMap(json);
+        user.name = "";
+        user.emailVerified = true;
+        PreferencesUtil.setUserData(user.toMap());
+        presenter.onSuccess(user);
+      } else {
+        throw value.error;
+      }
+    }).catchError((error) {
+      switch (error.code) {
+        case -1:
+          presenter.onFailure(ERROR_NETWORK);
+          break;
+        default:
+          presenter.onFailure(error.message);
+      }
+    });
+  }
+
 }

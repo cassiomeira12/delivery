@@ -1,5 +1,4 @@
-import 'package:delivery/utils/log_util.dart';
-import 'package:delivery/utils/preferences_util.dart';
+import '../../utils/preferences_util.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class ParsePushNotification {

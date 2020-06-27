@@ -1,10 +1,8 @@
-import 'package:delivery/models/order/evaluation.dart';
-import 'package:delivery/widgets/area_input_field.dart';
-import 'package:delivery/widgets/primary_button.dart';
-import 'package:delivery/widgets/stars_widget.dart';
-import 'package:delivery/widgets/text_input_field.dart';
+import '../../models/order/evaluation.dart';
+import '../../widgets/area_input_field.dart';
+import '../../widgets/primary_button.dart';
+import '../../widgets/stars_widget.dart';
 import 'package:flutter/material.dart';
-
 import '../page_router.dart';
 
 class EvaluationDialog extends StatefulWidget {

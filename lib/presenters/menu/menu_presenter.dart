@@ -1,5 +1,4 @@
-import 'package:delivery/services/parse/parse_menu_service.dart';
-
+import '../../services/parse/parse_menu_service.dart';
 import '../../models/menu/menu.dart';
 import '../../services/firebase/firebase_menu_service.dart';
 import '../../contracts/menu/menu_contract.dart';

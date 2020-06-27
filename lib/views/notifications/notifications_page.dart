@@ -1,6 +1,4 @@
-import 'package:delivery/models/singleton/singletons.dart';
-
-import '../../models/singleton/notification_list_singleton.dart';
+import '../../models/singleton/singletons.dart';
 import '../../contracts/user/notification_contract.dart';
 import '../../models/user_notification.dart';
 import '../../presenters/user/notification_presenter.dart';

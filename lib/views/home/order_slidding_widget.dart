@@ -1,11 +1,9 @@
-import 'package:delivery/models/singleton/singletons.dart';
-
+import '../../models/singleton/singletons.dart';
 import '../../models/order/order_item.dart';
 import '../../views/home/confirm_order_page.dart';
 import '../../widgets/primary_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-
 import '../../strings.dart';
 import '../page_router.dart';
 

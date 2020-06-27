@@ -1,4 +1,4 @@
-import 'package:delivery/models/base_model.dart';
+import '../models/base_model.dart';
 
 class VersionApp extends BaseModel<VersionApp> {
   String name;

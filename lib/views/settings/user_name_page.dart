@@ -1,4 +1,4 @@
-import 'package:delivery/utils/preferences_util.dart';
+import '../../utils/preferences_util.dart';
 import 'package:flutter/material.dart';
 import '../../models/singleton/singletons.dart';
 import '../../contracts/user/user_contract.dart';

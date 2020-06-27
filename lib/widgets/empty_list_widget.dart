@@ -1,5 +1,5 @@
-import 'package:delivery/strings.dart';
-import 'package:delivery/widgets/light_button.dart';
+import '../strings.dart';
+import '../widgets/light_button.dart';
 import 'package:flutter/material.dart';
 
 class EmptyListWidget extends StatelessWidget {
