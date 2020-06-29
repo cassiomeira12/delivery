@@ -36,6 +36,7 @@ dependencies:
   sliding_up_panel: ^1.0.2
   cached_network_image: ^2.2.0+1
   auto_size_text: ^2.1.0
+  timeline_tile: ^0.1.2
 
   # [Outros]
   google_sign_in: ^4.3.0

@@ -1,3 +1,4 @@
+import 'package:kideliver/utils/log_util.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import '../../contracts/company/company_contract.dart';
 import '../../models/company/company.dart';
@@ -112,7 +113,7 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
-      ..includeObject(["address", "address.city"])
+      ..includeObject(["address", "address.city", "deliveryStatus", "pickupStatus"])
       ..orderByDescending("createdAt");
 
     return await company.query().then((value) async {
@@ -126,9 +127,13 @@ class ParseCompanyService extends CompanyContractService {
             var companyJson = obj.toJson();
             var addressJson = obj.get("address").toJson();
             var cityJson = obj.get("address").get("city").toJson();
+            var delivertStatus = obj.get("deliveryStatus").toJson();
+            var pickupStatus = obj.get("pickupStatus").toJson();
 
             addressJson["city"] = cityJson;
             companyJson["address"] = addressJson;
+            companyJson["delivertStatus"] = delivertStatus;
+            companyJson["pickupStatus"] = pickupStatus;
 
             return Company.fromMap(companyJson);
           }).toList();
@@ -157,7 +162,7 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
-      ..includeObject(["address", "address.smallTown", "address.smallTown.city"])
+      ..includeObject(["address", "address.smallTown", "address.smallTown.city", "deliveryStatus", "pickupStatus"])
       ..orderByDescending("createdAt");
 
     return await company.query().then((value) async {
@@ -172,10 +177,14 @@ class ParseCompanyService extends CompanyContractService {
             var addressJson = obj.get("address").toJson();
             var smallTownJson = obj.get("address").get("smallTown").toJson();
             var cityJson = obj.get("address").get("smallTown").get("city").toJson();
+            var delivertStatus = obj.get("deliveryStatus").toJson();
+            var pickupStatus = obj.get("pickupStatus").toJson();
 
             smallTownJson["city"] = cityJson;
             addressJson["smallTown"] = smallTownJson;
             companyJson["address"] = addressJson;
+            companyJson["delivertStatus"] = delivertStatus;
+            companyJson["pickupStatus"] = pickupStatus;
 
             return Company.fromMap(companyJson);
           }).toList();

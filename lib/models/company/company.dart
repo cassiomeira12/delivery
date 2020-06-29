@@ -1,3 +1,6 @@
+import 'package:kideliver/models/order/order.dart';
+import 'package:kideliver/models/order/order_status.dart';
+
 import '../../models/phone_number.dart';
 import '../../utils/date_util.dart';
 import '../../models/address/address.dart';
@@ -17,6 +20,9 @@ class Company extends BaseModel<Company> {
   List<TypePayment> typePayments;
   Delivery delivery;
   PhoneNumber phoneNumber;
+
+  OrderStatus deliveryStatus;
+  OrderStatus pickupStatus;
 
   Company() : super('Company') {
     openHours = List();
@@ -40,6 +46,8 @@ class Company extends BaseModel<Company> {
       List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
     delivery = map["delivery"] == null ? null : Delivery.fromMap(map["delivery"]);
     phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
+    deliveryStatus = map["deliveryStatus"] == null ? null : OrderStatus.fromMap(map["deliveryStatus"]);
+    pickupStatus = map["pickupStatus"] == null ? null : OrderStatus.fromMap(map["pickupStatus"]);
   }
 
   @override
@@ -56,24 +64,10 @@ class Company extends BaseModel<Company> {
     map["typePayments"] = typePayments.map<Map>((e) => e.toMap()).toList();
     map["delivery"] = delivery == null ? null : delivery.toMap();
     map["phoneNumber"] = phoneNumber == null ? null : phoneNumber.toMap();
+    map["deliveryStatus"] = deliveryStatus == null ? null : deliveryStatus.toPointer();
+    map["pickupStatus"] = pickupStatus == null ? null : pickupStatus.toPointer();
     return map;
   }
-
-//  @override
-//  update(Company item) {
-//    id = item.id;
-//    topic = item.topic;
-//    name = item.name;
-//    cnpj = item.cnpj;
-//    logoURL = item.logoURL;
-//    bannerURL = item.bannerURL;
-//    openHours = item.openHours;
-//    address = item.address;
-//    idMenu = item.idMenu;
-//    typePayments = item.typePayments;
-//    delivery = item.delivery;
-//    phoneNumber = item.phoneNumber;
-//  }
 
   bool isTodayOpen() {
     OpeningHour openingHourToday;

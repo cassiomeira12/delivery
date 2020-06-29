@@ -4,26 +4,20 @@ class OrderStatus extends BaseModel<OrderStatus> {
   Status current;
   List<Status> values = List();
 
-  OrderStatus() : super('OrderStatus') {
-    values.add(Status("Pedido enviado"));
-    values.add(Status("Pedido confirmado"));
-    values.add(Status("Pedido em preparo"));
-    values.add(Status("Pedido pronto"));
-    values.add(Status("Pedido saiu pra entrega"));
-    values.add(Status("Pedido entregue"));
-    current = values[0];
-  }
+  OrderStatus() : super('OrderStatus');
 
   OrderStatus.fromMap(Map<dynamic, dynamic>  map) : super('OrderStatus') {
-    current = Status.fromMap(map["current"]);
-    values = List.from(map["values"]).map<Status>((e) => Status.fromMap(e)).toList();
+    current = map["current"] == null ? null : Status.fromMap(map["current"]);
+    values = map["values"] == null ?
+      null :
+      List.from(map["values"]).map<Status>((e) => Status.fromMap(e)).toList();
   }
 
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
-    map["current"] = current.toMap();
-    map["values"] = values.map((e) => e.toMap()).toList();
+    map["current"] = current == null ? null : current.toMap();
+    map["values"] = values == null ? null : values.map((e) => e.toMap()).toList();
     return map;
   }
 

@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:timeline_tile/timeline_tile.dart';
 import '../../views/historico/evalutation_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../contracts/order/order_contract.dart';
@@ -162,7 +163,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
           ),
         ];
       },
-      body: body(),
+      body: timeLine(),//body(),
     );
   }
 
@@ -244,7 +245,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 )
                   :
                 Text(
-                  order.deliveryForecast.toString(),
+                  order.deliveryForecast == null ? "" : order.deliveryForecast.toString(),
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 35,
@@ -378,6 +379,72 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
         fontSize: 22,
         color: Colors.red,
         fontWeight: FontWeight.bold,
+      ),
+    );
+  }
+
+  Widget timeLine() {
+    int index = 0;
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildListDelegate(
+            order.status.values.map((e) {
+              return timelineItem(e, index++);
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget timelineItem(Status status, int index) {
+    return TimelineTile(
+      alignment: TimelineAlign.manual,
+      lineX: 0.1,
+      isFirst: index == 0,
+      isLast: index == (order.status.values.length-1),
+      indicatorStyle: IndicatorStyle(
+        width: 20,
+        color: Color(0xFFDADADA),
+        padding: EdgeInsets.all(6),
+      ),
+      rightChild: Flexible(
+        flex: 1,
+        child: Container(
+          margin: EdgeInsets.only(left: 10),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                status.name,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 25,
+                  color: this.currentStatusIndex > index ? Colors.grey[550] : this.currentStatusIndex == index ? Colors.green : Colors.grey[300],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              status.date != null ?
+              Padding(
+                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                child: Text(
+                  DateUtil.formatHourMinute(DateTime.now()),//DateUtil.formatHourMinute(status.date),
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.black38,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+              ) : Container(),
+            ],
+          ),
+        ),
+      ),
+      topLineStyle: const LineStyle(
+        color: Color(0xFFDADADA),
       ),
     );
   }

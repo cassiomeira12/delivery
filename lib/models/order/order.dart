@@ -31,7 +31,6 @@ class Order extends BaseModel<Order> {
 
   Order() : super('Order') {
     items = List();
-    status = OrderStatus();
   }
 
   Order.fromMap(Map<dynamic, dynamic>  map) : super('Order') {

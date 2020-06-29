@@ -1,4 +1,5 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kideliver/models/order/order_status.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
@@ -85,16 +86,12 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   }
 
   @override
-  listSuccess(List<Order> list) {
-    print(list);
-  }
+  listSuccess(List<Order> list) {}
 
   @override
   onFailure(String error) {
-    print(error);
-    setState(() {
-      _loading = false;
-    });
+    setState(() => _loading = false);
+    ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override
@@ -531,10 +528,6 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   if (address != null) {
                     MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
                   }
-//                  var mapSchema = 'geo:${address.location.latitude},${address.location.longitude}';
-//                  if (await canLaunch(mapSchema)) {
-//                    await launch(mapSchema);
-//                  }
                 },
               ) : deliveryAddress == null ?
               Padding(
@@ -566,7 +559,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Text(
-          "Local de entrega",
+          pickup ? "Local de retirada" : "Local de entrega",
           textAlign: TextAlign.left,
           style: TextStyle(
             fontSize: 25,
@@ -956,10 +949,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             return;
           }
 
+          OrderStatus status = pickup ? Singletons.order().company.pickupStatus : Singletons.order().company.deliveryStatus;
+          status.values[0].createdAt = DateTime.now();
+          status.current = status.values[0];
+
           Singletons.order().id = null;
           Singletons.order().user = Singletons.user();
-          Singletons.order().status.values[0].date = DateTime.now();
-          Singletons.order().status.current = Singletons.order().status.values[0];
+          Singletons.order().status = status;
           Singletons.order().note = _observacaoController.text;
           Singletons.order().deliveryCost = pickup ? 0 : deliveryCost;
           Singletons.order().delivery = !pickup;
