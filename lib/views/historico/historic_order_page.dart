@@ -406,7 +406,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       isLast: index == (order.status.values.length-1),
       indicatorStyle: IndicatorStyle(
         width: 20,
-        color: Color(0xFFDADADA),
+        color: currentStatusIndex > index ? Colors.grey : currentStatusIndex == index ? Colors.green : Colors.grey[300],
         padding: EdgeInsets.all(6),
       ),
       rightChild: Flexible(
@@ -646,7 +646,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                   width: 25,
                   height: 25,
                   decoration: BoxDecoration(
-                    color: this.currentStatusIndex > index ? Colors.grey[350] : this.currentStatusIndex == index ? Colors.green : Colors.grey[300],
+                    color: currentStatusIndex > index ? Colors.grey[350] : currentStatusIndex == index ? Colors.green : Colors.grey[300],
                     borderRadius: BorderRadius.all(
                       Radius.circular(25),
                     ),
