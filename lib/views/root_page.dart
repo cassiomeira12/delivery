@@ -1,4 +1,3 @@
-import '../utils/log_util.dart';
 import '../models/singleton/singletons.dart';
 import '../services/notifications/parse_push_notification.dart';
 import '../services/notifications/firebase_push_notification.dart';

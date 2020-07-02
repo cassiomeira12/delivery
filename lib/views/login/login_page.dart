@@ -23,7 +23,7 @@ import 'signup_page.dart';
 class LoginPage extends StatefulWidget {
   final VoidCallback loginCallback;
   final bool anonymousLogin;
-  
+
   LoginPage({
     this.loginCallback,
     this.anonymousLogin = false,
@@ -135,15 +135,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
           textOU(),
           //googleButton(),
           signupButton(),
-          Padding(
-            padding: EdgeInsets.fromLTRB(10, 12, 10, 30),
-            child: LightButton(
-              text: "Entrar como convidado".toUpperCase(),
-              onPressed: () {
-                presenter.signAnonymous();
-              },
-            ),
-          ),
+          anonymousButton(),
         ],
       ),
     );
@@ -289,6 +281,18 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
         text: CRIAR_CONTA,
         onPressed: () {
           PageRouter.push(context, SignUpPage(loginCallback: widget.loginCallback,));
+        },
+      ),
+    );
+  }
+
+  Widget anonymousButton() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 12, 10, 30),
+      child: LightButton(
+        text: "Entrar como convidado".toUpperCase(),
+        onPressed: () {
+          presenter.signAnonymous();
         },
       ),
     );

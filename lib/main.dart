@@ -26,9 +26,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     root = RootPage();
-    ParseInit.init().then((value) {
-      root.init();
-    });
+    ParseInit.init().then((value) => root.init());
   }
 
   @override

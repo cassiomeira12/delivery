@@ -1,4 +1,3 @@
-import 'package:latlong/latlong.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import '../../models/base_user.dart';
 import '../../models/address/small_town.dart';
@@ -45,6 +44,22 @@ class Address extends BaseModel<Address> {
     map["city"] = city == null ? null : city.toPointer();
     map["location"] = location;
     map["smallTown"] = smallTown == null ? null : smallTown.toPointer();
+    return map;
+  }
+
+  @override
+  Map<String, dynamic> toMapData() {
+    var map = Map<String, dynamic>();
+    map["objectId"] = id;
+    map["user"] = user == null ? null : user.toMap();
+    map["zipCode"] = zipCode;
+    map["neighborhood"] = neighborhood;
+    map["number"] = number;
+    map["street"] = street;
+    map["reference"] = reference;
+    map["city"] = city == null ? null : city.toMap();
+    map["location"] = location;
+    map["smallTown"] = smallTown == null ? null : smallTown.toMap();
     return map;
   }
 

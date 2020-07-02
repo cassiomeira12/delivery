@@ -12,7 +12,6 @@ class FirebaseNotifications {
   final notifications = FlutterLocalNotificationsPlugin();
 
   FirebaseNotifications() {
-
     var settingsAndroid = AndroidInitializationSettings("ic_stat_notification");
     var settingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: (id, title, body, payload) => onSelectNotification(payload)
@@ -39,6 +38,7 @@ class FirebaseNotifications {
     var preferences = await PreferencesUtil.getInstance();
     topics.forEach((topic) async {
       if (preferences.getString(topic) == null) {
+        print("Topic: $topic");
         bool value = await subscribeToTopic(topic);
         if (value) {
           preferences.setString(topic, topic);

@@ -11,7 +11,6 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<Order> create(Order item) async {
     return service.create(item).then((response) {
-      Log.d(response);
       item.id = response["objectId"];
       item.objectId = response["objectId"];
       item.createdAt = DateTime.parse(response["createdAt"]).toLocal();

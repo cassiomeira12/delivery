@@ -34,18 +34,6 @@ const ERROR_ENVIAR_EMAIL = "Erro ao enviar email de verificação";
 const EMAIL_VERIFICACAO = "Email de verificação";
 const REENVIAR_EMAIL = "Reenviar email";
 
-const TRY_AGAIN = "Tentar novamente";
-const USER_ANONYMOUS = "Você precisa criar uma conta";
-
-const SUCCESS_EMAIL_SEND = "Email enviado com sucesso!";
-const SUCCESS_UPDATE_DATA = "Dados alterados com sucesso!";
-const ERROR_DATA_SUCCESS = "Erro ao alterados dados!";
-
-const ERROR_NETWORK = "Verifique sua conexão com a internet";
-const SOME_ERROR = "Ocorreu um erro";
-const ERROR_ALREADY_EXISTS = "Error, já existe uma conta com esse email, tente novamente.";
-const ERROR_LOGIN_PASSWORD = "Login ou Senha inválidos";
-
 const CRIAR_CONTA = "Criar conta";
 const CRIANDO_CONTA = "Criando conta";
 const ESTAMOS_CRIANDO_CONTA = "Estamos criando sua conta...";
@@ -104,3 +92,15 @@ const UPDATE_APP = "Atualize seu aplicativo!";
 const VERSION_OLDER = "Sua versão é muito antiga, atualize e confira as novidades!";
 const NOT_NOW = "Agora não";
 const UPDATE = "Atualizar";
+
+const TRY_AGAIN = "Tentar novamente";
+const USER_ANONYMOUS = "Você precisa criar uma conta";
+
+const SUCCESS_EMAIL_SEND = "Email enviado com sucesso!";
+const SUCCESS_UPDATE_DATA = "Dados alterados com sucesso!";
+const ERROR_DATA_SUCCESS = "Erro ao alterados dados!";
+
+const ERROR_NETWORK = "Verifique sua conexão com a internet";
+const SOME_ERROR = "Ocorreu um erro";
+const ERROR_ALREADY_EXISTS = "Error, já existe uma conta com esse email, tente novamente.";
+const ERROR_LOGIN_PASSWORD = "Login ou Senha inválidos";

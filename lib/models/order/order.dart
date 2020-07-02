@@ -70,7 +70,7 @@ class Order extends BaseModel<Order> {
     map["updatedAt"] = updatedAt == null ? null : updatedAt.toString();
     map["note"] = note;
     map["evaluation"] = evaluation == null ? null : evaluation.toMap();
-    map["deliveryAddress"] = deliveryAddress == null ? null : deliveryAddress.toMap();
+    map["deliveryAddress"] = deliveryAddress == null ? null : deliveryAddress.toMapData();
     map["deliveryCost"] = deliveryCost;
     map["typePayment"] = typePayment == null ? null : typePayment.toMap();
     map["items"] = items.map<Map>((e) => e.toMap()).toList();

@@ -1,6 +1,4 @@
-import 'package:kideliver/models/order/order.dart';
-import 'package:kideliver/models/order/order_status.dart';
-
+import '../../models/order/order_status.dart';
 import '../../models/phone_number.dart';
 import '../../utils/date_util.dart';
 import '../../models/address/address.dart';
@@ -67,6 +65,21 @@ class Company extends BaseModel<Company> {
     map["deliveryStatus"] = deliveryStatus == null ? null : deliveryStatus.toPointer();
     map["pickupStatus"] = pickupStatus == null ? null : pickupStatus.toPointer();
     return map;
+  }
+
+  void updateData(Company company) {
+    topic = company.topic;
+    name = company.name;
+    cnpj = company.cnpj;
+    logoURL = company.logoURL;
+    bannerURL = company.bannerURL;
+    openHours = company.openHours;
+    address = company.address;
+    typePayments = company.typePayments;
+    delivery = company.delivery;
+    phoneNumber = company.phoneNumber;
+    deliveryStatus = company.deliveryStatus;
+    pickupStatus = company.pickupStatus;
   }
 
   bool isTodayOpen() {

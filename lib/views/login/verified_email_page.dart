@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import '../../utils/preferences_util.dart';
 import '../../models/singleton/singletons.dart';
 import '../../contracts/user/user_contract.dart';
@@ -7,8 +8,6 @@ import '../../widgets/background_card.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/secondary_button.dart';
 import '../../widgets/shape_round.dart';
-import 'package:flutter/material.dart';
-
 import '../../strings.dart';
 
 class VerifiedEmailPage extends StatefulWidget {
