@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 import 'package:timeline_tile/timeline_tile.dart';
-import '../../views/historico/evalutation_dialog.dart';
+import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../views/historico/evalutation_dialog.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
 import '../../models/order/order.dart';
@@ -10,9 +12,6 @@ import '../../models/order/order_status.dart';
 import '../../presenters/order/order_presenter.dart';
 import '../../utils/date_util.dart';
 import '../../widgets/stars_widget.dart';
-import 'package:flutter/material.dart';
-
-import '../page_router.dart';
 
 class HistoricOrderPage extends StatefulWidget {
   final Order item;
@@ -94,7 +93,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   void checkEvalutationOrder() async {
     await Future.delayed(Duration(milliseconds: 500));
-    if (order.status.isLast() && order.evaluation == null) {
+    if (order.status.isLast() && order.evaluation == null && !order.canceled) {
       var evaluation = await showDialog(
         context: context,
         barrierDismissible: false,
@@ -163,7 +162,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
           ),
         ];
       },
-      body: timeLine(),//body(),
+      body: timeLine(),
     );
   }
 
@@ -182,13 +181,11 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                   flex: 1,
                   child: titleTextWidget(order.companyName),
                 ),
-                dateTextWidget(DateUtil.formatDateCalendar(order.createdAt)),
+                dateTextWidget(DateUtil.formatDateMouthHour(order.createdAt)),
               ],
             ),
             SizedBox(height: 5,),
-            Column(
-              children: ordersItems,
-            ),
+            Column(children: ordersItems,),
             textDelivery(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -197,6 +194,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
               ],
             ),
+            textPaymentType(),
             addressDataWidget(order.deliveryAddress),
             SizedBox(height: 10,),
             order.status.isLast() && order.evaluation != null ?
@@ -204,6 +202,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 children: [
                   avaliationTextWidget(),
                   StarsWidget(initialStar: order.evaluation.stars, size: 40,),
+                  avaliationComenteTextWidget(),
                 ],
               ) : Container(),
             order.evaluation == null ? deliveryCurrentStatus() : Container(),
@@ -275,12 +274,45 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.black45,
-                fontWeight: FontWeight.bold,
+                //fontWeight: FontWeight.bold,
               ),
             ),
           ),
           Text(
             "R\$ ${order.deliveryCost.toStringAsFixed(2)}",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.black45,
+              //fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget textPaymentType() {
+    return Padding(
+      padding: EdgeInsets.only(top: 15, bottom: 20),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Flexible(
+            flex: 1,
+            child: AutoSizeText(
+              order.typePayment.getType(),
+              maxLines: 1,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.black45,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          Text(
+            order.changeMoney == null ? "Sem troco" : order.changeMoney,
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 20,
@@ -353,14 +385,14 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
             }).toList(),
           ),
           item.note.isNotEmpty ?
-          Text(
-            item.note,
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.black54,
-              //fontWeight: FontWeight.bold,
-            ),
-          ) : Container(),
+            Text(
+              item.note,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.black54,
+                fontWeight: FontWeight.bold,
+              ),
+            ) : Container(),
         ],
       ),
     );
@@ -398,6 +430,20 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
     );
   }
 
+  Widget avaliationComenteTextWidget() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      child: Text(
+        order.evaluation.comment,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 25,
+          color: Colors.black45,
+        ),
+      ),
+    );
+  }
+
   Widget timelineItem(Status status, int index) {
     return TimelineTile(
       alignment: TimelineAlign.manual,
@@ -409,38 +455,35 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
         color: currentStatusIndex > index ? Colors.grey : currentStatusIndex == index ? Colors.green : Colors.grey[300],
         padding: EdgeInsets.all(6),
       ),
-      rightChild: Flexible(
-        flex: 1,
-        child: Container(
-          margin: EdgeInsets.only(left: 10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                status.name,
-                textAlign: TextAlign.left,
+      rightChild: Container(
+        margin: EdgeInsets.only(left: 10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              status.name,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 25,
+                color: this.currentStatusIndex > index ? Colors.grey[550] : this.currentStatusIndex == index ? Colors.green : Colors.grey[300],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            status.date != null ?
+            Padding(
+              padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+              child: Text(
+                DateUtil.formatDateMouthHour(status.date),
+                textAlign: TextAlign.right,
                 style: TextStyle(
-                  fontSize: 25,
-                  color: this.currentStatusIndex > index ? Colors.grey[550] : this.currentStatusIndex == index ? Colors.green : Colors.grey[300],
-                  fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: Colors.black38,
+                    fontWeight: FontWeight.bold
                 ),
               ),
-              status.date != null ?
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: Text(
-                  DateUtil.formatHourMinute(DateTime.now()),//DateUtil.formatHourMinute(status.date),
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Colors.black38,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-              ) : Container(),
-            ],
-          ),
+            ) : Container(),
+          ],
         ),
       ),
       topLineStyle: const LineStyle(
@@ -514,7 +557,9 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   Widget addressDataWidget(Address address) {
     return Card(
+      elevation: 5,
       margin: EdgeInsets.only(top: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
       child: Container(
         width: MediaQuery.of(context).size.width,
         child: Column(
@@ -532,18 +577,6 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 ),
               ),
             ),
-//            address.smallTown != null ?
-//            Padding(
-//              padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-//              child: Text(
-//                "asdf",//address.smallTown.toString(),
-//                textAlign: TextAlign.left,
-//                style: TextStyle(
-//                  fontSize: 20,
-//                  color: Colors.black54,
-//                ),
-//              ),
-//            ) : Container(),
             Padding(
               padding: EdgeInsets.only(left: 10, top: 5, right: 10),
               child: Text(
@@ -590,6 +623,32 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               ),
             ) : Container(),
             SizedBox(height: 10,),
+            order.deliveryAddress.location != null ?
+              GestureDetector(
+                child: Container(
+                  padding: EdgeInsets.only(top: 10, bottom: 10),
+                  width: MediaQuery.of(context).size.width,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColorLight,
+                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                  ),
+                  child: Text(
+                    "Abrir o Mapa",
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                onTap: () async {
+                  var address = order.deliveryAddress;
+                  if (address != null) {
+                    MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
+                  }
+                },
+              ) : Container(),
           ],
         ),
       ),

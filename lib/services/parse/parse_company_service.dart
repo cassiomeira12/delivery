@@ -113,6 +113,7 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
+      ..whereEqualTo("show", true)
       ..includeObject(["address", "address.city", "deliveryStatus", "pickupStatus"])
       ..orderByDescending("createdAt");
 
@@ -132,7 +133,7 @@ class ParseCompanyService extends CompanyContractService {
 
             addressJson["city"] = cityJson;
             companyJson["address"] = addressJson;
-            companyJson["delivertStatus"] = delivertStatus;
+            companyJson["deliveryStatus"] = delivertStatus;
             companyJson["pickupStatus"] = pickupStatus;
 
             return Company.fromMap(companyJson);
@@ -162,6 +163,7 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
+      ..whereEqualTo("show", true)
       ..includeObject(["address", "address.smallTown", "address.smallTown.city", "deliveryStatus", "pickupStatus"])
       ..orderByDescending("createdAt");
 
@@ -183,7 +185,7 @@ class ParseCompanyService extends CompanyContractService {
             smallTownJson["city"] = cityJson;
             addressJson["smallTown"] = smallTownJson;
             companyJson["address"] = addressJson;
-            companyJson["delivertStatus"] = delivertStatus;
+            companyJson["deliveryStatus"] = delivertStatus;
             companyJson["pickupStatus"] = pickupStatus;
 
             return Company.fromMap(companyJson);

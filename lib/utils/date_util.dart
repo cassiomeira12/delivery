@@ -60,7 +60,7 @@ class DateUtil {
   }
 
   static String formatDateMouthHour(DateTime date) {// [10 de jan às 20:05]
-    return "${formatDateMonth(date)} às ${date.hour}:${date.minute}";
+    return "${formatDateMonth(date)} às ${formatHourMinute(date)}";
   }
 
   static String formatHourMinute(DateTime date) {// [20:05]

@@ -115,7 +115,8 @@ class OrdersPresenter implements OrderContractPresenter {
     liveQuery = LiveQuery();
 
     QueryBuilder query = QueryBuilder(ParseObject("Order"))
-      ..whereEqualTo("user", Singletons.user().toPointer());
+      ..whereEqualTo("user", Singletons.user().toPointer())
+      ..orderByDescending("createdAt");
 
     subscription = await liveQuery.client.subscribe(query);
     subscription.on(LiveQueryEvent.update, (value) {

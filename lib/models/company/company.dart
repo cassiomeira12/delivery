@@ -1,3 +1,5 @@
+import 'package:kideliver/utils/log_util.dart';
+
 import '../../models/order/order_status.dart';
 import '../../models/phone_number.dart';
 import '../../utils/date_util.dart';
@@ -18,7 +20,6 @@ class Company extends BaseModel<Company> {
   List<TypePayment> typePayments;
   Delivery delivery;
   PhoneNumber phoneNumber;
-
   OrderStatus deliveryStatus;
   OrderStatus pickupStatus;
 

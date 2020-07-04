@@ -1,3 +1,5 @@
+import 'package:kideliver/utils/log_util.dart';
+
 import '../../models/menu/additional.dart';
 import '../../models/menu/choice.dart';
 import '../base_model.dart';
@@ -63,8 +65,8 @@ class PreparationTime extends BaseModel<PreparationTime> {
   PreparationTime() : super('PreparationTime');
 
   PreparationTime.fromMap(Map<dynamic, dynamic>  map) : super('PreparationTime') {
-    hour = map["hour"] as int;
-    minute = map["minute"] as int;
+    hour = (map["hour"] as num).toInt();
+    minute = (map["minute"] as num).toInt();
   }
 
   @override

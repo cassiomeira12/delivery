@@ -1,15 +1,11 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:kideliver/models/order/order_status.dart';
-import 'package:kideliver/utils/log_util.dart';
+import '../../models/order/order_status.dart';
 import 'package:maps_launcher/maps_launcher.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
-import 'package:get_it/get_it.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/address/states.dart';
-import '../../models/singleton/order_list_singleton.dart';
 import '../../models/singleton/singletons.dart';
 import '../../presenters/user/user_presenter.dart';
 import '../../services/api/time_service.dart';
@@ -97,11 +93,15 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   @override
   onSuccess(Order result) {
-    setState(() {
-      _loading = false;
-    });
+    setState(() => _loading = false);
+    String companyTopic = Singletons.order().company.topic;
+    if (!Singletons.user().notificationToken.topics.contains(companyTopic)) {
+      Singletons.user().notificationToken.topics.add(companyTopic);
+      PreferencesUtil.setUserData(Singletons.user().toMap());
+      userPresenter.update(Singletons.user());
+    }
     Singletons.order().id = result.id;
-    Singletons.orders().add(Order.fromMap(Singletons.order().toMap()));
+    Singletons.orders().insert(0, Order.fromMap(Singletons.order().toMap()));
     widget.orderCallback();
     PageRouter.pop(context, true);
   }
@@ -310,7 +310,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 Row(
                   children: [
                     Text(
-                      "R\$ ${(item.amount * item.cost).toStringAsFixed(2)}",
+                      "R\$ ${(item.amount * item.getTotal()).toStringAsFixed(2)}",
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 20,
@@ -470,9 +470,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
       child: Card(
         elevation: 5,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
         child: Container(
           padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
           width: MediaQuery.of(context).size.width,
@@ -951,7 +949,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           }
 
           OrderStatus status = pickup ? Singletons.order().company.pickupStatus : Singletons.order().company.deliveryStatus;
-          status.values[0].createdAt = DateTime.now();
+          status.values[0].date = DateTime.now();
           status.current = status.values[0];
 
           Singletons.order().id = null;

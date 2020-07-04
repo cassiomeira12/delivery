@@ -57,10 +57,11 @@ class _TabsPageState extends State<TabsPage> {
   void listOrders() async {
     var result = await presenter.findBy("user", Singletons.user().toPointer());
     if (result != null) {
+      Singletons.orders().clear();
       Singletons.orders().addAll(result);
       var temp = 0;
       result.forEach((element) {
-        if (!element.status.isLast()) {
+        if (!element.status.isLast() && !element.canceled) {
           temp++;
         }
       });

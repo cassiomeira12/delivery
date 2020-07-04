@@ -51,15 +51,18 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
 
   @override
   listSuccess(List<Order> list) {
-    print(list.length);
     if (ordersList != null && ordersList.isNotEmpty) {
       list.forEach((item) {
         var temp = ordersList.singleWhere((element) => element.id == item.id, orElse: null);
         setState(() {
           if (temp == null) {
-            ordersList.add(item);
+            setState(() {
+              ordersList.insert(0, item);
+            });
           } else {
-            temp.updateData(item);
+            setState(() {
+              temp.updateData(item);
+            });
           }
         });
       });

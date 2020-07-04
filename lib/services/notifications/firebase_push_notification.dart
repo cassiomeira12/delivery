@@ -1,10 +1,10 @@
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:package_info/package_info.dart';
 import 'dart:io';
 import '../../models/singleton/singletons.dart';
 import '../../services/notifications/local_notifications.dart';
 import '../../utils/preferences_util.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:package_info/package_info.dart';
 
 class FirebaseNotifications {
   FirebaseMessaging _firebaseMessaging;
