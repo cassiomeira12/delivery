@@ -68,11 +68,11 @@ class _HistoricWidgetState extends State<HistoricWidget> {
   }
 
   Widget titleTextWidget(String text) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+    return Flexible(
       child: Text(
         text,
         textAlign: TextAlign.left,
+        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontSize: 25,
           color: Colors.black45,

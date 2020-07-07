@@ -162,7 +162,9 @@ class DeliveryForecast extends BaseModel<DeliveryForecast> {
 
   @override
   String toString() {
-    return "${hour}:${minute}h";
+    String hora = hour < 10 ? "0${hour}" : hour.toString();
+    String minutos = minute < 10 ? "0${minute}" : minute.toString();
+    return "${hora}:${minutos}h";
   }
 
 }

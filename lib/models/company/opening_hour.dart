@@ -38,4 +38,35 @@ class OpeningHour extends BaseModel<OpeningHour> {
 //    closeMinute = item.closeMinute;
 //  }
 
+  String getDay() {
+    switch (weekDay) {
+      case 1:
+        return "Segunda";
+      case 2:
+        return "Terça";
+      case 3:
+        return "Quarta";
+      case 4:
+        return "Quinta";
+      case 5:
+        return "Sexta";
+      case 6:
+        return "Sábado";
+      case 7:
+        return "Domingo";
+    }
+  }
+
+  String openTime() {
+    String hora = openHour < 10 ? "0${openHour}" : openHour.toString();
+    String minutos = openMinute < 10 ? "0${openMinute}" : openMinute.toString();
+    return "${hora}:${minutos}h";
+  }
+
+  String closeTime() {
+    String hora = closeHour < 10 ? "0${closeHour}" : closeHour.toString();
+    String minutos = closeMinute < 10 ? "0${closeMinute}" : closeMinute.toString();
+    return "${hora}:${minutos}h";
+  }
+
 }

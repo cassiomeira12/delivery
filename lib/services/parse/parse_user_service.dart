@@ -189,10 +189,6 @@ class ParseUserService implements UserContractService {
 
   @override
   Future<String> changeUserPhoto(File image) async {
-//    String baseName = Path.basename(image.path);
-//    String uID = Singletons.user().id + baseName.substring(baseName.length - 4);
-//    String dir = Path.dirname(image.path);
-//    String newPath = Path.join(dir, uID);
     image = image.renameSync(image.path);
 
     var file = ParseFile(image);

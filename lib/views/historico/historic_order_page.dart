@@ -1,8 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kideliver/widgets/scaffold_snackbar.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../strings.dart';
 import '../../views/historico/evalutation_dialog.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/address/address.dart';
@@ -118,7 +121,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
         actions: [
           PopupMenuButton(
             itemBuilder: (BuildContext context) {
-              return ["Contato"].map((String choice) {
+              return ["WhatsApp"].map((String choice) {
                 return PopupMenuItem(
                   value: choice,
                   child: Text(choice),
@@ -127,10 +130,12 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
             },
             onSelected: (value) async {
               switch (value) {
-                case "Contato":
+                case "WhatsApp":
                   var whatsAppLink = order.companyPhoneNumber.whatsAppLink();
                   if (await canLaunch(whatsAppLink)) {
                     await launch(whatsAppLink);
+                  } else {
+                    ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
                   }
                   break;
               }
@@ -565,64 +570,77 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-              child: Text(
-                "Endereço",
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black54,
-                  fontWeight: FontWeight.bold,
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: order.delivery ? FaIcon(FontAwesomeIcons.motorcycle,) : FaIcon(FontAwesomeIcons.running,),
                 ),
-              ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(top: 5, right: 10),
+                      child: Text(
+                        order.delivery ? "Endereço de entrega" : "Endereço de retirada",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 5, right: 10),
+                      child: Text(
+                        "${address.street}" + (address.number == null ? "" : ", ${address.number}"),
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ),
+                    address.neighborhood != null ? Padding(
+                      padding: EdgeInsets.only(top: 5, right: 10),
+                      child: Text(
+                        address.neighborhood,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ) : Container(),
+                    address.reference != null ? Padding(
+                      padding: EdgeInsets.only(top: 5, right: 10),
+                      child: Text(
+                        address.reference,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black38,
+                        ),
+                      ),
+                    ) : Container(),
+                    order.note != null && order.note.isNotEmpty ?
+                    Padding(
+                      padding: EdgeInsets.only(top: 5, right: 10),
+                      child: Text(
+                        order.note,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black54,
+                          //fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ) : Container(),
+                    SizedBox(height: 10,),
+                  ],
+                ),
+              ],
             ),
-            Padding(
-              padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-              child: Text(
-                "${address.street}" + (address.number == null ? "" : ", ${address.number}"),
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black54,
-                ),
-              ),
-            ),
-            address.neighborhood != null ? Padding(
-              padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-              child: Text(
-                address.neighborhood,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black54,
-                ),
-              ),
-            ) : Container(),
-            address.reference != null ? Padding(
-              padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-              child: Text(
-                address.reference,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black38,
-                ),
-              ),
-            ) : Container(),
-            order.note != null && order.note.isNotEmpty ?
-            Padding(
-              padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-              child: Text(
-                order.note,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                  //fontWeight: FontWeight.bold,
-                ),
-              ),
-            ) : Container(),
-            SizedBox(height: 10,),
             order.deliveryAddress.location != null ?
               GestureDetector(
                 child: Container(
@@ -646,6 +664,8 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                   var address = order.deliveryAddress;
                   if (address != null) {
                     MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
+                  } else {
+                    ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
                   }
                 },
               ) : Container(),
