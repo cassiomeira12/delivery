@@ -274,6 +274,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       onRefresh: () {
+        dateNow = DateTime.now();
         GetIt.instance<CompanyListSingleton>().list.clear();
         return verifiedCityTown();
       },

@@ -100,27 +100,23 @@ class _AboutAppState extends State<AboutAppPage> {
               Padding(
                 padding: EdgeInsets.fromLTRB(5, 5, 10, 5),
                 child: CircularProgressIndicator(),
-              )
-                :
-              Icon(
-                icon,
-                color: colorIcon,
-                size: 50,
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      statusVersionApp,
-                      style: Theme.of(context).textTheme.body1,
-                    ),
-                    Text(
-                      currentVersion,
-                      style: Theme.of(context).textTheme.body1,
-                    ),
-                  ],
+              ) : Icon(icon, color: colorIcon, size: 50,),
+              Flexible(
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        statusVersionApp,
+                        style: Theme.of(context).textTheme.body1,
+                      ),
+                      Text(
+                        currentVersion,
+                        style: Theme.of(context).textTheme.body1,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

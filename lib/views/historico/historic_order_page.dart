@@ -119,28 +119,39 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
         title: Text("Pedido", style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
         actions: [
-          PopupMenuButton(
-            itemBuilder: (BuildContext context) {
-              return ["WhatsApp"].map((String choice) {
-                return PopupMenuItem(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-            onSelected: (value) async {
-              switch (value) {
-                case "WhatsApp":
-                  var whatsAppLink = order.companyPhoneNumber.whatsAppLink();
-                  if (await canLaunch(whatsAppLink)) {
-                    await launch(whatsAppLink);
-                  } else {
-                    ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
-                  }
-                  break;
+          IconButton(
+            icon: FaIcon(FontAwesomeIcons.whatsapp,),
+            onPressed: () async {
+              var whatsAppLink = order.companyPhoneNumber.whatsAppLink();
+              if (await canLaunch(whatsAppLink)) {
+                await launch(whatsAppLink);
+              } else {
+                ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
               }
             },
           ),
+//          PopupMenuButton(
+//            itemBuilder: (BuildContext context) {
+//              return ["WhatsApp"].map((String choice) {
+//                return PopupMenuItem(
+//                  value: choice,
+//                  child: Text(choice),
+//                );
+//              }).toList();
+//            },
+//            onSelected: (value) async {
+//              switch (value) {
+//                case "WhatsApp":
+//                  var whatsAppLink = order.companyPhoneNumber.whatsAppLink();
+//                  if (await canLaunch(whatsAppLink)) {
+//                    await launch(whatsAppLink);
+//                  } else {
+//                    ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
+//                  }
+//                  break;
+//              }
+//            },
+//          ),
         ],
       ),
       body: nestedScrollView(),
@@ -521,7 +532,6 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       child: Text(
         text,
         textAlign: TextAlign.left,
-        overflow: TextOverflow.ellipsis,
         style: TextStyle(
           fontSize: 25,
           color: Colors.black45,

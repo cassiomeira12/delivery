@@ -73,6 +73,7 @@ class _NewAddressPageState extends State<NewAddressPage> implements AddressContr
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
+          SizedBox(height: 10,),
           widget.city != null ? textCityWidget() : Container(),
           widget.smallTown != null ? textDistritoWidget() : Container(),
           widget.smallTown == null ? cityForm() : smallTomForm(),

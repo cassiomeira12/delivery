@@ -48,7 +48,6 @@ class _StarsWidgetState extends State<StarsWidget> {
   }
 
   Widget startItem(int index) {
-    //print(MediaQuery.of(context).size.width);
     return GestureDetector(
       child: Icon(
         index <= star ? Icons.star : Icons.star_border,
@@ -56,13 +55,13 @@ class _StarsWidgetState extends State<StarsWidget> {
         size: widget.size,
       ),
       onTap: () {
-        setState(() {
-          star = index;
-          buildStarList();
-          if (widget.onChanged != null) {
+        if (widget.onChanged != null) {
+          setState(() {
+            star = index;
+            buildStarList();
             widget.onChanged(star);
-          }
-        });
+          });
+        }
       },
     );
   }

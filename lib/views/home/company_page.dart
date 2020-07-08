@@ -387,7 +387,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
           ),
           Flexible(
             flex: 3,
-            child: widget.company.delivery != null ? deliveryCostCompanyWidget() : Container(),
+            child: deliveryCostCompanyWidget(),
           ),
         ],
       ),
@@ -418,7 +418,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         runSpacing: 5,
         spacing: 5,
         children: <Widget>[
-          widget.company.delivery.pickup ?
+          widget.company.delivery == null || widget.company.delivery.pickup ?
             Container(
               padding: EdgeInsets.all(10),
               decoration: BoxDecoration(
@@ -427,28 +427,26 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
               ),
               child: FaIcon(FontAwesomeIcons.running, size: 16, color: Theme.of(context).errorColor,),
             ) : Container(),
-          Container(
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.grey[300],
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                FaIcon(FontAwesomeIcons.motorcycle, size: 16, color: Theme.of(context).errorColor,),
-                SizedBox(width: 5,),
-                Text(
-                  widget.company.delivery.cost == 0 ? "Grátis" : "R\$ ${(widget.company.delivery.cost/100).toStringAsFixed(2)}",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).errorColor,
+          widget.company.delivery != null ?
+            Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(20),),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  FaIcon(FontAwesomeIcons.motorcycle, size: 16, color: Theme.of(context).errorColor,),
+                  SizedBox(width: 5,),
+                  Text(
+                    widget.company.delivery.cost == 0 ? "Grátis" : "R\$ ${(widget.company.delivery.cost/100).toStringAsFixed(2)}",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).errorColor,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ),
+                ],
+              ),
+            ) : Container(),
         ],
       ),
     );

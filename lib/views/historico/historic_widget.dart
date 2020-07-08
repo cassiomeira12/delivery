@@ -52,9 +52,13 @@ class _HistoricWidgetState extends State<HistoricWidget> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 order.evaluation == null ?
-                  Text(
-                    order.canceled ? "Esse pedido foi cancelado" : order.status.current.name,
-                    style: Theme.of(context).textTheme.body2,
+                  Flexible(
+                    flex: 1,
+                    child: Text(
+                      order.canceled ? "Esse pedido foi cancelado" : order.status.current.name,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.body2,
+                    ),
                   )
                     :
                   StarsWidget(initialStar: order.evaluation.stars, size: 30,),
