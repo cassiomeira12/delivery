@@ -1,3 +1,5 @@
+import 'package:kideliver/models/menu/choice_selected.dart';
+
 import '../../views/login/login_page.dart';
 import '../../models/singleton/singletons.dart';
 import '../../models/company/company.dart';
@@ -48,7 +50,7 @@ class _ProductPageState extends State<ProductPage> {
 
   var menu = ['Remover'];
 
-  List list = [1,2,3];
+  //List list = [1,2,3];
 
   int count = 1;
   double additionalCost = 0;
@@ -204,12 +206,11 @@ class _ProductPageState extends State<ProductPage> {
                   },
                 ),
               ),
-              costWidget(product.cost),
+              product.cost > 0 ? costWidget(product.cost) : Container(),
             ],
           ),
 
-          product.description == null ? Container() :
-          descriptionTextWidget(product.description),
+          product.description == null ? Container() : descriptionTextWidget(product.description),
 
           product.preparationTime == null ? Container() : tempoPreparo(product.preparationTime),
 
@@ -479,7 +480,14 @@ class _ProductPageState extends State<ProductPage> {
             return;
           }
         } else {
-          order.choicesSelected.add(element.choice.name + " - " + element.selectedItem.toString());
+          var choiceSelected = ChoiceSelected()
+            ..name = element.choice.name
+            ..description = element.choice.description
+            ..required = element.choice.required
+            ..maxQuantity = element.choice.maxQuantity
+            ..minQuantity = element.choice.minQuantity;
+          choiceSelected.choiceSelected.add(element.selectedItem);
+          order.choicesSelected.add(choiceSelected);
         }
       });
 
@@ -522,7 +530,14 @@ class _ProductPageState extends State<ProductPage> {
             return;
           }
         } else {
-          order.choicesSelected.add(element.choice.name + " - " + element.selectedItem.toString());
+          var choiceSelected = ChoiceSelected()
+            ..name = element.choice.name
+            ..description = element.choice.description
+            ..required = element.choice.required
+            ..maxQuantity = element.choice.maxQuantity
+            ..minQuantity = element.choice.minQuantity;
+          choiceSelected.choiceSelected.add(element.selectedItem);
+          order.choicesSelected.add(choiceSelected);
         }
       });
 

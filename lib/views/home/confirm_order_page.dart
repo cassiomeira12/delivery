@@ -66,7 +66,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     orderPresenter = OrdersPresenter(this);
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
-    pickup = Singletons.order().company.delivery == null ? true : Singletons.order().company.delivery.pickup;
+    //pickup = Singletons.order().company.delivery == null ? true : Singletons.order().company.delivery.pickup;
     deliveryCost = Singletons.order().company.delivery == null ? 0 : Singletons.order().company.delivery.cost/100;
     setState(() {
       listOrder.addAll(Singletons.order().items);
@@ -84,7 +84,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   }
 
   @override
-  listSuccess(List<Order> list) {}
+  listSuccess(List<Order> list) {
+
+  }
 
   @override
   onFailure(String error) {
@@ -158,7 +160,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   imageUser(Singletons.order().company.logoURL),
-                  textCompanyWidget(),
+                  textCompanyWidget(Singletons.order().company.name),
                 ],
               ),
               listViewOrder(),
@@ -199,11 +201,11 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     );
   }
 
-  Widget textCompanyWidget() {
+  Widget textCompanyWidget(String name) {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
       child: Text(
-        "Point Luca",
+        name,
         style: TextStyle(
           fontSize: 26,
           fontWeight: FontWeight.bold,
@@ -504,46 +506,50 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               ) : addressDataWidget( deliveryAddress == null ? Singletons.order().company.address : deliveryAddress ),
 
               pickup ?
-              GestureDetector(
-                child: Container(
-                  padding: EdgeInsets.only(top: 10, bottom: 10),
-                  width: MediaQuery.of(context).size.width,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).primaryColorLight,
-                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                  ),
-                  child: Text(
-                    "Abrir o Mapa",
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.white,
+
+              Singletons.order().company.address.location != null ?
+                GestureDetector(
+                  child: Container(
+                    padding: EdgeInsets.only(top: 10, bottom: 10),
+                    width: MediaQuery.of(context).size.width,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Theme.of(context).primaryColorLight,
+                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                    ),
+                    child: Text(
+                      "Abrir o Mapa",
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-                onTap: () async {
-                  var address =  Singletons.order().company.address;
-                  if (address != null) {
-                    MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
-                  }
-                },
-              ) : deliveryAddress == null ?
-              Padding(
-                padding: EdgeInsets.all(10),
-                child: SecondaryButton(
-                  text: "Escolher local",
-                  onPressed: () async {
-                    Address companyAddress = Singletons.order().company.address;
-                    Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
-                    if (result != null) {
-                      setState(() {
-                        deliveryAddress = result;
-                      });
+                  onTap: () async {
+                    var address =  Singletons.order().company.address;
+                    if (address != null && address.location != null) {
+                      print(address.location);
+                      MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
                     }
                   },
-                ),
-              ) : Container(),
+                ) : Container()
+                : deliveryAddress == null ?
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: SecondaryButton(
+                    text: "Escolher local",
+                    onPressed: () async {
+                      Address companyAddress = Singletons.order().company.address;
+                      Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
+                      if (result != null) {
+                        setState(() {
+                          deliveryAddress = result;
+                        });
+                      }
+                    },
+                  ),
+                ) : Container(),
             ],
           ),
         ),

@@ -246,6 +246,7 @@ class _RootPageState extends State<RootPage> {
   }
 
   void loginCallback() {
+    print("login callback");
     if (Singletons.user().emailVerified) {
       setState(() {
         authStatus = AuthStatus.LOGGED_IN;
@@ -278,10 +279,16 @@ class _RootPageState extends State<RootPage> {
   }
 
   void updateNotificationToken() async {
+    print("updateNotificationToken");
     var pushNotifications = FirebaseNotifications();
     await pushNotifications.setUpFirebase();
     String notificationToken = await PreferencesUtil.getNotificationToken();
+    print(notificationToken);
     NotificationToken token = Singletons.user().notificationToken;
+    print(token);
+    if (token != null) {
+      print(token.token);
+    }
     if (token == null || (token.token == null || token.token != notificationToken)) {
       if (token != null) {
         token.token = notificationToken;

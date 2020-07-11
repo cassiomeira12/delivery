@@ -275,8 +275,11 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       onRefresh: () {
+        setState(() {
+          list = null;
+        });
         Singletons.menus()[widget.company.id] = null;
-        return menuPresenter.read(menu);
+        return menuPresenter.findBy("company", widget.company.toPointer());
       },
       child: Center(
         child: list == null ?

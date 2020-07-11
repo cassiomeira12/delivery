@@ -20,20 +20,31 @@ class _ChoiceWidgetState extends State<ChoiceWidget> {
       header: Container(
         height: 50,
         color: Colors.grey[200],
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
         alignment: Alignment.centerLeft,
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              "${widget.choice.name}",
-            ),
-            widget.choice.required ?
-              Text(
-                "*",
-                style: TextStyle(
-                  color: Colors.red,
+            Row(
+              children: [
+                Text(
+                  "${widget.choice.name}",
                 ),
-              ) : Container(),
+                widget.choice.required ?
+                Text(
+                  "*",
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ) : Container(),
+              ],
+            ),
+            widget.choice.description != null ?
+            Text(
+              widget.choice.description,
+              style: Theme.of(context).textTheme.body2,
+            ) : Container(),
           ],
         ),
       ),
@@ -51,6 +62,7 @@ class _ChoiceWidgetState extends State<ChoiceWidget> {
   }
 
   Widget choiceItemWidget(Item item) {
+    print(item.toMap());
     return FlatButton(
       padding: EdgeInsets.fromLTRB(10, 2.5, 0, 2.5),
       child: Row(

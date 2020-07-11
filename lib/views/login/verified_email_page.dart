@@ -33,7 +33,12 @@ class _VerifiedEmailPageState extends State<VerifiedEmailPage> implements UserCo
     super.initState();
     email = Singletons.user().email;
     presenter = UserPresenter(this);
-    presenter.sendEmailVerification();
+    //presenter.sendEmailVerification();
+    setState(() {
+      sendingEmail = false;
+      this.textMessage = EMAIL_VERIFICACAO_ENVIADO;
+      this.imgEmail = "assets/email.png";
+    });
   }
 
   @override

@@ -1,7 +1,7 @@
 name: kideliver
 description: Kideliver Client
 autor: Cássio Meira Silva
-version: 1.0.1+1
+version: 1.0.2+2
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
@@ -37,6 +37,7 @@ dependencies:
   cached_network_image: ^2.2.0+1
   auto_size_text: ^2.1.0
   timeline_tile: ^0.1.2
+  network_to_file_image: ^2.3.1
 
   # [Outros]
   google_sign_in: ^4.3.0

@@ -256,11 +256,11 @@ class _SignUpPageState extends State<SignUpPage> implements LoginContractView{
     return user;
   }
 
-  void createAccount() {
+  void createAccount() async {
     if (validateData()) {
       var user = createBaseUser();
+      await PageRouter.push(context, CreateAccountPage(loginCallback: widget.loginCallback, user: user,));
       PageRouter.pop(context);
-      PageRouter.push(context, CreateAccountPage(loginCallback: widget.loginCallback, user: user,));
     }
   }
 

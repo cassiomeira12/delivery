@@ -1,3 +1,4 @@
+import '../../models/menu/choice_selected.dart';
 import '../../models/menu/product.dart';
 import '../../models/menu/additional.dart';
 import '../base_model.dart';
@@ -9,7 +10,7 @@ class OrderItem extends BaseModel<OrderItem> {
   double discount;
   PreparationTime preparationTime;
   int amount;
-  List<String> choicesSelected;
+  List<ChoiceSelected> choicesSelected;
   List<Additional> additionalSelected;
   String note;
 
@@ -28,7 +29,8 @@ class OrderItem extends BaseModel<OrderItem> {
     preparationTime = map["preparationTime"] == null ? null : PreparationTime.fromMap(map["preparationTime"]);
     amount = map["amount"] as int;
     choicesSelected = map["choicesSelected"] == null ?
-        List() : List.from(map["choicesSelected"]);
+        List() :
+        List.from(map["choicesSelected"]).map<ChoiceSelected>((e) => ChoiceSelected.fromMap(e)).toList();
     additionalSelected = map["additionalSelected"] == null ?
         List() :
         List.from(map["additionalSelected"]).map<Additional>((e) => Additional.fromMap(e)).toList();
@@ -45,7 +47,9 @@ class OrderItem extends BaseModel<OrderItem> {
     map["discount"] = discount;
     map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
     map["amount"] = amount;
-    map["choicesSelected"] = choicesSelected == null ?  null : choicesSelected.toList();
+    map["choicesSelected"] = choicesSelected == null ?
+        null :
+        choicesSelected.map((e) => e.toMap()).toList();
     map["additionalSelected"] = additionalSelected == null ?
         null :
         additionalSelected.map((e) => e.toMap()).toList();
@@ -71,6 +75,11 @@ class OrderItem extends BaseModel<OrderItem> {
     double total = amount * cost;
     additionalSelected.forEach((element) {
       total += element.amount * element.cost;
+    });
+    choicesSelected.forEach((element) {
+      element.choiceSelected.forEach((item) {
+        total += item.cost;
+      });
     });
     return total;
   }

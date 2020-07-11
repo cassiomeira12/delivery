@@ -194,7 +194,7 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
               shrinkWrap: true,
               children: item.choicesSelected.map((choice) {
                 return Text(
-                  "* $choice",
+                  "* ${choice.toString()}",
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 16,

@@ -44,10 +44,15 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   bool _loading = false;
 
+  var controller = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     presenter = LoginPresenter(this);
+    if (Singletons.user().id != null) {
+      controller.text = Singletons.user().email;
+    }
   }
 
   @override
@@ -77,8 +82,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
     Singletons.user().updateData(result);
     if (result.emailVerified) {
       if (result.phoneNumber == null && !result.isAnonymous()) {
-        var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
-        Singletons.user().phoneNumber = phoneNumber;
+        await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
       }
     }
     if (widget.anonymousLogin) {
@@ -187,6 +191,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
       padding: EdgeInsets.fromLTRB(0, 16, 0, 0),
       child: TextInputField(
         labelText: EMAIL,
+        controller: controller,
         keyboardType: TextInputType.emailAddress,
         onSaved: (value) => _email = value.trim(),
       ),
@@ -279,8 +284,11 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
       padding: EdgeInsets.fromLTRB(60, 12, 60, 0),
       child: SecondaryButton(
         text: CRIAR_CONTA,
-        onPressed: () {
-          PageRouter.push(context, SignUpPage(loginCallback: widget.loginCallback,));
+        onPressed: () async {
+          await PageRouter.push(context, SignUpPage(loginCallback: widget.loginCallback,));
+          if (Singletons.user().id != null) {
+            controller.text = Singletons.user().email;
+          }
         },
       ),
     );

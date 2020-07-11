@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-class ImageNetworkWidget extends StatelessWidget {
+class ImageNetworkWidget extends StatefulWidget {
   final String url;
   final double size;
 
@@ -11,12 +11,18 @@ class ImageNetworkWidget extends StatelessWidget {
   });
 
   @override
+  _ImageNetworkWidgetState createState() => _ImageNetworkWidgetState();
+}
+
+class _ImageNetworkWidgetState extends State<ImageNetworkWidget> {
+  @override
   Widget build(BuildContext context) {
     return Container(
-      width: size,
-      height: size,
+      width: widget.size,
+      height: widget.size,
       child: CachedNetworkImage(
-        imageUrl: url == null ? "" : url,
+        useOldImageOnUrlChange: true,
+        imageUrl: widget.url == null ? "" : widget.url,
         imageBuilder: (context, imageProvider) => Container(
           decoration: BoxDecoration(
             shape: BoxShape.circle,
@@ -29,11 +35,22 @@ class ImageNetworkWidget extends StatelessWidget {
         ),
         progressIndicatorBuilder: (context, url, downloadProgress) {
           return Container(
-            margin: EdgeInsets.all(size / 5),
+            margin: EdgeInsets.all(widget.size / 5),
             child: CircularProgressIndicator(value: downloadProgress.progress),
           );
         },
-        errorWidget: (context, url, error) => Icon(Icons.error_outline),
+        errorWidget: (context, url, error) {
+          return Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              image: DecorationImage(
+                image: AssetImage("assets/default_image.png"),
+                fit: BoxFit.cover,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

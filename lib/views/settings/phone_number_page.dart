@@ -1,3 +1,9 @@
+import 'package:kideliver/contracts/user/user_contract.dart';
+import 'package:kideliver/models/singleton/singletons.dart';
+import 'package:kideliver/presenters/user/user_presenter.dart';
+import 'package:kideliver/utils/preferences_util.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+
 import '../../widgets/text_input_field.dart';
 import 'package:flutter/material.dart';
 import '../../models/phone_number.dart';
@@ -23,17 +29,39 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   final _formKey = new GlobalKey<FormState>();
 
   String _phoneNumber;
+  bool _loading = false;
+  UserContractPresenter userPresenter;
+
+  @override
+  void initState() {
+    super.initState();
+    userPresenter = UserPresenter(null);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    userPresenter.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar( iconTheme: IconThemeData(color: Colors.white), elevation: 0,),
-      body: SingleChildScrollView(
-        child: Stack(
-          children: <Widget>[
-            BackgroundCard(),
-            bodyAppScrollView(),
-          ],
+      body: ModalProgressHUD(
+        inAsyncCall: _loading,
+        progressIndicator: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),
+          child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(),),
+        ),
+        child: SingleChildScrollView(
+          child: Stack(
+            children: <Widget>[
+              BackgroundCard(),
+              bodyAppScrollView(),
+            ],
+          ),
         ),
       ),
     );
@@ -134,12 +162,20 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
     return phone;
   }
 
-  void validateAndSubmit() {
+  void validateAndSubmit() async {
     if (validateAndSave()) {
       PhoneNumber phone = createNumber(_phoneNumber);
       if (widget.authenticate) {
         PageRouter.pop(context);
         PageRouter.push(context, VerifiedPhoneNumberPage(phoneNumber: phone,));
+      }
+      Singletons.user().phoneNumber = phone;
+      setState(() => _loading = true);
+      var result = await userPresenter.update(Singletons.user());
+      if (result != null) {
+        PreferencesUtil.setUserData(Singletons.user().toMap());
+      } else {
+        Singletons.user().phoneNumber = null;
       }
       PageRouter.pop(context, phone);
     }
