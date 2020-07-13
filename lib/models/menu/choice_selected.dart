@@ -1,5 +1,4 @@
-import 'package:kideliver/models/base_model.dart';
-
+import '../../models/base_model.dart';
 import 'item.dart';
 
 class ChoiceSelected extends BaseModel<ChoiceSelected> {

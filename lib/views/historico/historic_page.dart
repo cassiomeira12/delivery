@@ -51,20 +51,25 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
 
   @override
   listSuccess(List<Order> list) {
+    list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     if (ordersList != null && ordersList.isNotEmpty) {
       list.forEach((item) {
-        var temp = ordersList.singleWhere((element) => element.id == item.id, orElse: null);
-        setState(() {
-          if (temp == null) {
-            setState(() {
-              ordersList.insert(0, item);
-            });
-          } else {
-            setState(() {
-              temp.updateData(item);
-            });
+        var temp;
+        for (var element in Singletons.orders()) {
+          if (item.id == element.id) {
+            temp = element;
+            return;
           }
-        });
+        }
+        if (temp == null) {
+          setState(() {
+            ordersList.insert(0, item);
+          });
+        } else {
+          setState(() {
+            temp.updateData(item);
+          });
+        }
       });
     } else {
       setState(() {
