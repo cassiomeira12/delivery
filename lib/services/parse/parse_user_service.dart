@@ -248,7 +248,6 @@ class ParseUserService implements UserContractService {
   Future<void> signOut() async {
     PreferencesUtil.setUserData(null);
     ParseUser currentUser = await ParseUser.currentUser();
-    PreferencesUtil.setNotificationToken(null);
     await currentUser.logout();
   }
 

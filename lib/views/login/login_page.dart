@@ -1,4 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import '../../contracts/user/user_contract.dart';
+import '../../presenters/user/user_presenter.dart';
+import '../../utils/preferences_util.dart';
 import '../../models/singleton/singletons.dart';
 import '../../views/settings/phone_number_page.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +18,6 @@ import '../../widgets/primary_button.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/secondary_button.dart';
 import '../../widgets/shape_round.dart';
-
 import '../../strings.dart';
 import 'forgot_password_page.dart';
 import 'signup_page.dart';
@@ -36,20 +38,21 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> implements LoginContractView {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _loading = false;
 
-  LoginContractPresenter presenter;
+  LoginContractPresenter loginPresenter;
+  UserContractPresenter userPresenter;
 
   String _email;
   String _password;
-
-  bool _loading = false;
 
   var controller = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    presenter = LoginPresenter(this);
+    loginPresenter = LoginPresenter(this);
+    userPresenter = UserPresenter(null);
     if (Singletons.user().id != null) {
       controller.text = Singletons.user().email;
     }
@@ -58,7 +61,8 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
   @override
   void dispose() {
     super.dispose();
-    presenter.dispose();
+    loginPresenter.dispose();
+    userPresenter.dispose();
   }
 
   @override
@@ -86,10 +90,19 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
       }
     }
     if (widget.anonymousLogin) {
+      await updateNotificationToken();
       PageRouter.pop(context);
     } else {
       widget.loginCallback();
     }
+  }
+
+  Future<void> updateNotificationToken() async {
+    var notificationToken = await Singletons.pushNotification().updateNotificationToken();
+    Singletons.user().notificationToken = notificationToken;
+    PreferencesUtil.setUserData(Singletons.user().toMap());
+    userPresenter.update(Singletons.user());
+    return;
   }
 
   @override
@@ -273,7 +286,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
           ],
         ),
         onPressed: () {
-          presenter.signInWithGoogle();
+          loginPresenter.signInWithGoogle();
         },
       ),
     );
@@ -300,7 +313,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
       child: LightButton(
         text: "Entrar como convidado".toUpperCase(),
         onPressed: () {
-          presenter.signAnonymous();
+          loginPresenter.signAnonymous();
         },
       ),
     );
@@ -317,7 +330,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   void validateAndSubmit() {
     if (validateAndSave()) {
-      presenter.signIn(_email, _password);
+      loginPresenter.signIn(_email, _password);
     }
   }
 

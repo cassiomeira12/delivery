@@ -6,12 +6,12 @@ import '../../models/singleton/singletons.dart';
 import '../../services/notifications/local_notifications.dart';
 import '../../utils/preferences_util.dart';
 
-class FirebaseNotifications {
+class FirebasePushNotifications {
   FirebaseMessaging _firebaseMessaging;
 
   final notifications = FlutterLocalNotificationsPlugin();
 
-  FirebaseNotifications() {
+  FirebasePushNotifications() {
     var settingsAndroid = AndroidInitializationSettings("ic_stat_notification");
     var settingsIOS = IOSInitializationSettings(
       onDidReceiveLocalNotification: (id, title, body, payload) => onSelectNotification(payload)
@@ -49,10 +49,10 @@ class FirebaseNotifications {
 
   Future<void> setUpFirebase() {
     _firebaseMessaging = FirebaseMessaging();
-    return firebaseCloudMessaging_Listeners();
+    return firebaseCloudMessagingListeners();
   }
 
-  Future<void> firebaseCloudMessaging_Listeners() async {
+  Future<void> firebaseCloudMessagingListeners() async {
     if (Platform.isIOS) iOSPermission();
 
     var token = await _firebaseMessaging.getToken();

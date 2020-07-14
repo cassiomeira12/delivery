@@ -1,8 +1,5 @@
-import '../models/singleton/singletons.dart';
-import '../services/notifications/parse_push_notification.dart';
-import '../services/notifications/firebase_push_notification.dart';
 import '../contracts/user/user_contract.dart';
-import '../models/base_user.dart';
+import '../models/singleton/singletons.dart';
 import '../models/version_app.dart';
 import '../presenters/user/user_presenter.dart';
 import '../presenters/version_app_presenter.dart';
@@ -56,6 +53,12 @@ class _RootPageState extends State<RootPage> {
     Singletons.init();
     presenter = UserPresenter(null);
     updateCurrentTheme();
+    initPushNotification();
+  }
+
+  void initPushNotification() async {
+    Singletons.pushNotification();
+    await Singletons.pushNotification().init();
   }
 
   void currentUser() async {
@@ -246,11 +249,11 @@ class _RootPageState extends State<RootPage> {
   }
 
   void loginCallback() {
-    print("login callback");
     if (Singletons.user().emailVerified) {
       setState(() {
         authStatus = AuthStatus.LOGGED_IN;
       });
+      checkCurrentVersion();
       updateNotificationToken();
     } else {
       setState(() {
@@ -279,29 +282,10 @@ class _RootPageState extends State<RootPage> {
   }
 
   void updateNotificationToken() async {
-    print("updateNotificationToken");
-    var pushNotifications = FirebaseNotifications();
-    await pushNotifications.setUpFirebase();
-    String notificationToken = await PreferencesUtil.getNotificationToken();
-    print(notificationToken);
-    NotificationToken token = Singletons.user().notificationToken;
-    print(token);
-    if (token != null) {
-      print(token.token);
-    }
-    if (token == null || (token.token == null || token.token != notificationToken)) {
-      if (token != null) {
-        token.token = notificationToken;
-      } else {
-        token = NotificationToken(notificationToken);
-        token.topics = List();
-      }
-      Singletons.user().notificationToken = token;
-      PreferencesUtil.setUserData(Singletons.user().toMap());
-      presenter.update(Singletons.user());
-    }
-    pushNotifications.subscribeDefaultTopics();
-    ParsePushNotification();
+    var notificationToken = await Singletons.pushNotification().updateNotificationToken();
+    Singletons.user().notificationToken = notificationToken;
+    PreferencesUtil.setUserData(Singletons.user().toMap());
+    presenter.update(Singletons.user());
   }
 
 }

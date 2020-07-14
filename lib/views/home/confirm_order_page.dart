@@ -929,9 +929,6 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     if (Singletons.user().phoneNumber == null) {
       var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
       if (phoneNumber != null) {
-        Singletons.user().phoneNumber = phoneNumber;
-        PreferencesUtil.setUserData(Singletons.user().toMap());
-        userPresenter.update(Singletons.user());
         return true;
       }
       return false;
