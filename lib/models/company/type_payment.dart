@@ -7,11 +7,11 @@ enum Type {
 class TypePayment extends BaseModel<TypePayment> {
   String name;
   Type paymentType;
-  double taxa;// 0.0 - 1.0
+  int taxa;// 0 - 100 - Taxa pelo uso do aplicativo
   int maxInstallments;//Max prestação
 
   TypePayment() : super('TypePayment') {
-    taxa = 0;
+    taxa = 7;
     maxInstallments = 1;
   }
 
@@ -25,7 +25,7 @@ class TypePayment extends BaseModel<TypePayment> {
         return;
       }
     });
-    taxa = (map["taxa"] as num).toDouble();
+    taxa = (map["taxa"] as num).toInt();
     maxInstallments = map["maxInstallments"] as int;
   }
 

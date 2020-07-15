@@ -716,8 +716,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   paymentTypeWidget(typePayment),
-                  Padding(
-                    padding: EdgeInsets.all(10),
+                  typePayment.type == Type.MONEY ? Padding(
+                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
                     child: Text(
                       Singletons.order().changeMoney == null ? "Sem troco" : "Troco para ${Singletons.order().changeMoney}",
                       style: TextStyle(
@@ -725,7 +725,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                         color: Colors.green,
                       ),
                     ),
-                  ),
+                  ) : Container(),
                 ],
               ),
             ],
@@ -742,7 +742,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       elevation: 0,
       margin: EdgeInsets.all(0),
       child: Container(
-        padding: EdgeInsets.fromLTRB(0, 15, 5, 0),
+        padding: EdgeInsets.fromLTRB(0, 15, 5, 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
