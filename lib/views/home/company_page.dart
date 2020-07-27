@@ -65,7 +65,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     super.initState();
     logoURL = widget.company.logoURL;
     bannerURL = widget.company.bannerURL;
-    openTime = widget.company.getOpenTime(DateTime.now()) != null ? "Fechado" : widget.company.getOpenTime(DateTime.now());
+    setOpenTime();
     sliddingPage = OrderSliddingWidget(orderCallback: widget.orderCallback, updateOrders: updateOrders,);
     menuPresenter = MenuPresenter(this);
     menu = Singletons.menus()[widget.company.id];
@@ -75,6 +75,12 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
       onSuccess(menu);
     }
     updateOrders();
+  }
+
+  void setOpenTime() {
+    setState(() {
+      openTime = widget.company.getOpenTime(DateTime.now()) != null ? "Fechado" : widget.company.getOpenTime(DateTime.now());
+    });
   }
 
   void updateOrders() async {
@@ -335,6 +341,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
             if (result != null) {
               updateOrders();
             }
+            setOpenTime();
           },
         ),
       ),

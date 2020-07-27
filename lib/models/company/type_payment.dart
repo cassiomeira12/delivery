@@ -40,15 +40,6 @@ class TypePayment extends BaseModel<TypePayment> {
     return map;
   }
 
-//  @override
-//  update(TypePayment item) {
-//    id = item.id;
-//    name = item.name;
-//    paymentType = item.paymentType;
-//    taxa = item.taxa;
-//    maxInstallments = item.maxInstallments;
-//  }
-
   String getType() {
     switch (paymentType) {
       case Type.CARD:

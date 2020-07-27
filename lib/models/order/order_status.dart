@@ -7,25 +7,21 @@ class OrderStatus extends BaseModel<OrderStatus> {
   OrderStatus() : super('OrderStatus');
 
   OrderStatus.fromMap(Map<dynamic, dynamic>  map) : super('OrderStatus') {
+    objectId = map["objectId"];
     current = map["current"] == null ? null : Status.fromMap(map["current"]);
     values = map["values"] == null ?
-      null :
-      List.from(map["values"]).map<Status>((e) => Status.fromMap(e)).toList();
+    null :
+    List.from(map["values"]).map<Status>((e) => Status.fromMap(e)).toList();
   }
 
   @override
   Map<String, dynamic> toMap() {
     var map = Map<String, dynamic>();
+    map["objectId"] = objectId;
     map["current"] = current == null ? null : current.toMap();
     map["values"] = values == null ? null : values.map((e) => e.toMap()).toList();
     return map;
   }
-
-//  @override
-//  update(OrderStatus item) {
-//    current = item.current;
-//    values = item.values;
-//  }
 
   bool isFirst() {
     return current.name == values.first.name;

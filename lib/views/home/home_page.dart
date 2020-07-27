@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
       //var now = await TimeService(state.timeAPI).now();//demora resposta
       //dateNow = now == null ? DateTime.now() : now;
-      dateNow = DateTime.now();
+      setState(() => dateNow = DateTime.now());
     }
     verifiedCityTown();
   }
@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
           onPressed: () async {
             GetIt.instance<CompanyListSingleton>().list.clear();
             await PageRouter.push(context, LocationPage());
-            dateNow = DateTime.now();
+            setState(() => dateNow = DateTime.now());
             verifiedCityTown();
           },
         ),
@@ -274,7 +274,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     return RefreshIndicator(
       key: _refreshIndicatorKey,
       onRefresh: () {
-        dateNow = DateTime.now();
+        setState(() => dateNow = DateTime.now());
         GetIt.instance<CompanyListSingleton>().list.clear();
         return verifiedCityTown();
       },
@@ -316,8 +316,9 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
         child: CompanyWidget(
           item: item,
           dateTime: dateNow,
-          onPressed: (value) {
-            PageRouter.push(context, CompanyPage(loginCallback: widget.loginCallback, company: item, orderCallback: widget.orderCallback,));
+          onPressed: (value) async {
+            await PageRouter.push(context, CompanyPage(loginCallback: widget.loginCallback, company: item, orderCallback: widget.orderCallback,));
+            setState(() => dateNow = DateTime.now());
           },
         ),
       ),

@@ -84,7 +84,9 @@ class _CompanyWidgetState extends State<CompanyWidget> {
     bool openToday = company.isTodayOpen();
     String openText, closeText;
     if (openToday) {
+      print(timeNow);
       closeText = company.getOpenTime(timeNow);
+      print(closeText);
       if (closeText == null) {
         openText = "Aberto até ${company.closeTime()}";
       }
