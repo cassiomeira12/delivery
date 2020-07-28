@@ -60,7 +60,7 @@ class _CountWidgetState extends State<CountWidget> {
     }
   }
 
-  Widget botaoMenos(){
+  Widget botaoMenos() {
     return Container(
       width: widget.size,
       height: widget.size,
@@ -75,14 +75,12 @@ class _CountWidgetState extends State<CountWidget> {
             color: Colors.white,
           ),
         ),
-        onTap: () {
-          decrement();
-        }
+        onTap: decrement,
       ),
     );
   }
 
-  Widget quantidade(){
+  Widget quantidade() {
     return Container(
       margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: Text(
@@ -97,7 +95,7 @@ class _CountWidgetState extends State<CountWidget> {
     );
   }
 
-  Widget botaoMais(){
+  Widget botaoMais() {
     return Container(
       width: widget.size,
       height: widget.size,
@@ -112,9 +110,7 @@ class _CountWidgetState extends State<CountWidget> {
             color: Colors.white,
           ),
         ),
-        onTap: () {
-          increment();
-        },
+        onTap: increment,
       ),
     );
   }

@@ -198,11 +198,9 @@ class _ProductPageState extends State<ProductPage> {
                 padding: EdgeInsets.only(left: 10),
                 child: CountWidget(
                   minValue: 1,
-                  maxValue: 5,
+                  maxValue: 10,
                   changedCount: (value) {
-                    setState(() {
-                      count = value;
-                    });
+                    setState(() => count = value);
                   },
                 ),
               ),

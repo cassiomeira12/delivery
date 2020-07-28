@@ -18,7 +18,6 @@ class _ChoiceWidgetState extends State<ChoiceWidget> {
   Widget build(BuildContext context) {
     return StickyHeader(
       header: Container(
-        height: 50,
         color: Colors.grey[200],
         padding: EdgeInsets.fromLTRB(10, 5, 5, 5),
         alignment: Alignment.centerLeft,
@@ -87,7 +86,7 @@ class _ChoiceWidgetState extends State<ChoiceWidget> {
           ),
           Row(
             children: [
-              item.cost != null ?
+              item.cost != null && item.cost != 0 ?
               Text(
                 "R\$ ${item.cost.toStringAsFixed(2)}",
                 textAlign: TextAlign.left,

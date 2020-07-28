@@ -56,9 +56,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   double deliveryCost = 0;
   List<OrderItem> listOrder = List();
 
-  bool pickup = false;
-
-  List<bool> _selections = [true, false];
+  bool pickup;
+  List<bool> _selections;
 
   @override
   void initState() {
@@ -67,10 +66,15 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
     pickup = Singletons.order().company.delivery == null ? true : Singletons.order().company.delivery.pickup;
+    if (Singletons.order().company.delivery == null) {
+      pickup = true;
+      _selections = [false, true];
+    } else {
+      pickup = Singletons.order().company.delivery.pickup;
+      _selections = [true, false];
+    }
     deliveryCost = Singletons.order().company.delivery == null ? 0 : Singletons.order().company.delivery.cost/100;
-    setState(() {
-      listOrder.addAll(Singletons.order().items);
-    });
+    setState(() => listOrder.addAll(Singletons.order().items));
     listOrder.forEach((element) {
       total += element.getTotal();
     });
@@ -385,13 +389,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 children: [
                   textDeliveryAddress(),
                   Singletons.order().company.delivery != null ?
-                  Singletons.order().company.delivery.pickup ?
-                    Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width,
-                      child: typeDeliveryButtons(),
-                    ) : Container()
-                  : Container(),
+                    Singletons.order().company.delivery.pickup ?
+                      Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width,
+                        child: typeDeliveryButtons(),
+                      ) : Container()
+                    : Container(),
                   deliveryAddressWidget(),
                 ],
               ),
@@ -419,9 +423,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               children: [
                 FaIcon(FontAwesomeIcons.motorcycle,),
                 SizedBox(width: 10,),
-                Text(
-                  "Entrega",
-                ),
+                Text("Entrega",),
               ],
             ),
           ),
@@ -439,17 +441,22 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           ),
         ],
         onPressed: (int index) {
-          setState(() {
-            if (index == 0 && pickup) {
+          print(index);
+          print(pickup);
+
+          if (index == 0 && pickup) {
+            setState(() {
               _selections[index] = true;
               _selections[index + 1] = false;
               pickup = false;
-            } else if (index == 1 && !pickup) {
+            });
+          } else {
+            setState(() {
               _selections[index] = true;
               _selections[index - 1] = false;
               pickup = true;
-            }
-          });
+            });
+          }
         },
       ),
     );
