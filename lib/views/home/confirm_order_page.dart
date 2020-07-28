@@ -66,7 +66,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     orderPresenter = OrdersPresenter(this);
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
-    //pickup = Singletons.order().company.delivery == null ? true : Singletons.order().company.delivery.pickup;
+    pickup = Singletons.order().company.delivery == null ? true : Singletons.order().company.delivery.pickup;
     deliveryCost = Singletons.order().company.delivery == null ? 0 : Singletons.order().company.delivery.cost/100;
     setState(() {
       listOrder.addAll(Singletons.order().items);
