@@ -6,7 +6,7 @@ class ParseInit {
 //  static String masterKey = "kEDFmXLMsJFYi7FygmD1GVRNPRNORBHINWagKAGC";
 
 //  static String appId = "123456";
-//  static String serverUrl = "http://10.0.0.111:1337/parse";
+//  static String serverUrl = "http://10.0.0.107:1337/parse";
 //  static String masterKey = "123456";
 
   static String appId = "vP5eyem24FCRjqbzvfTx7KKgRN7WMk7RGObRBQfk";
