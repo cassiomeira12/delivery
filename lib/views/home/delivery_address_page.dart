@@ -46,7 +46,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Endereços", style: TextStyle(color: Colors.white),),
+        title: Text(ADDRESS, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: nestedScrollView(),

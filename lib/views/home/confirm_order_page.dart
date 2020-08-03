@@ -65,7 +65,6 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     orderPresenter = OrdersPresenter(this);
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
-    pickup = Singletons.order().company.delivery == null ? true : Singletons.order().company.delivery.pickup;
     if (Singletons.order().company.delivery == null) {
       pickup = true;
       _selections = [false, true];
@@ -118,7 +117,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Confirmar pedido", style: TextStyle(color: Colors.white),),
+        title: Text(CONFIRM_ORDER, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: ModalProgressHUD(
@@ -168,7 +167,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 ],
               ),
               listViewOrder(),
-              !pickup ? textDelivery() : Container(),
+              _selections[0] ? textDeliveryCost() : Container(),
               textCost(),
             ],
           ),
@@ -219,14 +218,14 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     );
   }
 
-  Widget textDelivery() {
+  Widget textDeliveryCost() {
     return Padding(
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Taxa de entrega",
+            DELIVERY_TAX,
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 20,
@@ -235,7 +234,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             ),
           ),
           Text(
-            deliveryCost == 0 ? "Grátis" : "R\$ ${(deliveryCost).toStringAsFixed(2)}",
+            deliveryCost == 0 ? FREE : "R\$ ${(deliveryCost).toStringAsFixed(2)}",
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 20,
@@ -264,7 +263,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             ),
           ),
           Text(
-            pickup ? "R\$ ${total.toStringAsFixed(2)}" : "R\$ ${(total + deliveryCost).toStringAsFixed(2)}",
+            _selections[1] ?
+              "R\$ ${total.toStringAsFixed(2)}" :
+              "R\$ ${(total + deliveryCost).toStringAsFixed(2)}",
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 25,
@@ -317,7 +318,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 Row(
                   children: [
                     Text(
-                      "R\$ ${(item.amount * item.getTotal()).toStringAsFixed(2)}",
+                      "R\$ ${(item.getTotal()).toStringAsFixed(2)}",
                       textAlign: TextAlign.left,
                       style: TextStyle(
                         fontSize: 20,
@@ -423,7 +424,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               children: [
                 FaIcon(FontAwesomeIcons.motorcycle,),
                 SizedBox(width: 10,),
-                Text("Entrega",),
+                Text(DELIVERY),
               ],
             ),
           ),
@@ -433,28 +434,23 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               children: [
                 FaIcon(FontAwesomeIcons.running,),
                 SizedBox(width: 10,),
-                Text(
-                  "Retirada",
-                ),
+                Text(PICKUP),
               ],
             ),
           ),
         ],
         onPressed: (int index) {
-          print(index);
-          print(pickup);
-
           if (index == 0 && pickup) {
             setState(() {
               _selections[index] = true;
               _selections[index + 1] = false;
-              pickup = false;
+              //pickup = false;
             });
           } else {
             setState(() {
               _selections[index] = true;
               _selections[index - 1] = false;
-              pickup = true;
+              //pickup = true;
             });
           }
         },
@@ -489,7 +485,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: Text(
-                  pickup ? "Buscar em" : "Entregar em",
+                  _selections[0] ? DELIVERY_AT : PICKUP_AT,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 23,
@@ -499,64 +495,68 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 ),
               ),
 
-              !pickup && (deliveryAddress == null) ?
-              Padding(
-                padding: EdgeInsets.only(left: 10, top: 15, right: 10, bottom: 15),
-                child: Text(
-                  "Adicione aqui o local para entrega",
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black54,
-                  ),
-                ),
-              ) : addressDataWidget( deliveryAddress == null ? Singletons.order().company.address : deliveryAddress ),
-
-              pickup ?
-
-              Singletons.order().company.address.location != null ?
-                GestureDetector(
-                  child: Container(
-                    padding: EdgeInsets.only(top: 10, bottom: 10),
-                    width: MediaQuery.of(context).size.width,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColorLight,
-                      borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+              _selections[0] && (deliveryAddress == null) ?
+                Padding(
+                  padding: EdgeInsets.only(left: 10, top: 15, right: 10, bottom: 15),
+                  child: Text(
+                    SET_DELIVERY_LOCATION,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Colors.black54,
                     ),
-                    child: Text(
-                      "Abrir o Mapa",
-                      textAlign: TextAlign.left,
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.white,
+                  ),
+                ) : addressDataWidget( deliveryAddress == null ? Singletons.order().company.address : deliveryAddress ),
+
+              _selections[1] ?
+                Singletons.order().company.address.location != null ?
+                    GestureDetector(
+                    child: Container(
+                      padding: EdgeInsets.only(top: 10, bottom: 10),
+                      width: MediaQuery.of(context).size.width,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).primaryColorLight,
+                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
+                      ),
+                      child: Text(
+                        OPEN_MAP,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  onTap: () async {
-                    var address =  Singletons.order().company.address;
-                    if (address != null && address.location != null) {
-                      print(address.location);
-                      MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
-                    }
-                  },
-                ) : Container()
-                : deliveryAddress == null ?
-                Padding(
-                  padding: EdgeInsets.all(10),
-                  child: SecondaryButton(
-                    text: "Escolher local",
-                    onPressed: () async {
-                      Address companyAddress = Singletons.order().company.address;
-                      Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
-                      if (result != null) {
-                        setState(() {
-                          deliveryAddress = result;
-                        });
+                    onTap: () async {
+                      var address =  Singletons.order().company.address;
+                      if (address != null && address.location != null) {
+                        print(address.location);
+                        MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
                       }
                     },
-                  ),
-                ) : Container(),
+                  )
+                      :
+                    Container()
+                  :
+                deliveryAddress == null ?
+                  Padding(
+                    padding: EdgeInsets.all(10),
+                    child: SecondaryButton(
+                      text: SELECT_LOCATION,
+                      onPressed: () async {
+                        Address companyAddress = Singletons.order().company.address;
+                        Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
+                        if (result != null) {
+                          setState(() {
+                            deliveryAddress = result;
+                          });
+                        }
+                      },
+                    ),
+                  )
+                    :
+                  Container(),
             ],
           ),
         ),
@@ -571,7 +571,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Text(
-          pickup ? "Local de retirada" : "Local de entrega",
+          _selections[0] ? DELIVERY_LOCATION : PICKUP_LOCATION,
           textAlign: TextAlign.left,
           style: TextStyle(
             fontSize: 25,
@@ -584,9 +584,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   }
 
   Widget addressDataWidget(Address address) {
-    print(address.toMap());
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Flexible(
           flex: 1,
@@ -654,20 +653,19 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             ],
           ),
         ),
-        deliveryAddress != null && !pickup ?
-        LightButton(
-          text: "Trocar",
-          onPressed: () async {
-            Address companyAddress = Singletons.order().company.address;
-            Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
-            if (result != null) {
-              setState(() {
-                deliveryAddress = result;
-              });
-            }
-          },
-        ) : Container(),
-        SizedBox(width: 5,),
+        deliveryAddress != null && _selections[0] ?
+          LightButton(
+            text: CHANGE,
+            onPressed: () async {
+              Address companyAddress = Singletons.order().company.address;
+              Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
+              if (result != null) {
+                setState(() {
+                  deliveryAddress = result;
+                });
+              }
+            },
+          ) : Container(),
       ],
     );
   }
@@ -688,7 +686,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 child: Padding(
                   padding: EdgeInsets.all(10),
                   child: Text(
-                    "Forma de pagamento",
+                    PAYMENT_TYPE,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 25,
@@ -702,7 +700,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               Padding(
                 padding: EdgeInsets.all(20),
                 child: SecondaryButton(
-                  text: "Escolher Pagamento",
+                  text: SELECT_PAYMENT,
                   onPressed: () async {
                     var companyPayments = Singletons.order().company.typePayments;
                     TypePayment result = await PageRouter.push(context, PaymentTypePage(paymentsType: companyPayments,));
@@ -770,7 +768,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               ],
             ),
             LightButton(
-              text: "Trocar",
+              text: CHANGE,
               onPressed: () async {
                 var companyPayments = Singletons.order().company.typePayments;
                 TypePayment result = await PageRouter.push(context, PaymentTypePage(paymentsType: companyPayments,));
@@ -815,7 +813,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   Future<String> getTroco() async {
     var result = await showTextInputDialog(
       context: context,
-      title: "Precisa de troco?",
+      title: "Precisa de troco ?",
       message: "Troco pra quanto ?",
       cancelLabel: "Sem troco",
       okLabel: SALVAR,
@@ -881,8 +879,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     }
     await showOkAlertDialog(
       context: context,
-      title: "Fechado",
-      okLabel: "Ok",
+      title: CLOSED,
+      okLabel: OK,
       message: message,
     );
   }
@@ -900,7 +898,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       await showOkAlertDialog(
         context: context,
         title: "Internet",
-        okLabel: "Ok",
+        okLabel: OK,
         message: "Error, verifique sua conexão com a internet e tente novamente.",
       );
       return false;
@@ -948,7 +946,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     return Padding(
       padding: EdgeInsets.all(10),
       child: PrimaryButton(
-        text: "Enviar Pedido",
+        text: "Enviar pedido",
         onPressed: () async {
 
           setState(() => _loading = true);
@@ -963,6 +961,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           status.current = status.values[0];
 
           Singletons.order().id = null;
+
           Singletons.order().user = Singletons.user();
           Singletons.order().status = status;
           Singletons.order().note = _observacaoController.text;

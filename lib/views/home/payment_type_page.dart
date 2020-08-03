@@ -1,3 +1,5 @@
+import 'package:kideliver/strings.dart';
+
 import '../../models/company/type_payment.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -21,7 +23,7 @@ class _PaymentTypePageState extends State<PaymentTypePage> {
     return Scaffold(
       //key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("Forma de pagamento", style: TextStyle(color: Colors.white),),
+        title: Text(PAYMENT_TYPE, style: TextStyle(color: Colors.white),),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: body(),

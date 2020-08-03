@@ -62,7 +62,7 @@ class _HistoricWidgetState extends State<HistoricWidget> {
                   )
                     :
                   StarsWidget(initialStar: order.evaluation.stars, size: 30,),
-                costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
+                order.canceled ? Container() : costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
               ],
             ),
           ],

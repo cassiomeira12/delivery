@@ -6,6 +6,7 @@ import '../../widgets/stars_widget.dart';
 import '../page_router.dart';
 
 class EvaluationDialog extends StatefulWidget {
+
   @override
   _EvaluationDialogState createState() => _EvaluationDialogState();
 }

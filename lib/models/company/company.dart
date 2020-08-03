@@ -1,3 +1,4 @@
+import 'package:kideliver/strings.dart';
 import 'package:kideliver/utils/log_util.dart';
 
 import '../../models/order/order_status.dart';
@@ -120,7 +121,7 @@ class Company extends BaseModel<Company> {
       }
     });
     if (openingHourToday == null) {// Nao abre no dia
-      return "Fechado";
+      return CLOSED;
     }
     var close = DateUtil.todayTime(openingHourToday.closeHour, openingHourToday.closeMinute);
     String hour = close.hour < 10 ? "0${close.hour}" : close.hour.toString();
@@ -136,24 +137,25 @@ class Company extends BaseModel<Company> {
         return;
       }
     });
+
     if (openingHourToday == null) {// Nao abre no dia
-      return "Fechado";
+      return CLOSED;
     }
 
     var open = DateUtil.todayTime(openingHourToday.openHour, openingHourToday.openMinute);
     var close = DateUtil.todayTime(openingHourToday.closeHour, openingHourToday.closeMinute);
 
-    //print("Agora ${date}");
-    //print("Abre ${open}");
-    //print("Fecha ${close}");
+    print("Agora ${date}");
+    print("Abre ${open}");
+    print("Fecha ${close}");
 
-    if (close.isBefore(open)) {
+    if (close.isBefore(open)) {// Fechado no outro dia
       close = close.add(Duration(days: 1));
     } else {
       if (date.isAfter(open) && date.isBefore(close)) {
         return null;// Aberto
-      } else {
-        return "Fechado";
+      } else if (date.isAfter(close)) {
+        return CLOSED;
       }
     }
 

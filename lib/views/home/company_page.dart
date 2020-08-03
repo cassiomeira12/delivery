@@ -79,7 +79,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   void setOpenTime() {
     setState(() {
-      openTime = widget.company.getOpenTime(DateTime.now()) != null ? "Fechado" : widget.company.getOpenTime(DateTime.now());
+      openTime = widget.company.getOpenTime(DateTime.now()) != null ? CLOSED : widget.company.getOpenTime(DateTime.now());
     });
   }
 
@@ -295,7 +295,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
             Stack(
               children: [
                 EmptyListWidget(
-                  message: "Nenhum item foi encontrado",
+                  message: NO_ITEM_FOUND,
                   //assetsImage: "assets/notification.png",
                 ),
                 listView(),
@@ -408,7 +408,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     return Container(
       alignment: Alignment.center,
       child: AutoSizeText(
-        openTime == null ? "Aberto" : openTime,
+        openTime == null ? OPEN : openTime,
         maxLines: 1,
         style: TextStyle(
           fontSize: 18,
@@ -447,7 +447,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
                   FaIcon(FontAwesomeIcons.motorcycle, size: 16, color: Theme.of(context).errorColor,),
                   SizedBox(width: 5,),
                   Text(
-                    widget.company.delivery.cost == 0 ? "Grátis" : "R\$ ${(widget.company.delivery.cost/100).toStringAsFixed(2)}",
+                    widget.company.delivery.cost == 0 ? FREE : "R\$ ${(widget.company.delivery.cost/100).toStringAsFixed(2)}",
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -501,8 +501,8 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   void showDialog() async {
     final result = await showOkCancelAlertDialog(
       context: context,
-      title: "Você tem peidos selecionados",
-      okLabel: "Limpar",
+      title: YOU_HAVE_ORDERS_SELECTED,
+      okLabel: CLEAR,
       cancelLabel: CANCELAR,
       message: "Deseja realmente limpar os pedidos selecionados de ${widget.company.name} ?",
     );

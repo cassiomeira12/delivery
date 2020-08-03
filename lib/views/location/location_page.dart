@@ -109,7 +109,7 @@ class _LocationPageState extends State<LocationPage> {
                 children: [
                   search(),
                   Text(
-                    "Escolha uma cidade",
+                    SELECT_CITY,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 23,
@@ -192,7 +192,7 @@ class _LocationPageState extends State<LocationPage> {
             Stack(
               children: [
                 EmptyListWidget(
-                  message: "Nenhum item foi encontrado",
+                  message: NO_CITY_FOUND,
                   //assetsImage: "assets/notification.png",
                 ),
                 listView(),
@@ -272,8 +272,8 @@ class _LocationPageState extends State<LocationPage> {
   void selectSmallTown(City city) async {
     final result = await showConfirmationDialog<String>(
       context: context,
-      title: "Escolha uma localidade",
-      okLabel: "Ok",
+      title: SELECT_SOME_LOCATION,
+      okLabel: OK,
       cancelLabel: CANCELAR,
       barrierDismissible: false,
       actions: dialogList.map((e) {
@@ -281,14 +281,14 @@ class _LocationPageState extends State<LocationPage> {
       }).toList(),
     );
     if (result == null || result == city.id) {
-      print("cidade ${city.toMap()}");
+      print("${CITY.toLowerCase()} ${city.toMap()}");
       PreferencesUtil.setSmallTownData(null);
       PreferencesUtil.setCityData(city.toMap());
       PageRouter.pop(context);
     } else {
       var smallTown = smallTownList.singleWhere((element) => element.id == result, orElse: null);
       smallTown.city = city;
-      print("povoado ${smallTown.toMap()}");
+      print("${SMALL_TOWN.toLowerCase()} ${smallTown.toMap()}");
       PreferencesUtil.setCityData(null);
       PreferencesUtil.setSmallTownData(smallTown.toMap());
       PageRouter.pop(context);

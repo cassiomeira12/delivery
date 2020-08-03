@@ -4,10 +4,12 @@ import '../../models/menu/choice.dart';
 import '../../models/menu/item.dart';
 
 class ChoiceWidget extends StatefulWidget {
-  final Choice choice;
   Item selectedItem;
 
-  ChoiceWidget(this.choice);
+  final Choice choice;
+  final ValueChanged<Item> onItemSelected;
+
+  ChoiceWidget(this.choice, this.onItemSelected);
 
   @override
   _ChoiceWidgetState createState() => _ChoiceWidgetState();
@@ -61,7 +63,6 @@ class _ChoiceWidgetState extends State<ChoiceWidget> {
   }
 
   Widget choiceItemWidget(Item item) {
-    print(item.toMap());
     return FlatButton(
       padding: EdgeInsets.fromLTRB(10, 2.5, 0, 2.5),
       child: Row(
@@ -104,10 +105,19 @@ class _ChoiceWidgetState extends State<ChoiceWidget> {
                   if (widget.selectedItem != null && widget.selectedItem == item) {
                     setState(() {
                       widget.selectedItem = null;
+                      var temp = Item();
+                      temp.cost = -item.cost;
+                      widget.onItemSelected(temp);
                     });
                   } else {
+                    if (widget.selectedItem != null) {
+                      var temp = Item();
+                      temp.cost = -widget.selectedItem.cost;
+                      widget.onItemSelected(temp);
+                    }
                     setState(() {
                       widget.selectedItem = item;
+                      widget.onItemSelected(item);
                     });
                   }
                 },
@@ -120,10 +130,19 @@ class _ChoiceWidgetState extends State<ChoiceWidget> {
         if (widget.selectedItem != null && widget.selectedItem == item) {
           setState(() {
             widget.selectedItem = null;
+            var temp = Item();
+            temp.cost = -item.cost;
+            widget.onItemSelected(temp);
           });
         } else {
+          if (widget.selectedItem != null) {
+            var temp = Item();
+            temp.cost = -widget.selectedItem.cost;
+            widget.onItemSelected(temp);
+          }
           setState(() {
             widget.selectedItem = item;
+            widget.onItemSelected(item);
           });
         }
       },

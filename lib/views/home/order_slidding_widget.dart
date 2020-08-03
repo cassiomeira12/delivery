@@ -36,7 +36,6 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
   @override
   void initState() {
     super.initState();
-    print("Slidding init");
     widget._initedState = true;
     //deliveryCost = OrderSingleton.instance.company.delivery.cost / 100;
     listItens();
@@ -46,7 +45,6 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
   void dispose() {
     super.dispose();
     widget._initedState = false;
-    print("slidding dispose");
   }
 
   void listItens() {
@@ -242,7 +240,7 @@ class _OrderSliddingWidgetState extends State<OrderSliddingWidget> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            "Taxa de entrega",
+            DELIVERY_TAX,
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 20,

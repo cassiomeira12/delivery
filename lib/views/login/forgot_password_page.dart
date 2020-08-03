@@ -6,7 +6,6 @@ import '../../widgets/background_card.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/shape_round.dart';
-
 import '../../strings.dart';
 
 class ForgotPasswordPage extends StatefulWidget {

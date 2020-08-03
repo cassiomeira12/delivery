@@ -1,5 +1,4 @@
-import 'package:kideliver/models/menu/choice_selected.dart';
-
+import '../../models/menu/choice_selected.dart';
 import '../../views/login/login_page.dart';
 import '../../models/singleton/singletons.dart';
 import '../../models/company/company.dart';
@@ -58,16 +57,23 @@ class _ProductPageState extends State<ProductPage> {
   TextEditingController _observacaoController;
 
   int radioGroup;
-  Item escolhido;
+  //Item itemSelected;
 
   List<ChoiceWidget> selectedChoices = List();
+  
+  double value = 0;
 
   @override
   void initState() {
     super.initState();
     product = widget.item as Product;
+    value = product.cost;
     _observacaoController = TextEditingController();
-    selectedChoices = product.choices.map((e) => ChoiceWidget(e)).toList();
+    selectedChoices = product.choices.map((e) {
+      return ChoiceWidget(e, (selected) {
+        setState(() => value += selected.cost);
+      });
+    }).toList();
   }
 
   @override
@@ -204,7 +210,7 @@ class _ProductPageState extends State<ProductPage> {
                   },
                 ),
               ),
-              product.cost > 0 ? costWidget(product.cost) : Container(),
+              costWidget(),
             ],
           ),
 
@@ -279,11 +285,11 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  Widget costWidget(double cost) {
+  Widget costWidget() {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Text(
-        "R\$ ${((count * cost) + additionalCost).toStringAsFixed(2)}",
+        value > 0 ? "R\$ ${((count * value) + additionalCost).toStringAsFixed(2)}" : "",
         textAlign: TextAlign.left,
         style: TextStyle(
           fontSize: 30,
@@ -402,7 +408,7 @@ class _ProductPageState extends State<ProductPage> {
             final result = await showOkCancelAlertDialog(
               context: context,
               title: "Criar conta",
-              message: "Você precisa criar uma conta para fazer pedido",
+              message: "Você precisa criar uma conta para fazer o pedido",
               okLabel: CRIAR_CONTA,
               cancelLabel: CANCELAR,
             );
@@ -430,8 +436,8 @@ class _ProductPageState extends State<ProductPage> {
     }
     await showOkAlertDialog(
       context: context,
-      title: "Fechado",
-      okLabel: "Ok",
+      title: CLOSED,
+      okLabel: OK,
       message: message,
     );
   }

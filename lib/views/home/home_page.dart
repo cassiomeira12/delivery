@@ -284,7 +284,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
             :
           list.isEmpty ?
             EmptyListWidget(
-              message: "Nenhuma empresa foi encontrada",
+              message: NO_COMPANY_FOUND,
               //assetsImage: "assets/notification.png",
             )
               :

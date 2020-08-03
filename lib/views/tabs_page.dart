@@ -1,11 +1,12 @@
 import 'dart:io';
+import 'package:kideliver/utils/log_util.dart';
+
 import '../models/singleton/singletons.dart';
 import '../contracts/order/order_contract.dart';
 import '../presenters/order/order_presenter.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../widgets/tabs.dart';
-import '../views/comanda/comanda_page.dart';
 import '../views/historico/historic_page.dart';
 import '../views/home/home_page.dart';
 import '../views/notifications/notifications_page.dart';
@@ -39,7 +40,6 @@ class _TabsPageState extends State<TabsPage> {
     screens = [
       HomePage(loginCallback: widget.loginCallback, orderCallback: orderCallback,),
       NotificationsPage(),
-      ComandaPage(),
       HistoricPage(),
       SettingsPage(logoutCallback: widget.logoutCallback,),
     ];
@@ -61,7 +61,7 @@ class _TabsPageState extends State<TabsPage> {
       Singletons.orders().addAll(result);
       var temp = 0;
       result.forEach((element) {
-        if (!element.status.isLast() && !element.canceled) {
+        if ((!element.status.isLast() || element.evaluation == null) && !element.canceled) {
           temp++;
         }
       });
@@ -185,6 +185,36 @@ class _TabsPageState extends State<TabsPage> {
               child: Container(
                 margin: EdgeInsets.fromLTRB(10, 5, 0, 5),
                 child: MaterialButton(
+                  color: currentTab == 2 ? Theme.of(context).primaryColorLight : Theme.of(context).backgroundColor,
+                  elevation: 0,
+                  shape: StadiumBorder(),
+                  splashColor: Theme.of(context).backgroundColor,
+                  clipBehavior: Clip.hardEdge,
+                  onPressed: () {
+                    setState(() {
+                      currentTab = 2;
+                      tabsView.setPage(currentTab);
+                    });
+                  },
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: <Widget>[
+                      FaIcon(FontAwesomeIcons.shoppingCart, color: currentTab == 2 ? Theme.of(context).backgroundColor : Colors.grey,),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
+                        child: notificationCount(orderCount),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+            Expanded(
+              flex: 2,
+              child: Container(
+                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                child: MaterialButton(
                   color: currentTab == 3 ? Theme.of(context).primaryColorLight : Theme.of(context).backgroundColor,
                   elevation: 0,
                   shape: StadiumBorder(),
@@ -199,37 +229,7 @@ class _TabsPageState extends State<TabsPage> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: <Widget>[
-                      FaIcon(FontAwesomeIcons.shoppingCart, color: currentTab == 3 ? Theme.of(context).backgroundColor : Colors.grey,),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
-                        child: notificationCount(Singletons.orders().length),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-
-            Expanded(
-              flex: 2,
-              child: Container(
-                margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                child: MaterialButton(
-                  color: currentTab == 4 ? Theme.of(context).primaryColorLight : Theme.of(context).backgroundColor,
-                  elevation: 0,
-                  shape: StadiumBorder(),
-                  splashColor: Theme.of(context).backgroundColor,
-                  clipBehavior: Clip.hardEdge,
-                  onPressed: () {
-                    setState(() {
-                      currentTab = 4;
-                      tabsView.setPage(currentTab);
-                    });
-                  },
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: <Widget>[
-                      FaIcon(FontAwesomeIcons.userCog, color: currentTab == 4 ? Theme.of(context).backgroundColor : Colors.grey,),
+                      FaIcon(FontAwesomeIcons.userCog, color: currentTab == 3 ? Theme.of(context).backgroundColor : Colors.grey,),
                       Padding(
                         padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
                         child: notificationCount(0),

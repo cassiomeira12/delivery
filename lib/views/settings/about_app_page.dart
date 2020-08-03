@@ -176,15 +176,4 @@ class _AboutAppState extends State<AboutAppPage> {
     );
   }
 
-  Widget txtAboutApp() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0),
-      width: double.maxFinite,
-      child: Text(
-        "About App",
-        style: Theme.of(context).textTheme.body1,
-      ),
-    );
-  }
-
 }

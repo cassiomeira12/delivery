@@ -12,7 +12,6 @@ import '../../widgets/background_card.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/shape_round.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
-
 import '../page_router.dart';
 import 'verified_phone_number_page.dart';
 

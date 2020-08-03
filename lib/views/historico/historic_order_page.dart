@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:kideliver/widgets/scaffold_snackbar.dart';
+import '../../models/company/type_payment.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:timeline_tile/timeline_tile.dart';
 import 'package:flutter/material.dart';
@@ -178,7 +179,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
           ),
         ];
       },
-      body: timeLine(),
+      body: order.canceled ? Container() : timeLine(),
     );
   }
 
@@ -201,16 +202,26 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               ],
             ),
             SizedBox(height: 5,),
-            Column(children: ordersItems,),
-            textDelivery(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                totalTextWidget(),
-                costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
-              ],
+            Card(
+              color: Colors.grey[200],
+              margin: EdgeInsets.all(0),
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                child: Column(children: ordersItems,),
+              ),
             ),
-            textPaymentType(),
+            order.delivery ? textDelivery() : Container(),
+            Padding(
+              padding: EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  totalTextWidget(),
+                  costTextWidget("R\$ ${total.toStringAsFixed(2)}"),
+                ],
+              ),
+            ),
+            paymentTypeWidget(order.typePayment),
             addressDataWidget(order.deliveryAddress),
             SizedBox(height: 10,),
             order.status.isLast() && order.evaluation != null ?
@@ -277,7 +288,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   Widget textDelivery() {
     return Padding(
-      padding: EdgeInsets.only(top: 10, bottom: 10),
+      padding: EdgeInsets.only(top: 10),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -308,17 +319,34 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
     );
   }
 
-  Widget textPaymentType() {
-    return Padding(
-      padding: EdgeInsets.only(top: 15, bottom: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            flex: 1,
-            child: AutoSizeText(
-              order.typePayment.getType(),
-              maxLines: 1,
+  Widget paymentTypeWidget(TypePayment payment) {
+    return Card(
+      elevation: 5,
+      margin: EdgeInsets.only(top: 15),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(0, 15, 10, 15),
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              alignment: Alignment.center,
+              child: FaIcon(findIcon(payment.paymentType), color: Colors.green,),
+            ),
+            Expanded(
+              child: AutoSizeText(
+                payment.getType(),
+                maxLines: 1,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 20,
+                  color: Colors.black45,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Text(
+              order.changeMoney == null ? "Sem troco" : order.changeMoney,
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 20,
@@ -326,24 +354,34 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-          Text(
-            order.changeMoney == null ? "Sem troco" : order.changeMoney,
-            textAlign: TextAlign.left,
-            style: TextStyle(
-              fontSize: 20,
-              color: Colors.black45,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
+  IconData findIcon(Type type) {
+    IconData icon;
+    switch(type) {
+      case Type.MONEY:
+        icon = FontAwesomeIcons.moneyBill;
+        break;
+      case Type.CARD:
+        icon = FontAwesomeIcons.creditCard;
+        break;
+      case Type.APP_PAYMENT:
+        icon = FontAwesomeIcons.mobileAlt;
+        break;
+      case Type.CASHBACK:
+        icon = FontAwesomeIcons.handHoldingUsd;
+        break;
+    }
+    return icon;
+  }
+
   Widget orderItem(OrderItem item) {
     return Padding(
-      padding: EdgeInsets.fromLTRB(0, 5, 0, 5),
+      padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -356,16 +394,16 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                   "${item.amount}x ${item.name}",
                   maxLines: 1,
                   style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black45,
+                    fontSize: 23,
+                    color: Colors.black54,
                   ),
                 ),
               ),
               Text(
                 "R\$ ${(item.getTotal()).toStringAsFixed(2)}",
                 style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.black45,
+                  fontSize: 22,
+                  color: Colors.black54,
                 ),
               ),
             ],
@@ -378,7 +416,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 "* $choice",
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 20,
                   color: Colors.black45,
                   //fontWeight: FontWeight.bold,
                 ),
@@ -393,7 +431,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 "+ ${additional.amount} ${additional.name} R\$ ${(additional.amount * additional.cost).toStringAsFixed(2)}",
                 textAlign: TextAlign.left,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 20,
                   color: Colors.black45,
                   //fontWeight: FontWeight.bold,
                 ),
@@ -404,11 +442,17 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
             Text(
               item.note,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 20,
                 color: Colors.black54,
                 fontWeight: FontWeight.bold,
               ),
             ) : Container(),
+          SizedBox(height: 15,),
+          Divider(
+            color: Colors.white,
+            thickness: 1,
+            height: 0,
+          ),
         ],
       ),
     );
@@ -556,16 +600,13 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
   }
 
   Widget totalTextWidget() {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      child: Text(
-        "Total",
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          fontSize: 25,
-          color: Colors.black45,
-          fontWeight: FontWeight.bold,
-        ),
+    return Text(
+      "Total",
+      textAlign: TextAlign.left,
+      style: TextStyle(
+        fontSize: 25,
+        color: Colors.black45,
+        fontWeight: FontWeight.bold,
       ),
     );
   }
@@ -586,68 +627,70 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                   padding: EdgeInsets.all(10),
                   child: order.delivery ? FaIcon(FontAwesomeIcons.motorcycle,) : FaIcon(FontAwesomeIcons.running,),
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(top: 5, right: 10),
-                      child: Text(
-                        order.delivery ? "Endereço de entrega" : "Endereço de retirada",
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.bold,
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 5, right: 10),
+                        child: Text(
+                          order.delivery ? "Endereço de entrega" : "Endereço de retirada",
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black54,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 5, right: 10),
-                      child: Text(
-                        "${address.street}" + (address.number == null ? "" : ", ${address.number}"),
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black54,
+                      Padding(
+                        padding: EdgeInsets.only(top: 5, right: 10),
+                        child: Text(
+                          "${address.street}" + (address.number == null ? "" : ", ${address.number}"),
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black54,
+                          ),
                         ),
                       ),
-                    ),
-                    address.neighborhood != null ? Padding(
-                      padding: EdgeInsets.only(top: 5, right: 10),
-                      child: Text(
-                        address.neighborhood,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black54,
+                      address.neighborhood != null ? Padding(
+                        padding: EdgeInsets.only(top: 5, right: 10),
+                        child: Text(
+                          address.neighborhood,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black54,
+                          ),
                         ),
-                      ),
-                    ) : Container(),
-                    address.reference != null ? Padding(
-                      padding: EdgeInsets.only(top: 5, right: 10),
-                      child: Text(
-                        address.reference,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black38,
+                      ) : Container(),
+                      address.reference != null ? Padding(
+                        padding: EdgeInsets.only(top: 5, right: 10),
+                        child: Text(
+                          address.reference,
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontSize: 20,
+                            color: Colors.black38,
+                          ),
                         ),
-                      ),
-                    ) : Container(),
-                    order.note != null && order.note.isNotEmpty ?
-                    Padding(
-                      padding: EdgeInsets.only(top: 5, right: 10),
-                      child: Text(
-                        order.note,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.black54,
-                          //fontWeight: FontWeight.bold,
+                      ) : Container(),
+                      order.note != null && order.note.isNotEmpty ?
+                      Padding(
+                        padding: EdgeInsets.only(top: 5, right: 10),
+                        child: Text(
+                          order.note,
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.black54,
+                            //fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      ),
-                    ) : Container(),
-                    SizedBox(height: 10,),
-                  ],
+                      ) : Container(),
+                      SizedBox(height: 10,),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -662,7 +705,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                     borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
                   ),
                   child: Text(
-                    "Abrir o Mapa",
+                    OPEN_MAP,
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontSize: 20,
@@ -686,16 +729,13 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
   }
 
   Widget costTextWidget(String text) {
-    return Padding(
-      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-      child: Text(
-        text,
-        textAlign: TextAlign.left,
-        style: TextStyle(
-          fontSize: 25,
-          color: Colors.black45,
-          fontWeight: FontWeight.bold,
-        ),
+    return Text(
+      text,
+      textAlign: TextAlign.left,
+      style: TextStyle(
+        fontSize: 25,
+        color: Colors.black45,
+        fontWeight: FontWeight.bold,
       ),
     );
   }

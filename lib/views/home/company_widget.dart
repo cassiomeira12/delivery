@@ -1,3 +1,5 @@
+import 'package:kideliver/strings.dart';
+
 import '../../widgets/image_network_widget.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/company/company.dart';
@@ -94,7 +96,7 @@ class _CompanyWidgetState extends State<CompanyWidget> {
     return Padding(
       padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
       child: Text(
-        openToday ? closeText == null ? openText : closeText : "Fechado",
+        openToday ? closeText == null ? openText : closeText : CLOSED,
         textAlign: TextAlign.left,
         style: TextStyle(
           fontSize: 18,

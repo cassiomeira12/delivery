@@ -219,7 +219,7 @@ class _SignUpPageState extends State<SignUpPage> implements LoginContractView{
               child: Container(
                 alignment: Alignment.center,
                 child: AutoSizeText(
-                  "Usar conta do Google",
+                  USE_GOOGLE_ACCOUNT,
                   maxLines: 1,
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.body2,

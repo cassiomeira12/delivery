@@ -25,6 +25,7 @@ const LOGAR = "Logar";
 const FAZER_LOGIN = "Fazer Login";
 const OU = "OU";
 const LOGAR_COM_GOOGLE = "Logar com Google";
+const USE_GOOGLE_ACCOUNT = "Usar conta do Google";
 const SALVAR = "Salvar";
 const ENVIAR = "Enviar";
 const FORGOT_PASSWORD_TEXT = "Será enviado um e-mail para recuperar a sua senha, verifique sua caixa de entrada e spam.";
@@ -66,6 +67,7 @@ const RECEBER_SMS = "Receber SMS";
 const ALTERAR_TELEFONE = "Alterar telefone";
 const REENVIAR_SMS = "Reenviar SMS";
 const CANCELAR = "Cancelar";
+const OK = "Ok";
 const TELEFONE_ATUALIZADO = "Telefone Atualizado";
 
 const ENTRAR = "Entrar";
@@ -104,3 +106,36 @@ const ERROR_NETWORK = "Verifique sua conexão com a internet";
 const SOME_ERROR = "Ocorreu um erro";
 const ERROR_ALREADY_EXISTS = "Error, já existe uma conta com esse email, tente novamente.";
 const ERROR_LOGIN_PASSWORD = "Login ou Senha inválidos";
+
+const CITY = "Cidade";
+const SMALL_TOWN = "Povoado";
+
+const SELECT_CITY = "Escolha uma cidade";
+const SELECT_SOME_LOCATION = "Escolha uma localidade";
+const SELECT_LOCATION = "Escolher local";
+const NO_CITY_FOUND = "Nenhuma cidade foi encontrada";
+
+const NO_COMPANY_FOUND = "Nenhuma empresa foi encontrada";
+const OPEN = "Aberto";
+const CLOSED = "Fechado";
+const FREE = "Grátis";
+const CLEAR = "Limpar";
+const CONFIRM_ORDER = "Confirmar pedido";
+const DELIVERY = "Entrega";
+const PICKUP = "Retirada";
+const DELIVERY_LOCATION = "Local de entrega";
+const PICKUP_LOCATION = "Local de retirada";
+const DELIVERY_TAX = "Taxa de entrega";
+const DELIVERY_AT = "Entregar em";
+const PICKUP_AT = "Buscar em";
+const SET_DELIVERY_LOCATION = "Adicione aqui o local para entrega";
+const OPEN_MAP = "Abrir no mapa";
+const CHANGE = "Trocar";
+const ADDRESS = "Endereços";
+
+const SELECT_PAYMENT = "Escolher pagamento";
+const PAYMENT_TYPE = "Forma de pagamento";
+
+const NO_ITEM_FOUND = "Nenhum item foi encontrado";
+
+const YOU_HAVE_ORDERS_SELECTED = "Você tem pedidos selecionados";
