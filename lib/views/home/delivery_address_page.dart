@@ -1,3 +1,5 @@
+import 'package:kideliver/utils/log_util.dart';
+
 import '../../widgets/scaffold_snackbar.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../contracts/address/address_contract.dart';
@@ -32,7 +34,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
   void initState() {
     super.initState();
     presenter = AddressPresenter(this);
-    presenter.listUsersAddress();
+    presenter.listUsersAddress(widget.address);
   }
 
   @override
@@ -103,7 +105,7 @@ class _DeliveryAddressPageState extends State<DeliveryAddressPage> implements Ad
     final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     return RefreshIndicator(
       key: _refreshIndicatorKey,
-      onRefresh: () => presenter.listUsersAddress(),
+      onRefresh: () => presenter.listUsersAddress(widget.address),
       child: Center(
         child: listView(),
       ),

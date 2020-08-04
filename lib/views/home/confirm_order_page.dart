@@ -1,4 +1,5 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kideliver/utils/log_util.dart';
 import '../../models/order/order_status.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:flutter/material.dart';
@@ -595,7 +596,10 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: Text(
-                  address.city == null ? address.smallTown.city.name : address.city.name,
+                  address.city == null ?
+                    address.smallTown.city.name
+                      :
+                    address.city.name,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 20,

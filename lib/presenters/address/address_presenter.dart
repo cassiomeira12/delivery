@@ -85,8 +85,8 @@ class AddressPresenter implements AddressContractPresenter {
   }
 
   @override
-  listUsersAddress() async {
-    return await service.findBy("user", Singletons.user().toPointer()).then((value) {
+  listUsersAddress(Address address) async {
+    return await service.listUserAddress(Singletons.user(), address).then((value) {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
