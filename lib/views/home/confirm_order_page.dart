@@ -1,5 +1,7 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:kideliver/utils/log_util.dart';
+import '../../contracts/address/states_contract.dart';
+import '../../presenters/address/states_presenter.dart';
+import '../../utils/log_util.dart';
 import '../../models/order/order_status.dart';
 import 'package:maps_launcher/maps_launcher.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +47,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   bool _loading = false;
 
+  StatesContractPresenter statePresenter;
   OrderContractPresenter orderPresenter;
   UserContractPresenter userPresenter;
 
@@ -63,6 +66,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   @override
   void initState() {
     super.initState();
+    statePresenter = StatesPresenter(null);
     orderPresenter = OrdersPresenter(this);
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();

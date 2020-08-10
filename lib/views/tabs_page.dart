@@ -73,7 +73,7 @@ class _TabsPageState extends State<TabsPage> {
 
   void orderCallback() {
     setState(() {
-      currentTab = 3;
+      currentTab = 2;
       tabsView.setPage(currentTab);
     });
   }

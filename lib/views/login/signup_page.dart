@@ -14,7 +14,6 @@ import '../../views/login/create_account_page.dart';
 import '../../widgets/background_card.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/shape_round.dart';
-
 import '../page_router.dart';
 
 class SignUpPage extends StatefulWidget {

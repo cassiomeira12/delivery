@@ -30,7 +30,7 @@ class _LocationPageState extends State<LocationPage> {
     ..objectId = "1bp6TfFPUE"
     ..name = "Bahia"
     ..code = "BA"
-    ..timeAPI = "http://worldtimeapi.org/api/timezone/america/bahia";
+    ..timeAPI = "http://worldtimeapi.org/api/timezone/america/Bahia";
 
   List<City> cityList;
   List<SmallTown> smallTownList;

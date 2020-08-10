@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:kideliver/views/login/company/new_company_page.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../presenters/user/user_presenter.dart';
 import '../../utils/preferences_util.dart';
@@ -153,6 +154,7 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
           //googleButton(),
           signupButton(),
           anonymousButton(),
+          newCompanyButton(),
         ],
       ),
     );
@@ -309,11 +311,23 @@ class _LoginPageState extends State<LoginPage> implements LoginContractView {
 
   Widget anonymousButton() {
     return Padding(
-      padding: EdgeInsets.fromLTRB(10, 12, 10, 30),
+      padding: EdgeInsets.fromLTRB(10, 12, 10, 0),
       child: LightButton(
         text: "Entrar como convidado".toUpperCase(),
         onPressed: () {
           loginPresenter.signAnonymous();
+        },
+      ),
+    );
+  }
+
+  Widget newCompanyButton() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(10, 0, 10, 50),
+      child: LightButton(
+        text: "Cadastre seu estabelecimento".toUpperCase(),
+        onPressed: () {
+          PageRouter.push(context, NewCompanyPage());
         },
       ),
     );

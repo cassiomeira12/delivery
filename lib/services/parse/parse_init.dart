@@ -2,7 +2,7 @@ import 'package:parse_server_sdk/parse_server_sdk.dart';
 
 class ParseInit {
 //  static String appId = "123456";
-//  static String serverUrl = "http://10.0.0.107:1337/parse";
+//  static String serverUrl = "http://10.0.0.106:1337/parse";
 //  static String masterKey = "123456";
 
   static String appId = "vP5eyem24FCRjqbzvfTx7KKgRN7WMk7RGObRBQfk";
