@@ -1,7 +1,7 @@
 name: kideliver
 description: Kideliver Client
 autor: Cássio Meira Silva
-version: 1.0.5+5
+version: 1.0.6+6
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
