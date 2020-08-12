@@ -1,8 +1,8 @@
-import 'package:kideliver/services/notifications/push_notification.dart';
-
+import '../../services/notifications/push_notification.dart';
 import '../../models/menu/menu.dart';
 import '../../models/singleton/menu_map_singleton.dart';
 import 'package:get_it/get_it.dart';
+import '../version_app.dart';
 import 'company_list_singleton.dart';
 import 'order_list_singleton.dart';
 import '../../models/company/company.dart';
@@ -21,6 +21,7 @@ class Singletons {
     GetIt.instance.registerSingleton<CompanyListSingleton>(CompanyListSingleton());
     GetIt.instance.registerSingleton<MenuMapSingleton>(MenuMapSingleton());
     GetIt.instance.registerSingleton<PushNotification>(PushNotification());
+    GetIt.instance.registerSingleton<VersionApp>(VersionApp());
   }
 
   static BaseUser user() {
@@ -49,6 +50,10 @@ class Singletons {
 
   static PushNotification pushNotification() {
     return GetIt.instance<PushNotification>();
+  }
+
+  static VersionApp versionApp() {
+    return GetIt.instance<VersionApp>();
   }
 
 }

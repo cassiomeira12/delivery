@@ -44,7 +44,6 @@ class _RootPageState extends State<RootPage> {
 
   UserContractPresenter presenter;
 
-  VersionApp versionApp;
   bool minimumUpdate = true;
 
   @override
@@ -140,9 +139,9 @@ class _RootPageState extends State<RootPage> {
     } else {
       var now = DateTime.now();
       var dif = now.difference(last);
-      if (dif.inDays > 3) {//Check update
-        checkCurrentVersion();
-      }
+//      if (dif.inDays > 3) {//Check update
+//        checkCurrentVersion();
+//      }
       checkCurrentVersion();
     }
   }
@@ -151,8 +150,9 @@ class _RootPageState extends State<RootPage> {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     String packageName = packageInfo.packageName;
     int buildNumber = int.parse(packageInfo.buildNumber);
-    versionApp = await VersionAppPresenter().checkCurrentVersion(packageName);
+    var versionApp = await VersionAppPresenter().checkCurrentVersion(packageName);
     if (versionApp != null) {
+      versionApp.installedCode = buildNumber;
       if (versionApp.currentCode > buildNumber) {
         setState(() => authStatus = AuthStatus.UPDATE_APP);
       }
@@ -161,6 +161,7 @@ class _RootPageState extends State<RootPage> {
           minimumUpdate = false;
         });
       }
+      Singletons.versionApp().updateData(versionApp);
     }
     PreferencesUtil.setLastCheckUpdate(DateTime.now());//Atualizando ultimo check de versao
   }
@@ -226,9 +227,9 @@ class _RootPageState extends State<RootPage> {
                   child: PrimaryButton(
                     text: UPDATE,
                     onPressed: () async {
-                      bool valid = await canLaunch(versionApp.storeUrl);
+                      bool valid = await canLaunch(Singletons.versionApp().storeUrl);
                       if (valid) {
-                        launch(versionApp.storeUrl);
+                        launch(Singletons.versionApp().storeUrl);
                       }
                     },
                   ),

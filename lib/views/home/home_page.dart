@@ -1,3 +1,4 @@
+import '../../models/singleton/singletons.dart';
 import '../../models/address/city.dart';
 import '../../models/address/small_town.dart';
 import '../../models/address/states.dart';
@@ -263,10 +264,16 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   @override
   listSuccess(List<Company> list) {
-    GetIt.instance<CompanyListSingleton>().list.addAll(list);
-    setState(() {
-      this.list = list;
-    });
+    if (Singletons.versionApp().isAcceptVersion()) {
+      GetIt.instance<CompanyListSingleton>().list.addAll(list);
+      setState(() {
+        this.list = list;
+      });
+    } else {
+      setState(() {
+        this.list = List();
+      });
+    }
   }
 
   Widget body() {
