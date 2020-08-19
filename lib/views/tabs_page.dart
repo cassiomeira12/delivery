@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'package:kideliver/utils/log_util.dart';
-
 import '../models/singleton/singletons.dart';
 import '../contracts/order/order_contract.dart';
 import '../presenters/order/order_presenter.dart';
@@ -59,19 +57,24 @@ class _TabsPageState extends State<TabsPage> {
     if (result != null) {
       Singletons.orders().clear();
       Singletons.orders().addAll(result);
-      var temp = 0;
-      result.forEach((element) {
-        if ((!element.status.isLast() || element.evaluation == null) && !element.canceled) {
-          temp++;
-        }
-      });
-      setState(() {
-        orderCount = temp;
-      });
+      calculateOrdersItens();
     }
   }
 
+  void calculateOrdersItens() {
+    var temp = 0;
+    Singletons.orders().forEach((element) {
+      if ((!element.status.isLast() || element.evaluation == null) && !element.canceled) {
+        temp++;
+      }
+    });
+    setState(() {
+      orderCount = temp;
+    });
+  }
+
   void orderCallback() {
+    calculateOrdersItens();
     setState(() {
       currentTab = 2;
       tabsView.setPage(currentTab);

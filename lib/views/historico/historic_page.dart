@@ -28,10 +28,10 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
   @override
   void initState() {
     super.initState();
-    verifyNewOrder();
     presenter = OrdersPresenter(this);
     presenter.listUserOrders();
     ordersList = Singletons.orders();
+    verifyNewOrder();
   }
 
   @override
@@ -42,9 +42,10 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
 
   void verifyNewOrder() async {
     if (Singletons.order().id != null) {
-      Order newOrder = Order.fromMap(Singletons.order().toMap());
+      Order newOrder = Order();
+      newOrder.updateData(Singletons.order());
       await Future.delayed(Duration(seconds: 1));
-      PageRouter.push(context, HistoricOrderPage(item: newOrder,));
+      PageRouter.push(context, HistoricOrderPage(order: newOrder,));
       Singletons.order().clear();
     }
   }
@@ -120,37 +121,44 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
       },
       child: Center(
         child: ordersList == null ?
-        LoadingWidget()
+          LoadingWidget()
             :
-        ordersList.isEmpty ?
-        EmptyListWidget(
-          message: "Nenhum pedido foi encontrado",
-          onPressed: () async {
-            setState(() {
-              ordersList = null;
-            });
-            Singletons.orders().clear();
-            presenter.findBy("user", Singletons.user().toPointer());
-          },
-        )
-            :
-        CustomScrollView(
-          slivers: <Widget>[
-            SliverList(
-              delegate: SliverChildListDelegate(
-                  ordersList.map<Widget>((item) {
-                    return GestureDetector(
-                      child: HistoricWidget(item: item,),
-                      onTap: () async {
-                        await PageRouter.push(context, HistoricOrderPage(item: item,));
-                      },
-                    );
-                  }).toList()
-              ),
-            ),
-          ],
-        ),
+          Stack(
+            children: [
+              listOrders(),
+              ordersList.isEmpty ?
+                EmptyListWidget(
+                  message: "Nenhum pedido foi encontrado",
+//                  onPressed: () async {
+//                    setState(() {
+//                      ordersList = null;
+//                    });
+//                    Singletons.orders().clear();
+//                    presenter.findBy("user", Singletons.user().toPointer());
+//                  },
+                ) : Container(),
+            ],
+          ),
       )
+    );
+  }
+
+  Widget listOrders() {
+    return CustomScrollView(
+      slivers: <Widget>[
+        SliverList(
+          delegate: SliverChildListDelegate(
+              ordersList.map<Widget>((item) {
+                return GestureDetector(
+                  child: HistoricWidget(item: item),
+                  onTap: () async {
+                    await PageRouter.push(context, HistoricOrderPage(order: item));
+                  },
+                );
+              }).toList()
+          ),
+        ),
+      ],
     );
   }
 

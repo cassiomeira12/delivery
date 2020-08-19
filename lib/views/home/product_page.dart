@@ -49,15 +49,13 @@ class _ProductPageState extends State<ProductPage> {
 
   var menu = ['Remover'];
 
-  //List list = [1,2,3];
-
   int count = 1;
   double additionalCost = 0;
+  double choicesCost = 0;
 
   TextEditingController _observacaoController;
 
   int radioGroup;
-  //Item itemSelected;
 
   List<ChoiceWidget> selectedChoices = List();
   
@@ -71,7 +69,7 @@ class _ProductPageState extends State<ProductPage> {
     _observacaoController = TextEditingController();
     selectedChoices = product.choices.map((e) {
       return ChoiceWidget(e, (selected) {
-        setState(() => value += selected.cost);
+        setState(() => choicesCost += selected.cost);
       });
     }).toList();
   }
@@ -289,7 +287,7 @@ class _ProductPageState extends State<ProductPage> {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Text(
-        value > 0 ? "R\$ ${((count * value) + additionalCost).toStringAsFixed(2)}" : "",
+        value > 0 ? "R\$ ${((count * (value + choicesCost)) + additionalCost).toStringAsFixed(2)}" : "",
         textAlign: TextAlign.left,
         style: TextStyle(
           fontSize: 30,
@@ -364,9 +362,6 @@ class _ProductPageState extends State<ProductPage> {
           });
           setState(() {
             additionalCost = temp;
-          });
-          product.additional.forEach((element) {
-            print(element.toMap());
           });
         },
       ),
@@ -457,6 +452,7 @@ class _ProductPageState extends State<ProductPage> {
     }
 
     bool foundError = false;
+    String errorMessage = "Selecione todas as opções obrigatórias";
 
     if (Singletons.order().id == null) {
       var order = OrderItem();
@@ -471,14 +467,13 @@ class _ProductPageState extends State<ProductPage> {
       order.note = _observacaoController.text;
 
       product.additional.forEach((element) {
-        print(element.toMap());
         if (element.amount > 0) {
           order.additionalSelected.add(element);
         }
       });
 
       selectedChoices.forEach((element) {
-        if (element.selectedItem == null) {
+        if (element.isEmpty()) {
           if (element.choice.required) {
             foundError = true;
             return;
@@ -489,8 +484,15 @@ class _ProductPageState extends State<ProductPage> {
             ..description = element.choice.description
             ..required = element.choice.required
             ..maxQuantity = element.choice.maxQuantity
-            ..minQuantity = element.choice.minQuantity;
-          choiceSelected.choiceSelected.add(element.selectedItem);
+            ..minQuantity = element.choice.minQuantity
+            ..choiceSelected = element.getItemsSelected();
+
+          if (element.choice.required && element.getItemsSelected().length < choiceSelected.minQuantity) {
+            foundError = true;
+            errorMessage = "Escolha a quantidade mínima de ${choiceSelected.name}";
+            return;
+          }
+
           order.choicesSelected.add(choiceSelected);
         }
       });
@@ -499,7 +501,7 @@ class _ProductPageState extends State<ProductPage> {
         setState(() {
           _loading = false;
         });
-        ScaffoldSnackBar.failure(context, _scaffoldKey, "Selecione todas as opções obrigatórias");
+        ScaffoldSnackBar.failure(context, _scaffoldKey, errorMessage);
       } else {
         Singletons.order().id = "temp";
         Singletons.order().user = Singletons.user();
@@ -528,7 +530,7 @@ class _ProductPageState extends State<ProductPage> {
       });
 
       selectedChoices.forEach((element) {
-        if (element.selectedItem == null) {
+        if (element.isEmpty()) {
           if (element.choice.required) {
             foundError = true;
             return;
@@ -539,8 +541,15 @@ class _ProductPageState extends State<ProductPage> {
             ..description = element.choice.description
             ..required = element.choice.required
             ..maxQuantity = element.choice.maxQuantity
-            ..minQuantity = element.choice.minQuantity;
-          choiceSelected.choiceSelected.add(element.selectedItem);
+            ..minQuantity = element.choice.minQuantity
+            ..choiceSelected = element.getItemsSelected();
+
+          if (element.choice.required && element.getItemsSelected().length < choiceSelected.minQuantity) {
+            foundError = true;
+            errorMessage = "Escolha a quantidade mínima de ${choiceSelected.name}";
+            return;
+          }
+
           order.choicesSelected.add(choiceSelected);
         }
       });
@@ -550,7 +559,7 @@ class _ProductPageState extends State<ProductPage> {
         setState(() {
           _loading = false;
         });
-        ScaffoldSnackBar.failure(context, _scaffoldKey, "Selecione todas as opções obrigatórias");
+        ScaffoldSnackBar.failure(context, _scaffoldKey, errorMessage);
       } else {
         Singletons.order().items.add(order);
         PageRouter.pop(context, Singletons.order());

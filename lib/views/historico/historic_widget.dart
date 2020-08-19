@@ -1,3 +1,5 @@
+import 'package:kideliver/utils/log_util.dart';
+
 import '../../models/order/order.dart';
 import '../../utils/date_util.dart';
 import '../../widgets/stars_widget.dart';
@@ -26,6 +28,12 @@ class _HistoricWidgetState extends State<HistoricWidget> {
     order.items.forEach((element) {
       total += element.getTotal();
     });
+    if (order.cupon != null) {
+      print(order.cupon.calcPercentDiscount(total));
+      print(order.cupon.getMoneyDiscount());
+      total += -order.cupon.calcPercentDiscount(total) - order.cupon.getMoneyDiscount();
+      print(total);
+    }
   }
 
   @override

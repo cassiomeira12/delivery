@@ -1,3 +1,8 @@
+import 'package:kideliver/models/order/cupon.dart';
+import 'package:kideliver/utils/log_util.dart';
+import 'package:kideliver/widgets/scaffold_snackbar.dart';
+
+import '../../services/api/cupon_service.dart';
 import '../../contracts/user/user_contract.dart';
 import '../../models/singleton/singletons.dart';
 import '../../presenters/user/user_presenter.dart';
@@ -12,39 +17,29 @@ import '../../widgets/primary_button.dart';
 import '../../widgets/shape_round.dart';
 import 'package:flutter_masked_text/flutter_masked_text.dart';
 import '../page_router.dart';
-import 'verified_phone_number_page.dart';
 
-class PhoneNumberPage extends StatefulWidget {
-  final bool authenticate;
-
-  PhoneNumberPage({this.authenticate = true});
+class CheckCuponPage extends StatefulWidget {
 
   @override
-  State<StatefulWidget> createState() => _PhoneNumberPageState();
+  State<StatefulWidget> createState() => _CheckCuponPageState();
 }
 
-class _PhoneNumberPageState extends State<PhoneNumberPage> {
+class _CheckCuponPageState extends State<CheckCuponPage> {
   final _formKey = new GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  String _phoneNumber;
+  String _code;
   bool _loading = false;
-  UserContractPresenter userPresenter;
 
   @override
   void initState() {
     super.initState();
-    userPresenter = UserPresenter(null);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    userPresenter.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar( iconTheme: IconThemeData(color: Colors.white), elevation: 0,),
       body: ModalProgressHUD(
         inAsyncCall: _loading,
@@ -87,8 +82,8 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
           children: <Widget>[
             textTitle(),
             textMessage(),
-            showNumberInput(),
-            enviarSMSButton(),
+            cuponInput(),
+            checkCuponCode(),
           ],
         ),
       ),
@@ -98,7 +93,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
   Widget textTitle() {
     return Center(
       child: Text(
-        NUMERO_CELULAR,
+        "Cupom",
         style: Theme.of(context).textTheme.subtitle,
       ),
     );
@@ -109,7 +104,7 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
       padding: EdgeInsets.fromLTRB(0.0, 12.0, 0.0, 0.0),
       child: Center(
         child: Text(
-          widget.authenticate ? MENSAGEM_SMS_VERIFICACAO : "Adicione aqui o seu telefone para contato",
+          "Adicione aqui o seu cupom de desconto",
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.body2,
         ),
@@ -117,27 +112,22 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
     );
   }
 
-  Widget showNumberInput () {
-    var controller = MaskedTextController(mask: '(00) 0 0000-0000');
+  Widget cuponInput () {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
       child: TextInputField(
-        controller: controller,
         textAlign: TextAlign.center,
-        keyboardType: TextInputType.phone,
-        labelText: NUMERO_CELULAR,
-        hintText: "(XX) X XXXX-XXXX",
-        validator: (value) => value.isEmpty ? DIGITE_NUMERO_TELEFONE : null,
-        onSaved: (value) => _phoneNumber = value.trim(),
+        labelText: "Código do cupom",
+        onSaved: (value) => _code = value.trim(),
       ),
     );
   }
 
-  Widget enviarSMSButton() {
+  Widget checkCuponCode() {
     return Padding(
       padding: EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 0.0),
       child: PrimaryButton(
-        text: widget.authenticate ? RECEBER_SMS : SALVAR,
+        text: "Aplicar",
         onPressed: validateAndSubmit,
       ),
     );
@@ -152,30 +142,22 @@ class _PhoneNumberPageState extends State<PhoneNumberPage> {
     return false;
   }
 
-  PhoneNumber createNumber(String phoneNumber) {
-    PhoneNumber phone = PhoneNumber();
-    phone.countryCode = "+55";
-    phone.ddd = _phoneNumber.substring(1, 3);
-    phone.number = _phoneNumber.substring(5);
-    return phone;
-  }
-
   void validateAndSubmit() async {
     if (validateAndSave()) {
-      PhoneNumber phone = createNumber(_phoneNumber);
-      if (widget.authenticate) {
-        PageRouter.pop(context);
-        PageRouter.push(context, VerifiedPhoneNumberPage(phoneNumber: phone,));
+      Cupon result;
+      try {
+        setState(() => _loading = true);
+        result = await CuponService().check(_code, user: Singletons.user(), company: Singletons.order().company);
+        ScaffoldSnackBar.success(context, _scaffoldKey, "Cupom adicionado com sucesso!");
+      } catch(error) {
+        ScaffoldSnackBar.failure(context, _scaffoldKey, error.message);
+      } finally {
+        setState(() => _loading = false);
+        if (result != null) {
+          await Future.delayed(Duration(seconds: 1));
+          PageRouter.pop(context, result);
+        }
       }
-      Singletons.user().phoneNumber = phone;
-      setState(() => _loading = true);
-      var result = await userPresenter.update(Singletons.user());
-      if (result != null) {
-        PreferencesUtil.setUserData(Singletons.user().toMap());
-      } else {
-        Singletons.user().phoneNumber = null;
-      }
-      PageRouter.pop(context, phone);
     }
   }
 

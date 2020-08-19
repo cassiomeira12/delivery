@@ -1,13 +1,11 @@
 import '../../models/singleton/singletons.dart';
 import '../../models/address/city.dart';
 import '../../models/address/small_town.dart';
-import '../../models/address/states.dart';
 import '../../models/singleton/company_list_singleton.dart';
 import '../../utils/preferences_util.dart';
 import '../../views/location/location_page.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:get_it/get_it.dart';
 import '../../contracts/company/company_contract.dart';
 import '../../models/company/company.dart';
 import '../../presenters/company/company_presenter.dart';
@@ -18,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../strings.dart';
 import '../../widgets/background_card.dart';
-
 import '../page_router.dart';
 import 'company_page.dart';
 
@@ -67,7 +64,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
   void checkState() async {
     var stateData = await PreferencesUtil.getStateData();
     if (stateData != null) {
-      var state = States.fromMap(stateData);
+      // var state = States.fromMap(stateData);
       var townData = await PreferencesUtil.getSmallTownData();
       var cityData = await PreferencesUtil.getCityData();
 
@@ -89,8 +86,6 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
         }
       }
 
-      //var now = await TimeService(state.timeAPI).now();//demora resposta
-      //dateNow = now == null ? DateTime.now() : now;
       setState(() => dateNow = DateTime.now());
     }
     verifiedCityTown();
@@ -125,17 +120,16 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   void findCompaniesByCity() async {
     setState(() => list = null);
-    var temp = GetIt.instance<CompanyListSingleton>().list;
-    if (temp.isEmpty) {
+    if (Singletons.companies().isEmpty) {
       companyPresenter.listFromCity(city.id);
     } else {
-      setState(() => list = temp);
+      setState(() => list = Singletons.companies());
     }
   }
 
   void findCompaniesBySmallTown() async {
     setState(() => list = null);
-    var temp = GetIt.instance<CompanyListSingleton>().list;
+    var temp = Singletons.companies();
     if (temp.isEmpty) {
       companyPresenter.listFromSmallTown(smallTown.id);
     } else {
@@ -239,7 +233,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
             ],
           ),
           onPressed: () async {
-            GetIt.instance<CompanyListSingleton>().list.clear();
+            Singletons.companies().clear();
             await PageRouter.push(context, LocationPage());
             setState(() => dateNow = DateTime.now());
             verifiedCityTown();
@@ -265,14 +259,10 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
   @override
   listSuccess(List<Company> list) {
     if (Singletons.versionApp().isAcceptVersion()) {
-      GetIt.instance<CompanyListSingleton>().list.addAll(list);
-      setState(() {
-        this.list = list;
-      });
+      Singletons.companies().addAll(list);
+      setState(() => this.list = list);
     } else {
-      setState(() {
-        this.list = List();
-      });
+      setState(() => this.list = List());
     }
   }
 
@@ -282,20 +272,23 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
       key: _refreshIndicatorKey,
       onRefresh: () {
         setState(() => dateNow = DateTime.now());
-        GetIt.instance<CompanyListSingleton>().list.clear();
+        Singletons.companies().clear();
         return verifiedCityTown();
       },
       child: Center(
         child: list == null ?
           LoadingShimmerList()
             :
-          list.isEmpty ?
-            EmptyListWidget(
-              message: NO_COMPANY_FOUND,
-              //assetsImage: "assets/notification.png",
-            )
-              :
-            listView(),
+          Stack(
+            children: [
+              listView(),
+              list.isEmpty ?
+                EmptyListWidget(
+                  message: NO_COMPANY_FOUND,
+                  //assetsImage: "assets/notification.png",
+                ) : Container(),
+            ],
+          ),
       ),
     );
   }

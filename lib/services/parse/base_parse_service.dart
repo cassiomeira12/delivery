@@ -1,4 +1,3 @@
-import 'package:kideliver/utils/log_util.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 import '../../models/base_model.dart';
 

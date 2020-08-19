@@ -123,10 +123,10 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     if (orderSelected && _pc.isPanelOpen) {
       _pc.close();
     } else {
-      if (Singletons.order().id != null) {
-        showDialog();
-      } else {
+      if (Singletons.order().items.isEmpty) {
         PageRouter.pop(context);
+      } else {
+        showDialog();
       }
     }
   }

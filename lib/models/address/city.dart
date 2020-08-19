@@ -8,29 +8,29 @@ class City extends BaseModel<City> {
   City() : super('City');
 
   City.fromMap(Map<dynamic, dynamic>  map) : super('City') {
-    objectId = map["objectId"];
-    id = objectId;
+    baseFromMap(map);
     name = map["name"];
     state = map["state"] == null ? null : States.fromMap(map["state"]);
   }
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["name"] = name;
     map["state"] = state == null ? null : state.toMap();
     return map;
   }
 
-//  @override
-//  update(City item) {
-//    id = item.id;
-//    name = item.name;
-//    idState = item.idState;
-//    nameState = item.nameState;
-//    codeState = item.codeState;
-//  }
+  @override
+  updateData(City item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    name = item.name;
+    state = item.state;
+  }
 
   @override
   String toString() {

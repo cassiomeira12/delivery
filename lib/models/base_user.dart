@@ -20,8 +20,7 @@ class BaseUser extends BaseModel<BaseUser> {
   }
 
   BaseUser.fromMap(Map<dynamic, dynamic>  map) : super('_User') {
-    objectId = map["objectId"];
-    id = objectId;
+    baseFromMap(map);
     notificationToken = map["notificationToken"] == null ? null : NotificationToken.fromMap(map["notificationToken"]);
     avatarURL = map["avatarURL"];
     username = map["username"];
@@ -35,26 +34,8 @@ class BaseUser extends BaseModel<BaseUser> {
     socialProvider = map["socialProvider"] == null ? false : map["socialProvider"] as bool;
   }
 
-  updateData(BaseUser user) {
-    id = user.id;
-    objectId = id;
-    notificationToken = user.notificationToken;
-    avatarURL = user.avatarURL;
-    status = user.status;
-    username = user.username;
-    name = user.name;
-    email = user.email;
-    emailVerified = user.emailVerified;
-    password = user.password;
-    createdAt = user.createdAt;
-    updatedAt = user.updatedAt;
-    phoneNumber = user.phoneNumber;
-    socialProvider = user.socialProvider;
-  }
-
   toMap() {
-    var map = Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["notificationToken"] = notificationToken == null ? null : notificationToken.toMap();
     map["avatarURL"] = avatarURL;
     map["username"] = username;
@@ -67,6 +48,26 @@ class BaseUser extends BaseModel<BaseUser> {
     map["phoneNumber"] = phoneNumber == null ? null : phoneNumber.toMap();
     map["socialProvider"] = socialProvider;
     return map;
+  }
+
+  updateData(BaseUser item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    notificationToken = item.notificationToken;
+    avatarURL = item.avatarURL;
+    status = item.status;
+    username = item.username;
+    name = item.name;
+    email = item.email;
+    emailVerified = item.emailVerified;
+    password = item.password;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+    phoneNumber = item.phoneNumber;
+    socialProvider = item.socialProvider;
   }
 
   bool isAnonymous() {
@@ -85,18 +86,27 @@ class NotificationToken extends BaseModel<NotificationToken> {
   }
 
   NotificationToken.fromMap(Map<dynamic, dynamic> map) : super('NotificationToken') {
-    id = map["objectId"];
+    baseFromMap(map);
     token = map["token"];
     active = map["active"] as bool;
     topics = map["topics"] == null ? List() : List.from(map["topics"]);
   }
 
   toMap() {
-    var map = new Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["token"] = token;
     map["active"] = active;
     map["topics"] = topics == null ? List() : topics;
     return map;
   }
+
+  @override
+  void updateData(NotificationToken item) {
+    id = item.id;
+    objectId = item.objectId;
+    token = item.token;
+    active = item.active;
+    topics = item.topics;
+  }
+
 }

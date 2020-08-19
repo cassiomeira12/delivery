@@ -7,23 +7,28 @@ class Evaluation extends BaseModel<Evaluation> {
   Evaluation() : super('Evaluation');
 
   Evaluation.fromMap(Map<dynamic, dynamic>  map) : super('Evaluation') {
+    baseFromMap(map);
     stars = map["stars"] as int;
     comment = map["comment"];
   }
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
+    var map = super.toMap();
     map["stars"] = stars;
     map["comment"] = comment;
     return map;
   }
 
-//  @override
-//  update(Evaluation item) {
-//    id = item.id;
-//    stars = item.stars;
-//    comment = item.comment;
-//  }
+  @override
+  updateData(Evaluation item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    stars = item.stars;
+    comment = item.comment;
+  }
 
 }

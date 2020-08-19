@@ -8,6 +8,7 @@ class Delivery extends BaseModel<Delivery> {
   Delivery() : super('Delivery');
 
   Delivery.fromMap(Map<dynamic, dynamic>  map) : super('Delivery') {
+    baseFromMap(map);
     name = map["name"];
     cost = (map["cost"] as num).toDouble();
     pickup = map["pickup"] as bool;
@@ -15,18 +16,23 @@ class Delivery extends BaseModel<Delivery> {
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
+    var map = super.toMap();
     map["name"] = name;
     map["cost"] = cost;
     map["pickup"] = pickup;
     return map;
   }
 
-//  @override
-//  update(Delivery item) {
-//    name = item.name;
-//    cost = item.cost;
-//    pickup = item.pickup;
-//  }
+  @override
+  updateData(Delivery item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    name = item.name;
+    cost = item.cost;
+    pickup = item.pickup;
+  }
 
 }

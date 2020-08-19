@@ -10,8 +10,7 @@ class States extends BaseModel<States> {
   States() : super('State');
 
   States.fromMap(Map<dynamic, dynamic>  map) : super('State') {
-    objectId = map["objectId"];
-    id = objectId;
+    baseFromMap(map);
     name = map["name"];
     code = map["code"];
     timeAPI = map["timeAPI"];
@@ -20,8 +19,7 @@ class States extends BaseModel<States> {
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["name"] = name;
     map["code"] = code;
     map["timeAPI"] = timeAPI;
@@ -29,15 +27,17 @@ class States extends BaseModel<States> {
     return map;
   }
 
-//  @override
-//  update(States item) {
-//    id = item.id;
-//    idCountry = item.idCountry;
-//    nameCountry = item.nameCountry;
-//    codeCountry = item.codeCountry;
-//    name = item.name;
-//    code = item.code;
-//    timeAPI = item.timeAPI;
-//  }
+  @override
+  updateData(States item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    name = item.name;
+    code = item.code;
+    timeAPI = item.timeAPI;
+    country = item.country;
+  }
 
 }

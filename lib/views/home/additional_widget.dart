@@ -32,12 +32,12 @@ class _AdditionalWidgetState extends State<AdditionalWidget> {
       ) : Container(),
       content: Column(
         children: widget.additional.map((e) {
-          return Column(
+          return e.visible ? Column(
             children: [
               additionalItemWidget(e),
               Divider(color: Colors.grey, height: 0,),
             ],
-          );
+          ) : Container();
         }).toList(),
       ),
     );

@@ -18,8 +18,7 @@ class Address extends BaseModel<Address> {
   Address() : super('Address');
 
   Address.fromMap(Map<dynamic, dynamic>  map) : super('Address') {
-    objectId = map["objectId"];
-    id = objectId;
+    baseFromMap(map);
     user = map["user"] == null ? null : BaseUser.fromMap(map["user"]);
     zipCode = map["zipCode"];
     neighborhood = map["neighborhood"];
@@ -33,8 +32,7 @@ class Address extends BaseModel<Address> {
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["user"] = user == null ? null : user.toPointer();
     map["zipCode"] = zipCode;
     map["neighborhood"] = neighborhood;
@@ -49,8 +47,7 @@ class Address extends BaseModel<Address> {
 
   @override
   Map<String, dynamic> toMapData() {
-    var map = Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["user"] = user == null ? null : user.toMap();
     map["zipCode"] = zipCode;
     map["neighborhood"] = neighborhood;
@@ -63,18 +60,22 @@ class Address extends BaseModel<Address> {
     return map;
   }
 
-//  @override
-//  update(Address item) {
-//    id = item.id;
-//    userId = item.userId;
-//    zipCode = item.zipCode;
-//    neighborhood = item.neighborhood;
-//    street = item.street;
-//    number = item.number;
-//    reference = item.reference;
-//    city = item.city;
-//    location = item.location;
-//    smallTown = item.smallTown;
-//  }
+  @override
+  updateData(Address item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    user = item.user;
+    zipCode = item.zipCode;
+    neighborhood = item.neighborhood;
+    number = item.number;
+    street = item.street;
+    reference = item.reference;
+    city = item.city;
+    location = item.location;
+    smallTown = item.smallTown;
+  }
 
 }

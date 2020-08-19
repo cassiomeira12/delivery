@@ -1,6 +1,3 @@
-import 'package:kideliver/strings.dart';
-import 'package:kideliver/utils/log_util.dart';
-
 import '../../models/order/order_status.dart';
 import '../../models/phone_number.dart';
 import '../../utils/date_util.dart';
@@ -21,6 +18,7 @@ class Company extends BaseModel<Company> {
   List<TypePayment> typePayments;
   Delivery delivery;
   PhoneNumber phoneNumber;
+
   OrderStatus deliveryStatus;
   OrderStatus pickupStatus;
 
@@ -38,12 +36,12 @@ class Company extends BaseModel<Company> {
     logoURL = map["logo"] == null ? null : (map["logo"] as dynamic)["url"];
     bannerURL = map["banner"] == null ? null : (map["banner"] as dynamic)["url"];
     openHours = map["openHours"] == null ?
-      List() :
-      List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
+    List() :
+    List.from(map["openHours"]).map<OpeningHour>((e) => OpeningHour.fromMap(e)).toList();
     address = map["address"] == null ? null : Address.fromMap(map["address"]);
     typePayments = map["typePayments"] == null ?
-      List() :
-      List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
+    List() :
+    List.from(map["typePayments"]).map<TypePayment>((e) => TypePayment.fromMap(e)).toList();
     delivery = map["delivery"] == null ? null : Delivery.fromMap(map["delivery"]);
     phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
     deliveryStatus = map["deliveryStatus"] == null ? null : OrderStatus.fromMap(map["deliveryStatus"]);
@@ -59,9 +57,9 @@ class Company extends BaseModel<Company> {
     map["cnpj"] = cnpj;
     map["logoURL"] = logoURL;
     map["bannerURL"] = bannerURL;
-    map["openHours"] = openHours.map<Map>((e) => e.toMap()).toList();
-    map["address"] = address.toMap();
-    map["typePayments"] = typePayments.map<Map>((e) => e.toMap()).toList();
+    map["openHours"] = openHours == null ? List() : openHours.map<Map>((e) => e.toMap()).toList();
+    map["address"] = address.toPointer();
+    map["typePayments"] = typePayments == null ? List() : typePayments.map<Map>((e) => e.toMap()).toList();
     map["delivery"] = delivery == null ? null : delivery.toMap();
     map["phoneNumber"] = phoneNumber == null ? null : phoneNumber.toMap();
     map["deliveryStatus"] = deliveryStatus == null ? null : deliveryStatus.toPointer();
@@ -69,19 +67,42 @@ class Company extends BaseModel<Company> {
     return map;
   }
 
-  void updateData(Company company) {
-    topic = company.topic;
-    name = company.name;
-    cnpj = company.cnpj;
-    logoURL = company.logoURL;
-    bannerURL = company.bannerURL;
-    openHours = company.openHours;
-    address = company.address;
-    typePayments = company.typePayments;
-    delivery = company.delivery;
-    phoneNumber = company.phoneNumber;
-    deliveryStatus = company.deliveryStatus;
-    pickupStatus = company.pickupStatus;
+  @override
+  void updateData(Company item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    topic = item.topic;
+    name = item.name;
+    cnpj = item.cnpj;
+    logoURL = item.logoURL;
+    bannerURL = item.bannerURL;
+    openHours = item.openHours;
+    address = item.address;
+    typePayments = item.typePayments;
+    delivery = item.delivery;
+    phoneNumber = item.phoneNumber;
+    deliveryStatus = item.deliveryStatus;
+    pickupStatus = item.pickupStatus;
+  }
+
+  void clear() {
+    id = null;
+    objectId = null;
+    topic = null;
+    name = null;
+    cnpj = null;
+    logoURL = null;
+    bannerURL = null;
+    openHours = null;
+    address = null;
+    typePayments = null;
+    delivery = null;
+    phoneNumber = null;
+    deliveryStatus = null;
+    pickupStatus = null;
   }
 
   bool isTodayOpen() {
@@ -121,7 +142,7 @@ class Company extends BaseModel<Company> {
       }
     });
     if (openingHourToday == null) {// Nao abre no dia
-      return CLOSED;
+      return "Fechado";
     }
     var close = DateUtil.todayTime(openingHourToday.closeHour, openingHourToday.closeMinute);
     String hour = close.hour < 10 ? "0${close.hour}" : close.hour.toString();
@@ -137,25 +158,24 @@ class Company extends BaseModel<Company> {
         return;
       }
     });
-
     if (openingHourToday == null) {// Nao abre no dia
-      return CLOSED;
+      return "Fechado";
     }
 
     var open = DateUtil.todayTime(openingHourToday.openHour, openingHourToday.openMinute);
     var close = DateUtil.todayTime(openingHourToday.closeHour, openingHourToday.closeMinute);
 
-    print("Agora ${date}");
-    print("Abre ${open}");
-    print("Fecha ${close}");
+    //print("Agora ${date}");
+    //print("Abre ${open}");
+    //print("Fecha ${close}");
 
-    if (close.isBefore(open)) {// Fechado no outro dia
+    if (close.isBefore(open)) {
       close = close.add(Duration(days: 1));
     } else {
       if (date.isAfter(open) && date.isBefore(close)) {
         return null;// Aberto
-      } else if (date.isAfter(close)) {
-        return CLOSED;
+      } else {
+        return "Fechado";
       }
     }
 

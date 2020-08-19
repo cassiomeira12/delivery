@@ -1,3 +1,5 @@
+import 'package:kideliver/utils/log_util.dart';
+
 import '../../models/base_user.dart';
 import '../../models/menu/product.dart';
 import '../../models/phone_number.dart';
@@ -7,6 +9,7 @@ import '../../models/address/address.dart';
 import '../../models/company/type_payment.dart';
 import '../../models/order/evaluation.dart';
 import '../base_model.dart';
+import 'cupon.dart';
 import 'order_status.dart';
 
 class Order extends BaseModel<Order> {
@@ -28,20 +31,19 @@ class Order extends BaseModel<Order> {
   PhoneNumber companyPhoneNumber;
   PhoneNumber userPhoneNumber;
   bool canceled;
+  Cupon cupon;
 
   Order() : super('Order') {
     items = List();
+    canceled = false;
   }
 
   Order.fromMap(Map<dynamic, dynamic>  map) : super('Order') {
-    objectId = map["objectId"];
-    id = objectId;
+    baseFromMap(map);
     user = map["user"] == null ? null : BaseUser.fromMap(map["user"]);
     userName = map["userName"];
     company = map["company"] == null ? null : Company.fromMap(map["company"]);
     companyName = map["companyName"];
-    createdAt = map["createdAt"] == null ? null : DateTime.parse(map["createdAt"]).toLocal();
-    updatedAt = map["updatedAt"] == null ? null : DateTime.parse(map["updatedAt"]).toLocal();
     note = map["note"];
     evaluation = map["evaluation"] == null ? null : Evaluation.fromMap(map["evaluation"]);
     deliveryAddress = map["deliveryAddress"] == null ? null : Address.fromMap(map["deliveryAddress"]);
@@ -56,21 +58,19 @@ class Order extends BaseModel<Order> {
     companyPhoneNumber = map["companyPhoneNumber"] == null ? null : PhoneNumber.fromMap(map["companyPhoneNumber"]);
     userPhoneNumber = map["userPhoneNumber"] == null ? null : PhoneNumber.fromMap(map["userPhoneNumber"]);
     canceled = map["canceled"] == null ? false : map["canceled"] as bool;
+    cupon = map["cupon"] == null ? null : Cupon.fromMap(map["cupon"]);
   }
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["user"] = user == null ? null : user.toPointer();
     map["userName"] = userName;
     map["company"] = company == null ? null : company.toPointer();
     map["companyName"] = companyName;
-    map["createdAt"] = createdAt == null ? null : createdAt.toString();
-    map["updatedAt"] = updatedAt == null ? null : updatedAt.toString();
     map["note"] = note;
     map["evaluation"] = evaluation == null ? null : evaluation.toMap();
-    map["deliveryAddress"] = deliveryAddress == null ? null : deliveryAddress.toMapData();
+    map["deliveryAddress"] = deliveryAddress == null ? null : deliveryAddress.toMap();
     map["deliveryCost"] = deliveryCost;
     map["typePayment"] = typePayment == null ? null : typePayment.toMap();
     map["items"] = items.map<Map>((e) => e.toMap()).toList();
@@ -82,18 +82,21 @@ class Order extends BaseModel<Order> {
     map["companyPhoneNumber"] = companyPhoneNumber == null ? null : companyPhoneNumber.toMap();
     map["userPhoneNumber"] = userPhoneNumber == null ? null : userPhoneNumber.toMap();
     map["canceled"] = canceled == null ? false : canceled;
+    map["cupon"] = cupon == null ? null : cupon.toPointer();
     return map;
   }
 
+  @override
   updateData(Order item) {
     id = item.id;
     objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
     user = item.user;
     userName = item.userName;
     company = item.company;
     companyName = item.companyName;
-    createdAt = item.createdAt;
-    updatedAt = item.updatedAt;
     note = item.note;
     evaluation = item.evaluation;
     deliveryAddress = item.deliveryAddress;
@@ -102,12 +105,13 @@ class Order extends BaseModel<Order> {
     items = item.items;
     status = item.status;
     changeMoney = item.changeMoney;
-    deliveryCost = item.deliveryCost;
+    delivery = item.delivery;
     deliveryForecast = item.deliveryForecast;
     preparationTime = item.preparationTime;
     companyPhoneNumber = item.companyPhoneNumber;
     userPhoneNumber = item.userPhoneNumber;
     canceled = item.canceled;
+    cupon = item.cupon;
   }
 
   clear() {
@@ -132,6 +136,7 @@ class Order extends BaseModel<Order> {
     companyPhoneNumber = null;
     userPhoneNumber = null;
     canceled = false;
+    cupon = null;
   }
 
 }
@@ -142,23 +147,26 @@ class DeliveryForecast extends BaseModel<DeliveryForecast> {
   DeliveryForecast() : super('DeliveryForecast');
 
   DeliveryForecast.fromMap(Map<dynamic, dynamic>  map) : super('DeliveryForecast') {
+    baseFromMap(map);
     hour = map["hour"];
     minute = map["minute"];
   }
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
+    var map = super.toMap();
     map["hour"] = hour;
     map["minute"] = minute;
     return map;
   }
 
-//  @override
-//  update(DeliveryForecast item) {
-//    hour = item.hour;
-//    minute = item.minute;
-//  }
+  @override
+  updateData(DeliveryForecast item) {
+    id = item.id;
+    objectId = item.objectId;
+    hour = item.hour;
+    minute = item.minute;
+  }
 
   @override
   String toString() {

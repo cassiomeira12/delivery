@@ -20,8 +20,7 @@ class OrderItem extends BaseModel<OrderItem> {
   }
 
   OrderItem.fromMap(Map<dynamic, dynamic>  map) : super('OrderItem') {
-    objectId = map["objectId"];
-    id = objectId;
+    baseFromMap(map);
     name = map["name"];
     description = map["description"];
     cost = (map["cost"] as num).toDouble();
@@ -29,18 +28,17 @@ class OrderItem extends BaseModel<OrderItem> {
     preparationTime = map["preparationTime"] == null ? null : PreparationTime.fromMap(map["preparationTime"]);
     amount = map["amount"] as int;
     choicesSelected = map["choicesSelected"] == null ?
-        List() :
-        List.from(map["choicesSelected"]).map<ChoiceSelected>((e) => ChoiceSelected.fromMap(e)).toList();
+    List() :
+    List.from(map["choicesSelected"]).map<ChoiceSelected>((e) => ChoiceSelected.fromMap(e)).toList();
     additionalSelected = map["additionalSelected"] == null ?
-        List() :
-        List.from(map["additionalSelected"]).map<Additional>((e) => Additional.fromMap(e)).toList();
+    List() :
+    List.from(map["additionalSelected"]).map<Additional>((e) => Additional.fromMap(e)).toList();
     note = map["note"];
   }
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["name"] = name;
     map["description"] = description;
     map["cost"] = cost;
@@ -48,28 +46,32 @@ class OrderItem extends BaseModel<OrderItem> {
     map["preparationTime"] = preparationTime == null ? null : preparationTime.toMap();
     map["amount"] = amount;
     map["choicesSelected"] = choicesSelected == null ?
-        null :
-        choicesSelected.map((e) => e.toMap()).toList();
+    null :
+    choicesSelected.map((e) => e.toMap()).toList();
     map["additionalSelected"] = additionalSelected == null ?
-        null :
-        additionalSelected.map((e) => e.toMap()).toList();
+    null :
+    additionalSelected.map((e) => e.toMap()).toList();
     map["note"] = note;
     return map;
   }
 
-//  @override
-//  update(OrderItem item) {
-//    id = item.id;
-//    name = item.name;
-//    description = item.description;
-//    cost = item.cost;
-//    discount = item.discount;
-//    preparationTime = item.preparationTime;
-//    amount = item.amount;
-//    choicesSelected = item.choicesSelected;
-//    additionalSelected = item.additionalSelected;
-//    note = item.note;
-//  }
+  @override
+  updateData(OrderItem item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    name = item.name;
+    description = item.description;
+    cost = item.cost;
+    discount = item.discount;
+    preparationTime = item.preparationTime;
+    amount = item.amount;
+    choicesSelected = item.choicesSelected;
+    additionalSelected = item.additionalSelected;
+    note = item.note;
+  }
 
   double getTotal() {
     double total = amount * cost;

@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kideliver/models/order/cupon.dart';
+import 'package:kideliver/utils/log_util.dart';
 import '../../models/company/type_payment.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import 'package:maps_launcher/maps_launcher.dart';
@@ -18,10 +20,10 @@ import '../../utils/date_util.dart';
 import '../../widgets/stars_widget.dart';
 
 class HistoricOrderPage extends StatefulWidget {
-  final Order item;
+  Order order;
 
   HistoricOrderPage({
-    this.item,
+    this.order,
   });
 
   @override
@@ -34,7 +36,6 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   OrdersPresenter presenter;
 
-  Order order;
   double total = 0;
 
   List<Widget> ordersItems;
@@ -45,22 +46,24 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
   void initState() {
     super.initState();
     presenter = OrdersPresenter(this);
-    this.order = widget.item;
-    total = order.deliveryCost;
-    order.items.forEach((element) {
+    total = widget.order.deliveryCost;
+    widget.order.items.forEach((element) {
       total += element.getTotal();
     });
-    ordersItems = order.items.map((e) => orderItem(e)).toList();
+    if (widget.order.cupon != null) {
+      total += -widget.order.cupon.calcPercentDiscount(total) - widget.order.cupon.getMoneyDiscount();
+    }
+    ordersItems = widget.order.items.map((e) => orderItem(e)).toList();
     int index = 0;
-    order.status.values.forEach((element) {
-      if (element.name == order.status.current.name) {
+    widget.order.status.values.forEach((element) {
+      if (element.name == widget.order.status.current.name) {
         currentStatusIndex = index;
         return;
       }
       index++;
     });
     checkEvalutationOrder();
-    presenter.readSnapshot(order);
+    presenter.readSnapshot(widget.order);
   }
 
   @override
@@ -81,10 +84,10 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   @override
   onSuccess(Order result) {
-    order = result;
+    widget.order = result;
     int index = 0;
-    order.status.values.forEach((element) {
-      if (element.name == order.status.current.name) {
+    widget.order.status.values.forEach((element) {
+      if (element.name == widget.order.status.current.name) {
         setState(() {
           currentStatusIndex = index;
         });
@@ -97,7 +100,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
 
   void checkEvalutationOrder() async {
     await Future.delayed(Duration(milliseconds: 500));
-    if (order.status.isLast() && order.evaluation == null && !order.canceled) {
+    if (widget.order.status.isLast() && widget.order.evaluation == null && !widget.order.canceled) {
       var evaluation = await showDialog(
         context: context,
         barrierDismissible: false,
@@ -105,9 +108,9 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       );
       if (evaluation != null) {
         setState(() {
-          order.evaluation = evaluation;
+          widget.order.evaluation = evaluation;
         });
-        presenter.update(order);
+        presenter.update(widget.order);
       }
     }
   }
@@ -123,7 +126,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
           IconButton(
             icon: FaIcon(FontAwesomeIcons.whatsapp,),
             onPressed: () async {
-              var whatsAppLink = order.companyPhoneNumber.whatsAppLink();
+              var whatsAppLink = widget.order.companyPhoneNumber.whatsAppLink();
               if (await canLaunch(whatsAppLink)) {
                 await launch(whatsAppLink);
               } else {
@@ -131,28 +134,33 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               }
             },
           ),
-//          PopupMenuButton(
-//            itemBuilder: (BuildContext context) {
-//              return ["WhatsApp"].map((String choice) {
-//                return PopupMenuItem(
-//                  value: choice,
-//                  child: Text(choice),
-//                );
-//              }).toList();
-//            },
-//            onSelected: (value) async {
-//              switch (value) {
-//                case "WhatsApp":
-//                  var whatsAppLink = order.companyPhoneNumber.whatsAppLink();
-//                  if (await canLaunch(whatsAppLink)) {
-//                    await launch(whatsAppLink);
-//                  } else {
-//                    ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
-//                  }
-//                  break;
-//              }
-//            },
-//          ),
+          PopupMenuButton(
+            itemBuilder: (BuildContext context) {
+              return ["WhatsApp", "Ligar"].map((String choice) {
+                return PopupMenuItem(value: choice, child: Text(choice),);
+              }).toList();
+            },
+            onSelected: (value) async {
+              switch (value) {
+                case "WhatsApp":
+                  var whatsAppLink = widget.order.companyPhoneNumber.whatsAppLink();
+                  if (await canLaunch(whatsAppLink)) {
+                    await launch(whatsAppLink);
+                  } else {
+                    ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
+                  }
+                  break;
+                case "Ligar":
+                  var url = "tel: ${widget.order.companyPhoneNumber.toString()}";
+                  if (await canLaunch(url)) {
+                    await launch(url);
+                  } else {
+                    ScaffoldSnackBar.failure(context, _scaffoldKey, SOME_ERROR);
+                  }
+                  break;
+              }
+            },
+          ),
         ],
       ),
       body: nestedScrollView(),
@@ -179,7 +187,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
           ),
         ];
       },
-      body: order.canceled ? Container() : timeLine(),
+      body: widget.order.canceled ? Container() : timeLine(),
     );
   }
 
@@ -196,9 +204,9 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               children: [
                 Flexible(
                   flex: 1,
-                  child: titleTextWidget(order.companyName),
+                  child: titleTextWidget(widget.order.companyName),
                 ),
-                dateTextWidget(DateUtil.formatDateMouthHour(order.createdAt)),
+                dateTextWidget(DateUtil.formatDateMouthHour(widget.order.createdAt)),
               ],
             ),
             SizedBox(height: 5,),
@@ -210,7 +218,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 child: Column(children: ordersItems,),
               ),
             ),
-            order.delivery ? textDelivery() : Container(),
+            widget.order.delivery ? textDelivery() : Container(),
             Padding(
               padding: EdgeInsets.only(top: 10),
               child: Row(
@@ -221,18 +229,19 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 ],
               ),
             ),
-            paymentTypeWidget(order.typePayment),
-            addressDataWidget(order.deliveryAddress),
+            widget.order.cupon != null ? cardCupon() : Container(),
+            paymentTypeWidget(widget.order.typePayment),
+            addressDataWidget(widget.order.deliveryAddress),
             SizedBox(height: 10,),
-            order.status.isLast() && order.evaluation != null ?
+            widget.order.status.isLast() && widget.order.evaluation != null ?
               Column(
                 children: [
                   avaliationTextWidget(),
-                  StarsWidget(initialStar: order.evaluation.stars, size: 40,),
+                  StarsWidget(initialStar: widget.order.evaluation.stars, size: 40,),
                   avaliationComenteTextWidget(),
                 ],
               ) : Container(),
-            order.evaluation == null ? deliveryCurrentStatus() : Container(),
+            widget.order.evaluation == null ? deliveryCurrentStatus() : Container(),
           ],
         ),
       ),
@@ -244,9 +253,9 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: Column(
         children: [
-          order.canceled ?
+          widget.order.canceled ?
             orderCanceled()
-            :
+              :
             Column(
             children: [
               AutoSizeText(
@@ -260,7 +269,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 ),
               ),
               SizedBox(height: 10,),
-              order.status.isFirst() ?
+              widget.order.status.isFirst() ?
                 Text(
                   "Aguarde seu pedido ser confirmado",
                   textAlign: TextAlign.center,
@@ -271,7 +280,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 )
                   :
                 Text(
-                  order.deliveryForecast == null ? "" : order.deliveryForecast.toString(),
+                  widget.order.deliveryForecast == null ? "" : widget.order.deliveryForecast.toString(),
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 35,
@@ -306,7 +315,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
             ),
           ),
           Text(
-            "R\$ ${order.deliveryCost.toStringAsFixed(2)}",
+            "R\$ ${widget.order.deliveryCost.toStringAsFixed(2)}",
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 20,
@@ -315,6 +324,96 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget cardCupon() {
+    return Card(
+      elevation: 3,
+      margin: EdgeInsets.only(top: 10),
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+          padding: EdgeInsets.all(0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                color: Colors.grey[200],
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      FaIcon(FontAwesomeIcons.receipt, color: Colors.black54,),
+                      SizedBox(width: 5,),
+                      Text(
+                        "Cupom de desconto",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.all(5),
+                child: cuponWidget(widget.order.cupon),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget cuponWidget(Cupon cupon) {
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.all(0),
+      child: Container(
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              alignment: Alignment.center,
+              child: FaIcon(FontAwesomeIcons.fileInvoiceDollar, color: Colors.black45,),
+            ),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  cupon.code,
+                  style: TextStyle(
+                      fontSize: 23,
+                      color: Colors.black45,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+                Text(
+                  "Válido até ${DateUtil.formatDateMouthHour(cupon.dateLimit)}h",
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black45,
+                  ),
+                ),
+                Text(
+                  "Desconto: ${cupon.getDiscount()}",
+                  style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.red,
+                      fontWeight: FontWeight.bold
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -346,7 +445,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               ),
             ),
             Text(
-              order.changeMoney == null ? "Sem troco" : order.changeMoney,
+              widget.order.changeMoney == null ? "Sem troco" : widget.order.changeMoney,
               textAlign: TextAlign.left,
               style: TextStyle(
                 fontSize: 20,
@@ -481,7 +580,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       slivers: <Widget>[
         SliverList(
           delegate: SliverChildListDelegate(
-            order.status.values.map((e) {
+            widget.order.status.values.map((e) {
               return timelineItem(e, index++);
             }).toList(),
           ),
@@ -494,7 +593,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
     return Padding(
       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
       child: Text(
-        order.evaluation.comment,
+        widget.order.evaluation.comment,
         textAlign: TextAlign.center,
         style: TextStyle(
           fontSize: 25,
@@ -509,7 +608,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
       alignment: TimelineAlign.manual,
       lineX: 0.1,
       isFirst: index == 0,
-      isLast: index == (order.status.values.length-1),
+      isLast: index == (widget.order.status.values.length-1),
       indicatorStyle: IndicatorStyle(
         width: 20,
         color: currentStatusIndex > index ? Colors.grey : currentStatusIndex == index ? Colors.green : Colors.grey[300],
@@ -560,7 +659,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
         slivers: <Widget>[
           SliverList(
             delegate: SliverChildListDelegate(
-              order.status.values.map((e) {
+              widget.order.status.values.map((e) {
                 return statusItemList(e, index++);
               }).toList(),
             ),
@@ -625,7 +724,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
               children: [
                 Padding(
                   padding: EdgeInsets.all(10),
-                  child: order.delivery ? FaIcon(FontAwesomeIcons.motorcycle,) : FaIcon(FontAwesomeIcons.running,),
+                  child: widget.order.delivery ? FaIcon(FontAwesomeIcons.motorcycle,) : FaIcon(FontAwesomeIcons.running,),
                 ),
                 Flexible(
                   child: Column(
@@ -634,7 +733,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                       Padding(
                         padding: EdgeInsets.only(top: 5, right: 10),
                         child: Text(
-                          order.delivery ? "Endereço de entrega" : "Endereço de retirada",
+                          widget.order.delivery ? "Endereço de entrega" : "Endereço de retirada",
                           textAlign: TextAlign.left,
                           style: TextStyle(
                             fontSize: 20,
@@ -676,11 +775,11 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                           ),
                         ),
                       ) : Container(),
-                      order.note != null && order.note.isNotEmpty ?
+                      widget.order.note != null && widget.order.note.isNotEmpty ?
                       Padding(
                         padding: EdgeInsets.only(top: 5, right: 10),
                         child: Text(
-                          order.note,
+                          widget.order.note,
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.black54,
@@ -694,7 +793,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                 ),
               ],
             ),
-            order.deliveryAddress.location != null ?
+            widget.order.deliveryAddress.location != null ?
               GestureDetector(
                 child: Container(
                   padding: EdgeInsets.only(top: 10, bottom: 10),
@@ -714,7 +813,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage> implements OrderC
                   ),
                 ),
                 onTap: () async {
-                  var address = order.deliveryAddress;
+                  var address = widget.order.deliveryAddress;
                   if (address != null) {
                     MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
                   } else {

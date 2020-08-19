@@ -1,7 +1,7 @@
 import '../base_model.dart';
 
 enum Type {
-  CARD, MONEY, APP_PAYMENT, CASHBACK
+  CARD, MONEY, APP_PAYMENT, CASHBACK, PICK_PAY
 }
 
 class TypePayment extends BaseModel<TypePayment> {
@@ -10,13 +10,15 @@ class TypePayment extends BaseModel<TypePayment> {
   int taxa;// 0 - 100 - Taxa pelo uso do aplicativo
   int maxInstallments;//Max prestação
 
+  String url;
+
   TypePayment() : super('TypePayment') {
     taxa = 7;
     maxInstallments = 1;
   }
 
   TypePayment.fromMap(Map<dynamic, dynamic>  map) : super('TypePayment') {
-    //id = map["id"];
+    baseFromMap(map);
     name = map["name"];
     var typeTemp = map["type"];
     Type.values.forEach((element) {
@@ -27,17 +29,32 @@ class TypePayment extends BaseModel<TypePayment> {
     });
     taxa = (map["taxa"] as num).toInt();
     maxInstallments = map["maxInstallments"] as int;
+    url = map["url"];
   }
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    //map["id"] = id;
+    var map = super.toMap();
     map["name"] = name;
     map["type"] = paymentType.toString().split('.').last;
     map["taxa"] = taxa;
     map["maxInstallments"] = maxInstallments;
+    map["url"] = url;
     return map;
+  }
+
+  @override
+  void updateData(TypePayment item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    name = item.name;
+    type = item.type;
+    taxa = item.taxa;
+    maxInstallments = item.maxInstallments;
+    url = item.url;
   }
 
   String getType() {
@@ -50,6 +67,8 @@ class TypePayment extends BaseModel<TypePayment> {
         return "Pagamento no Aplicativo";
       case Type.CASHBACK:
         return "Cashback";
+      case Type.PICK_PAY:
+        return "PicPay";
       default:
         return "";
     }

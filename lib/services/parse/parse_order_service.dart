@@ -1,3 +1,5 @@
+import 'package:parse_server_sdk/parse_server_sdk.dart';
+
 import '../../utils/log_util.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
@@ -11,10 +13,12 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<Order> create(Order item) async {
     return service.create(item).then((response) {
-      item.id = response["objectId"];
-      item.objectId = response["objectId"];
-      item.createdAt = DateTime.parse(response["createdAt"]).toLocal();
-      return response == null ? null : item;
+      var temp = Order();
+      temp.updateData(item);
+      temp.id = response["objectId"];
+      temp.objectId = response["objectId"];
+      temp.createdAt = DateTime.parse(response["createdAt"]).toLocal();
+      return response == null ? null : temp;
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -74,8 +78,38 @@ class ParseOrderService extends OrderContractService {
 
   @override
   Future<List<Order>> findBy(String field, value) async {
-    return service.findBy(field, value).then((response) {
-      return response.isEmpty ? List<Order>() : response.map<Order>((item) => Order.fromMap(item)).toList();
+    var includes = ["cupon"];
+
+    var query = QueryBuilder<ParseObject>(service.getObject())
+      ..whereEqualTo(field, value)
+      ..includeObject(includes)
+      ..orderByDescending("createdAt");
+
+    return await query.query().then((value) async {
+      if (value.success) {
+        if (value.result == null) {
+          return List<Order>();
+        } else {
+          List<ParseObject> listObj = value.result;
+
+          return listObj.map<Order>((obj) {
+            var objectJson = obj.toJson();
+
+            for (var include in includes) {
+              try {
+                var json = obj.get(include).toJson();
+                objectJson[include] = json;
+              } catch (error) {
+                print("sem $include");
+              }
+            }
+
+            return Order.fromMap(objectJson);
+          }).toList();
+        }
+      } else {
+        return throw value.error;
+      }
     }).catchError((error) {
       switch (error.code) {
         case -1:

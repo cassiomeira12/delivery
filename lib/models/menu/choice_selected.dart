@@ -14,18 +14,19 @@ class ChoiceSelected extends BaseModel<ChoiceSelected> {
   }
 
   ChoiceSelected.fromMap(Map<dynamic, dynamic>  map) : super('ChoiceSelected') {
+    baseFromMap(map);
     name = map["name"];
     description = map["description"];
     required = map["required"] as bool;
     maxQuantity = (map["maxQuantity"] as num).toInt();
     minQuantity = (map["minQuantity"] as num).toInt();
-    choiceSelected = map["choiceSelected"] == null ? List() :
-      List.from(map["choiceSelected"]).map<Item>((e) => Item.fromMap(e)).toList();
+    choiceSelected = map["choiceSelected"] == null ?
+      List() : List.from(map["choiceSelected"]).map<Item>((e) => Item.fromMap(e)).toList();
   }
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
+    var map = super.toMap();
     map["name"] = name;
     map["description"] = description;
     map["required"] = required;
@@ -36,12 +37,33 @@ class ChoiceSelected extends BaseModel<ChoiceSelected> {
   }
 
   @override
+  void updateData(ChoiceSelected item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    name = item.name;
+    description = item.description;
+    required = item.required;
+    maxQuantity = item.maxQuantity;
+    minQuantity = item.minQuantity;
+    choiceSelected = item.choiceSelected;
+  }
+
+  @override
   String toString() {
-    String result = "";
-    for (var value in choiceSelected) {
-      result += "${name} - ${value.name}";
-      result += value.cost > 0 ? " R\$ ${value.cost.toStringAsFixed(2)}" : "";
-    }
+    String result = "$name - ";
+    choiceSelected.asMap().forEach((key, value) {
+      if (key == 0) {
+        result += "${value.name}";
+        result += value.cost > 0 ? " R\$ ${value.cost.toStringAsFixed(2)}" : "";
+      } else {
+        result += ", ${value.name}";
+        result += value.cost > 0 ? " R\$ ${value.cost.toStringAsFixed(2)}" : "";
+      }
+    });
+    result += ";";
     return result;
   }
 

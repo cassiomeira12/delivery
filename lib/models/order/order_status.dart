@@ -7,7 +7,7 @@ class OrderStatus extends BaseModel<OrderStatus> {
   OrderStatus() : super('OrderStatus');
 
   OrderStatus.fromMap(Map<dynamic, dynamic>  map) : super('OrderStatus') {
-    objectId = map["objectId"];
+    baseFromMap(map);
     current = map["current"] == null ? null : Status.fromMap(map["current"]);
     values = map["values"] == null ?
     null :
@@ -16,11 +16,18 @@ class OrderStatus extends BaseModel<OrderStatus> {
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    map["objectId"] = objectId;
+    var map = super.toMap();
     map["current"] = current == null ? null : current.toMap();
     map["values"] = values == null ? null : values.map((e) => e.toMap()).toList();
     return map;
+  }
+
+  @override
+  void updateData(OrderStatus item) {
+    id = item.id;
+    objectId = item.objectId;
+    current = item.current;
+    values = item.values;
   }
 
   bool isFirst() {
@@ -29,6 +36,17 @@ class OrderStatus extends BaseModel<OrderStatus> {
 
   bool isLast() {
     return current.name == values.last.name;
+  }
+
+  int getIndex(Status current) {
+    int index = 0;
+    for (var value in values) {
+      if (current.name == value.name) {
+        return index;
+      }
+      index++;
+    }
+    return -1;
   }
 
 }
@@ -40,16 +58,28 @@ class Status extends BaseModel<Status> {
   Status(this.name) : super('Status');
 
   Status.fromMap(Map<dynamic, dynamic>  map) : super('Status') {
+    baseFromMap(map);
     name = map["name"];
     date = map["date"] == null ? null : DateTime.parse(map["date"]);
   }
 
   @override
   Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
+    var map = super.toMap();
     map["name"] = name;
     map["date"] = date == null ? null : date.toString();
     return map;
+  }
+
+  @override
+  void updateData(Status item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    name = item.name;
+    date = item.date;
   }
 
 }

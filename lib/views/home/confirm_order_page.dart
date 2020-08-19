@@ -1,4 +1,8 @@
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:kideliver/utils/date_util.dart';
+import 'package:kideliver/views/home/check_cupon_page.dart';
+import 'package:kideliver/views/home/cupon_page.dart';
+import '../../models/order/cupon.dart';
 import '../../contracts/address/states_contract.dart';
 import '../../presenters/address/states_presenter.dart';
 import '../../utils/log_util.dart';
@@ -55,12 +59,12 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   Address deliveryAddress;
   TypePayment typePayment;
+  Cupon cupon;
 
   double total = 0;
   double deliveryCost = 0;
   List<OrderItem> listOrder = List();
 
-  bool pickup;
   List<bool> _selections;
 
   @override
@@ -71,10 +75,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
     if (Singletons.order().company.delivery == null) {
-      pickup = true;
       _selections = [false, true];
     } else {
-      pickup = Singletons.order().company.delivery.pickup;
       _selections = [true, false];
     }
     deliveryCost = Singletons.order().company.delivery == null ? 0 : Singletons.order().company.delivery.cost/100;
@@ -111,8 +113,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       PreferencesUtil.setUserData(Singletons.user().toMap());
       userPresenter.update(Singletons.user());
     }
-    Singletons.order().id = result.id;
-    Singletons.orders().insert(0, Order.fromMap(Singletons.order().toMap()));
+    Singletons.order().updateData(result);
+    Singletons.orders().insert(0, result);
     widget.orderCallback();
     PageRouter.pop(context, true);
   }
@@ -142,6 +144,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       child: Column(
         children: [
           cardCompany(),
+          SizedBox(height: 10,),
+          cardCupon(),
           SizedBox(height: 10,),
           cardDeliveryAddress(),
           SizedBox(height: 10,),
@@ -173,7 +177,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               ),
               listViewOrder(),
               _selections[0] ? textDeliveryCost() : Container(),
-              textCost(),
+              cupon != null ? textDiscount() : Container(),
+              textTotal(),
             ],
           ),
         ),
@@ -252,7 +257,36 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     );
   }
 
-  Widget textCost() {
+  Widget textDiscount() {
+    return Padding(
+      padding: EdgeInsets.only(top: 10, bottom: 10),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Cupom de desconto",
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.black45,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            cupon.getDiscount(),
+            textAlign: TextAlign.left,
+            style: TextStyle(
+              fontSize: 20,
+              color: Colors.black45,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget textTotal() {
     return Padding(
       padding: EdgeInsets.only(top: 10, bottom: 10),
       child: Row(
@@ -269,8 +303,22 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           ),
           Text(
             _selections[1] ?
-              "R\$ ${total.toStringAsFixed(2)}" :
-              "R\$ ${(total + deliveryCost).toStringAsFixed(2)}",
+              "R\$ ${(
+                  total - (
+                      cupon != null ? cupon.calcPercentDiscount(total) : 0
+                  ) - (
+                      cupon != null ? cupon.getMoneyDiscount() : 0
+                  )
+                ).toStringAsFixed(2)}"
+                :
+              "R\$ ${(
+                  (total + deliveryCost) - (
+                      cupon != null ? cupon.calcPercentDiscount(total) : 0
+                  ) - (
+                      cupon != null ? cupon.getMoneyDiscount() : 0
+                  )
+                ).toStringAsFixed(2)}",
+
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 25,
@@ -366,15 +414,15 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               }).toList(),
             ),
             item.note.isNotEmpty ?
-            Text(
-              item.note,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
-                //fontWeight: FontWeight.bold,
-              ),
-            ) : Container(),
+              Text(
+                item.note,
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.black54,
+                  fontWeight: FontWeight.bold,
+                ),
+              ) : Container(),
           ],
         ),
       ),
@@ -400,8 +448,11 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width,
                         child: typeDeliveryButtons(),
-                      ) : Container()
-                    : Container(),
+                      )
+                        :
+                      Container()
+                    :
+                      Container(),
                   deliveryAddressWidget(),
                 ],
               ),
@@ -445,17 +496,17 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           ),
         ],
         onPressed: (int index) {
-          if (index == 0 && pickup) {
+          if (index == 0) {
             setState(() {
               _selections[index] = true;
               _selections[index + 1] = false;
-              //pickup = false;
+              deliveryAddress = null;
             });
           } else {
             setState(() {
               _selections[index] = true;
               _selections[index - 1] = false;
-              //pickup = true;
+              deliveryAddress = Singletons.order().company.address;
             });
           }
         },
@@ -575,14 +626,20 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       color: Colors.grey[200],
       child: Padding(
         padding: EdgeInsets.all(10),
-        child: Text(
-          _selections[0] ? DELIVERY_LOCATION : PICKUP_LOCATION,
-          textAlign: TextAlign.left,
-          style: TextStyle(
-            fontSize: 25,
-            color: Colors.black54,
-            fontWeight: FontWeight.bold,
-          ),
+        child: Row(
+          children: [
+            FaIcon(_selections[0] ? FontAwesomeIcons.motorcycle : FontAwesomeIcons.running, color: Colors.black54,),
+            SizedBox(width: 5,),
+            Text(
+              _selections[0] ? DELIVERY_LOCATION : PICKUP_LOCATION,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                fontSize: 23,
+                color: Colors.black54,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -678,6 +735,65 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     );
   }
 
+  Widget cardCupon() {
+    return Card(
+      elevation: 3,
+      child: Container(
+        width: MediaQuery.of(context).size.width,
+        child: Padding(
+          padding: EdgeInsets.all(0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                color: Colors.grey[200],
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      FaIcon(FontAwesomeIcons.receipt, color: Colors.black54,),
+                      SizedBox(width: 5,),
+                      Text(
+                        "Cupom de desconto",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 22,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              cupon == null ?
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: SecondaryButton(
+                    text: "Adicionar",
+                    onPressed: () async {
+                      var cupon = await PageRouter.push(context, CheckCuponPage());
+                      if (cupon != null) {
+                        setState(() {
+                          this.cupon = cupon;
+                        });
+                      }
+                    },
+                  ),
+                ) : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    cuponWidget(cupon),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget cardPaymentType() {
     return Card(
       elevation: 3,
@@ -693,14 +809,20 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 color: Colors.grey[200],
                 child: Padding(
                   padding: EdgeInsets.all(10),
-                  child: Text(
-                    PAYMENT_TYPE,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 25,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    children: [
+                      FaIcon(FontAwesomeIcons.handHoldingUsd, color: Colors.black54,),
+                      SizedBox(width: 5,),
+                      Text(
+                        PAYMENT_TYPE,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 25,
+                          color: Colors.black54,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
@@ -743,6 +865,75 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget cuponWidget(Cupon cupon) {
+    return Card(
+      elevation: 0,
+      margin: EdgeInsets.all(0),
+      child: Container(
+        padding: EdgeInsets.fromLTRB(0, 15, 5, 10),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              child: Row(
+                children: [
+                  Container(
+                    width: 50,
+                    alignment: Alignment.center,
+                    child: FaIcon(FontAwesomeIcons.fileInvoiceDollar, color: Colors.black45,),
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        cupon.code,
+                        style: TextStyle(
+                            fontSize: 23,
+                            color: Colors.black45,
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                      Text(
+                        "${cupon.limit} unidade restante",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black45,
+                        ),
+                      ),
+                      Text(
+                        "Válido até ${DateUtil.formatDateMouthHour(cupon.dateLimit)}h",
+                        style: TextStyle(
+                          fontSize: 18,
+                          color: Colors.black45,
+                        ),
+                      ),
+                      Text(
+                        "Desconto: ${cupon.getDiscount()}",
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.red,
+                            fontWeight: FontWeight.bold
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              onTap: () {
+                PageRouter.push(context, CuponPage(this.cupon));
+              },
+            ),
+            LightButton(
+              text: "Remover",
+              onPressed: () => setState(() => this.cupon = null)
+            ),
+          ],
         ),
       ),
     );
@@ -871,7 +1062,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   }
 
   bool checkDelevieryAddress() {
-    return pickup ? true : deliveryAddress != null;
+    return _selections[1] || deliveryAddress != null;
   }
 
   bool checkPaymentType() {
@@ -921,7 +1112,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     }
     
     if (checkDelevieryAddress()) {
-      if (pickup) {
+      if (_selections[1]) {
         var companyAddress = Singletons.order().company.address;
         Singletons.order().deliveryAddress = companyAddress;
       } else {
@@ -964,7 +1155,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             return;
           }
 
-          OrderStatus status = pickup ? Singletons.order().company.pickupStatus : Singletons.order().company.deliveryStatus;
+          OrderStatus status = _selections[1] ? Singletons.order().company.pickupStatus : Singletons.order().company.deliveryStatus;
           status.values[0].date = DateTime.now();
           status.current = status.values[0];
 
@@ -973,10 +1164,11 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           Singletons.order().user = Singletons.user();
           Singletons.order().status = status;
           Singletons.order().note = _observacaoController.text;
-          Singletons.order().deliveryCost = pickup ? 0 : deliveryCost;
-          Singletons.order().delivery = !pickup;
+          Singletons.order().deliveryCost = _selections[1] ? 0 : deliveryCost;
+          Singletons.order().delivery = _selections[0];
           Singletons.order().companyPhoneNumber = Singletons.order().company.phoneNumber;
           Singletons.order().userPhoneNumber = Singletons.user().phoneNumber;
+          Singletons.order().cupon = cupon;
 
           orderPresenter.create(Singletons.order());
         },

@@ -9,8 +9,7 @@ class PhoneNumber extends BaseModel<PhoneNumber> {
   PhoneNumber() : super('PhoneNumber');
 
   PhoneNumber.fromMap(Map<dynamic, dynamic>  map) : super('PhoneNumber') {
-    objectId = map["objectId"];
-    id = objectId;
+    baseFromMap(map);
     countryCode = map["countryCode"];
     ddd = map["ddd"];
     number = map["number"];
@@ -18,13 +17,25 @@ class PhoneNumber extends BaseModel<PhoneNumber> {
   }
 
   toMap() {
-    var map = new Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["countryCode"] = countryCode;
     map["ddd"] = ddd;
     map["number"] = number;
     map["verified"] = verified == null ? false : verified;
     return map;
+  }
+
+  @override
+  void updateData(PhoneNumber item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    countryCode = item.countryCode;
+    ddd = item.ddd;
+    number = item.number;
+    verified = item.verified;
   }
 
   String whatsAppLink() {

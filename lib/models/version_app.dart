@@ -29,14 +29,17 @@ class VersionApp extends BaseModel<VersionApp> {
     return map;
   }
 
-  void updateData(VersionApp versionApp) {
-    objectId = versionApp.objectId;
-    id = versionApp.id;
-    name = versionApp.name;
-    currentCode = versionApp.currentCode;
-    minimumCode = versionApp.minimumCode;
-    storeUrl = versionApp.storeUrl;
-    installedCode = versionApp.installedCode;
+  void updateData(VersionApp item) {
+    id = item.id;
+    objectId = item.objectId;
+    createdAt = item.createdAt;
+    updatedAt = item.updatedAt;
+
+    name = item.name;
+    currentCode = item.currentCode;
+    minimumCode = item.minimumCode;
+    storeUrl = item.storeUrl;
+    installedCode = item.installedCode;
   }
 
   bool isAcceptVersion() {
