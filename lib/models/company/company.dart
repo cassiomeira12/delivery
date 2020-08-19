@@ -18,9 +18,9 @@ class Company extends BaseModel<Company> {
   List<TypePayment> typePayments;
   Delivery delivery;
   PhoneNumber phoneNumber;
-
   OrderStatus deliveryStatus;
   OrderStatus pickupStatus;
+  bool initiated;
 
   Company() : super('Company') {
     openHours = List();
@@ -46,6 +46,7 @@ class Company extends BaseModel<Company> {
     phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
     deliveryStatus = map["deliveryStatus"] == null ? null : OrderStatus.fromMap(map["deliveryStatus"]);
     pickupStatus = map["pickupStatus"] == null ? null : OrderStatus.fromMap(map["pickupStatus"]);
+    initiated = map["initiated"] == null ? true : map["initiated"] as bool;
   }
 
   @override
@@ -64,6 +65,7 @@ class Company extends BaseModel<Company> {
     map["phoneNumber"] = phoneNumber == null ? null : phoneNumber.toMap();
     map["deliveryStatus"] = deliveryStatus == null ? null : deliveryStatus.toPointer();
     map["pickupStatus"] = pickupStatus == null ? null : pickupStatus.toPointer();
+    map["initiated"] = initiated == null ? true : initiated;
     return map;
   }
 
@@ -86,6 +88,7 @@ class Company extends BaseModel<Company> {
     phoneNumber = item.phoneNumber;
     deliveryStatus = item.deliveryStatus;
     pickupStatus = item.pickupStatus;
+    initiated = item.initiated == null ? true : item.initiated;
   }
 
   void clear() {
@@ -103,6 +106,7 @@ class Company extends BaseModel<Company> {
     phoneNumber = null;
     deliveryStatus = null;
     pickupStatus = null;
+    initiated = null;
   }
 
   bool isTodayOpen() {

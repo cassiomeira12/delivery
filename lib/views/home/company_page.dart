@@ -315,7 +315,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
           SliverList(
             delegate: SliverChildListDelegate(
                 list.map<Widget>((item) {
-                  return listItem(item);
+                  return item.visible ? listItem(item) : Container();
                 }).toList()
             ),
           ),

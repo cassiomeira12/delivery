@@ -11,6 +11,7 @@ class Product extends BaseModel<Product> {
   List<String> images;
   List<Choice> choices;
   List<Additional> additional;
+  bool visible;
 
   Product() : super('Product');
 
@@ -24,6 +25,7 @@ class Product extends BaseModel<Product> {
     images = map["images"] == null ? List() : List.from(map["images"]);
     choices = map["choices"] == null ? List() : List.from(map["choices"]).map<Choice>((e) => Choice.fromMap(e)).toList();
     additional = map["additional"] == null ? List() : List.from(map["additional"]).map<Additional>((e) => Additional.fromMap(e)).toList();
+    visible = map["visible"] == null ? true : map["visible"] as bool;
   }
 
   @override
@@ -37,6 +39,7 @@ class Product extends BaseModel<Product> {
     map["images"] = images == null ? List() : images;
     map["choices"] = choices == null ? List() : choices.map<Map>((e) => e.toMap()).toList();
     map["additional"] = additional == null ? List() : additional.map((e) => e.toMap()).toList();
+    map["visible"] = visible == null ? true : visible;
     return map;
   }
 
@@ -52,6 +55,7 @@ class Product extends BaseModel<Product> {
     images = item.images;
     choices = item.choices;
     additional = item.additional;
+    visible = item.visible == null ? true : visible;
   }
 
 }

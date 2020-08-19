@@ -41,9 +41,10 @@ class _CompanyWidgetState extends State<CompanyWidget> {
     return Container(
       child: RaisedButton(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-        elevation: 1,
+        elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0),),
         color: Theme.of(context).backgroundColor,
+        disabledColor: Theme.of(context).backgroundColor,
         child: Row(
           children: [
             ImageNetworkWidget(url: company.logoURL, size: 68,),
@@ -53,16 +54,14 @@ class _CompanyWidgetState extends State<CompanyWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   titleTextWidget(company.name),
-                  openingHourMessageTextWidget(),
+                  company.initiated ? openingHourMessageTextWidget() : textNotInitialized(),
                 ],
               ),
             ),
             FaIcon(FontAwesomeIcons.angleRight, color: Theme.of(context).iconTheme.color,),
           ],
         ),
-        onPressed: () {
-          widget.onPressed(company);
-        }
+        onPressed: company.initiated ? () => widget.onPressed(company) : null,
       ),
     );
   }
@@ -101,6 +100,21 @@ class _CompanyWidgetState extends State<CompanyWidget> {
         style: TextStyle(
           fontSize: 18,
           color: openToday ? closeText == null ? Colors.green : Colors.red : Colors.red,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget textNotInitialized() {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
+      child: Text(
+        "Disponível em breve",
+        textAlign: TextAlign.left,
+        style: TextStyle(
+          fontSize: 18,
+          color: Colors.green,
           fontWeight: FontWeight.bold,
         ),
       ),
