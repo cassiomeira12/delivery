@@ -155,7 +155,6 @@ class _ChoiceWidgetState extends State<ChoiceWidget> {
                 value: item,
                 groupValue: widget.choice.maxQuantity > 1 ? widget._selectedItems[index] : widget._lastSelectedItem,
                 activeColor: Theme.of(context).primaryColor,
-                toggleable: true,
                 onChanged: (value) => selectItem(item, index),
               ),
             ],
