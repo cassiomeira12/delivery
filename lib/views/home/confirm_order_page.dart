@@ -1,52 +1,51 @@
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kideliver/utils/date_util.dart';
 import 'package:kideliver/views/home/check_cupon_page.dart';
 import 'package:kideliver/views/home/cupon_page.dart';
-import '../../models/order/cupon.dart';
-import '../../contracts/address/states_contract.dart';
-import '../../presenters/address/states_presenter.dart';
-import '../../utils/log_util.dart';
-import '../../models/order/order_status.dart';
 import 'package:maps_launcher/maps_launcher.dart';
-import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
-import 'package:adaptive_dialog/adaptive_dialog.dart';
-import '../../contracts/user/user_contract.dart';
-import '../../models/address/states.dart';
-import '../../models/singleton/singletons.dart';
-import '../../presenters/user/user_presenter.dart';
-import '../../services/api/time_service.dart';
-import '../../utils/preferences_util.dart';
-import '../../views/settings/phone_number_page.dart';
+
+import '../../contracts/address/states_contract.dart';
 import '../../contracts/order/order_contract.dart';
+import '../../contracts/user/user_contract.dart';
 import '../../models/address/address.dart';
+import '../../models/address/states.dart';
 import '../../models/company/type_payment.dart';
+import '../../models/order/cupon.dart';
 import '../../models/order/order.dart';
 import '../../models/order/order_item.dart';
+import '../../models/order/order_status.dart';
+import '../../models/singleton/singletons.dart';
+import '../../presenters/address/states_presenter.dart';
 import '../../presenters/order/order_presenter.dart';
+import '../../presenters/user/user_presenter.dart';
+import '../../services/api/time_service.dart';
+import '../../strings.dart';
+import '../../utils/preferences_util.dart';
 import '../../views/home/delivery_address_page.dart';
 import '../../views/home/payment_type_page.dart';
+import '../../views/settings/phone_number_page.dart';
 import '../../widgets/area_input_field.dart';
 import '../../widgets/image_network_widget.dart';
 import '../../widgets/light_button.dart';
 import '../../widgets/primary_button.dart';
 import '../../widgets/scaffold_snackbar.dart';
 import '../../widgets/secondary_button.dart';
-import '../../strings.dart';
 import '../page_router.dart';
 
 class ConfirmOrderPage extends StatefulWidget {
   final VoidCallback orderCallback;
 
-  ConfirmOrderPage({
-    @required this.orderCallback
-  });
+  ConfirmOrderPage({@required this.orderCallback});
 
   @override
   _ConfirmOrderPageState createState() => _ConfirmOrderPageState();
 }
 
-class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderContractView {
+class _ConfirmOrderPageState extends State<ConfirmOrderPage>
+    implements OrderContractView {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool _loading = false;
@@ -74,12 +73,14 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     orderPresenter = OrdersPresenter(this);
     userPresenter = UserPresenter(null);
     _observacaoController = TextEditingController();
-    if (Singletons.order().company.delivery == null) {
-      _selections = [false, true];
+    if (Singletons.order().company.delivery?.delivery ?? false) {
+      _selections = [true, false]; // [delivery, pickup]
     } else {
-      _selections = [true, false];
+      _selections = [false, true]; // [delivery, pickup]
     }
-    deliveryCost = Singletons.order().company.delivery == null ? 0 : Singletons.order().company.delivery.cost/100;
+    deliveryCost = Singletons.order().company.delivery == null
+        ? 0
+        : Singletons.order().company.delivery.cost / 100;
     setState(() => listOrder.addAll(Singletons.order().items));
     listOrder.forEach((element) {
       total += element.getTotal();
@@ -94,9 +95,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   }
 
   @override
-  listSuccess(List<Order> list) {
-
-  }
+  listSuccess(List<Order> list) {}
 
   @override
   onFailure(String error) {
@@ -124,15 +123,23 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(CONFIRM_ORDER, style: TextStyle(color: Colors.white),),
+        title: Text(
+          CONFIRM_ORDER,
+          style: TextStyle(color: Colors.white),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         progressIndicator: Card(
           elevation: 5,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),
-          child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(),),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: CircularProgressIndicator(),
+          ),
         ),
         child: body(),
       ),
@@ -144,15 +151,25 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       child: Column(
         children: [
           cardCompany(),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           cardCupon(),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           cardDeliveryAddress(),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
           cardPaymentType(),
-          SizedBox(height: 30,),
+          SizedBox(
+            height: 30,
+          ),
           sendOrderButton(),
-          SizedBox(height: 10,),
+          SizedBox(
+            height: 10,
+          ),
         ],
       ),
     );
@@ -201,15 +218,19 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               color: Theme.of(context).hintColor,
             ),
           ),
-          child: url == null ?
-          Padding(
-            padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-            child: Image.asset("assets/logo_app.png"),
-          )
-              :
-          Container(),
+          child: url == null
+              ? Padding(
+                  padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  child: Image.asset("assets/logo_app.png"),
+                )
+              : Container(),
         ),
-        url == null ? Container() : ImageNetworkWidget(url: url, size: 68,),
+        url == null
+            ? Container()
+            : ImageNetworkWidget(
+                url: url,
+                size: 68,
+              ),
       ],
     );
   }
@@ -244,7 +265,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             ),
           ),
           Text(
-            deliveryCost == 0 ? FREE : "R\$ ${(deliveryCost).toStringAsFixed(2)}",
+            deliveryCost == 0
+                ? FREE
+                : "R\$ ${(deliveryCost).toStringAsFixed(2)}",
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 20,
@@ -302,23 +325,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             ),
           ),
           Text(
-            _selections[1] ?
-              "R\$ ${(
-                  total - (
-                      cupon != null ? cupon.calcPercentDiscount(total) : 0
-                  ) - (
-                      cupon != null ? cupon.getMoneyDiscount() : 0
-                  )
-                ).toStringAsFixed(2)}"
-                :
-              "R\$ ${(
-                  (total + deliveryCost) - (
-                      cupon != null ? cupon.calcPercentDiscount(total) : 0
-                  ) - (
-                      cupon != null ? cupon.getMoneyDiscount() : 0
-                  )
-                ).toStringAsFixed(2)}",
-
+            _selections[1]
+                ? "R\$ ${(total - (cupon != null ? cupon.calcPercentDiscount(total) : 0) - (cupon != null ? cupon.getMoneyDiscount() : 0)).toStringAsFixed(2)}"
+                : "R\$ ${((total + deliveryCost) - (cupon != null ? cupon.calcPercentDiscount(total) : 0) - (cupon != null ? cupon.getMoneyDiscount() : 0)).toStringAsFixed(2)}",
             textAlign: TextAlign.left,
             style: TextStyle(
               fontSize: 25,
@@ -413,16 +422,17 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 );
               }).toList(),
             ),
-            item.note.isNotEmpty ?
-              Text(
-                item.note,
-                textAlign: TextAlign.left,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.black54,
-                  fontWeight: FontWeight.bold,
-                ),
-              ) : Container(),
+            item.note.isNotEmpty
+                ? Text(
+                    item.note,
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.black54,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -442,24 +452,20 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   textDeliveryAddress(),
-                  Singletons.order().company.delivery != null ?
-                    Singletons.order().company.delivery.pickup ?
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width,
-                        child: typeDeliveryButtons(),
-                      )
-                        :
-                      Container()
-                    :
-                      Container(),
+                  Singletons.order().company.delivery?.delivery ?? false
+                      ? Container(
+                          alignment: Alignment.center,
+                          width: MediaQuery.of(context).size.width,
+                          child: typeDeliveryButtons(),
+                        )
+                      : Container(),
                   deliveryAddressWidget(),
                 ],
               ),
             ),
           ),
           observacaoDelivery(),
-          SizedBox(height: 5,),
+          SizedBox(height: 5),
         ],
       ),
     );
@@ -478,8 +484,12 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             padding: EdgeInsets.only(left: 15, right: 15),
             child: Row(
               children: [
-                FaIcon(FontAwesomeIcons.motorcycle,),
-                SizedBox(width: 10,),
+                FaIcon(
+                  FontAwesomeIcons.motorcycle,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
                 Text(DELIVERY),
               ],
             ),
@@ -488,8 +498,12 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             padding: EdgeInsets.only(left: 15, right: 15),
             child: Row(
               children: [
-                FaIcon(FontAwesomeIcons.running,),
-                SizedBox(width: 10,),
+                FaIcon(
+                  FontAwesomeIcons.running,
+                ),
+                SizedBox(
+                  width: 10,
+                ),
                 Text(PICKUP),
               ],
             ),
@@ -531,7 +545,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       padding: EdgeInsets.fromLTRB(10, 30, 10, 0),
       child: Card(
         elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10),),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10),
+        ),
         child: Container(
           padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
           width: MediaQuery.of(context).size.width,
@@ -550,69 +566,77 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   ),
                 ),
               ),
-
-              _selections[0] && (deliveryAddress == null) ?
-                Padding(
-                  padding: EdgeInsets.only(left: 10, top: 15, right: 10, bottom: 15),
-                  child: Text(
-                    SET_DELIVERY_LOCATION,
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black54,
-                    ),
-                  ),
-                ) : addressDataWidget( deliveryAddress == null ? Singletons.order().company.address : deliveryAddress ),
-
-              _selections[1] ?
-                Singletons.order().company.address.location != null ?
-                    GestureDetector(
-                    child: Container(
-                      padding: EdgeInsets.only(top: 10, bottom: 10),
-                      width: MediaQuery.of(context).size.width,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColorLight,
-                        borderRadius: BorderRadius.only(bottomLeft: Radius.circular(10), bottomRight: Radius.circular(10)),
-                      ),
+              _selections[0] && (deliveryAddress == null)
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          left: 10, top: 15, right: 10, bottom: 15),
                       child: Text(
-                        OPEN_MAP,
+                        SET_DELIVERY_LOCATION,
                         textAlign: TextAlign.left,
                         style: TextStyle(
                           fontSize: 20,
-                          color: Colors.white,
+                          color: Colors.black54,
                         ),
                       ),
-                    ),
-                    onTap: () async {
-                      var address =  Singletons.order().company.address;
-                      if (address != null && address.location != null) {
-                        print(address.location);
-                        MapsLauncher.launchCoordinates(address.location.latitude, address.location.longitude);
-                      }
-                    },
-                  )
-                      :
-                    Container()
-                  :
-                deliveryAddress == null ?
-                  Padding(
-                    padding: EdgeInsets.all(10),
-                    child: SecondaryButton(
-                      text: SELECT_LOCATION,
-                      onPressed: () async {
-                        Address companyAddress = Singletons.order().company.address;
-                        Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
-                        if (result != null) {
-                          setState(() {
-                            deliveryAddress = result;
-                          });
-                        }
-                      },
-                    ),
-                  )
-                    :
-                  Container(),
+                    )
+                  : addressDataWidget(deliveryAddress == null
+                      ? Singletons.order().company.address
+                      : deliveryAddress),
+              _selections[1]
+                  ? Singletons.order().company.address.location != null
+                      ? GestureDetector(
+                          child: Container(
+                            padding: EdgeInsets.only(top: 10, bottom: 10),
+                            width: MediaQuery.of(context).size.width,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColorLight,
+                              borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10),
+                                  bottomRight: Radius.circular(10)),
+                            ),
+                            child: Text(
+                              OPEN_MAP,
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                          onTap: () async {
+                            var address = Singletons.order().company.address;
+                            if (address != null && address.location != null) {
+                              print(address.location);
+                              MapsLauncher.launchCoordinates(
+                                  address.location.latitude,
+                                  address.location.longitude);
+                            }
+                          },
+                        )
+                      : Container()
+                  : deliveryAddress == null
+                      ? Padding(
+                          padding: EdgeInsets.all(10),
+                          child: SecondaryButton(
+                            text: SELECT_LOCATION,
+                            onPressed: () async {
+                              Address companyAddress =
+                                  Singletons.order().company.address;
+                              Address result = await PageRouter.push(
+                                  context,
+                                  DeliveryAddressPage(
+                                    address: companyAddress,
+                                  ));
+                              if (result != null) {
+                                setState(() {
+                                  deliveryAddress = result;
+                                });
+                              }
+                            },
+                          ),
+                        )
+                      : Container(),
             ],
           ),
         ),
@@ -628,8 +652,15 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
         padding: EdgeInsets.all(10),
         child: Row(
           children: [
-            FaIcon(_selections[0] ? FontAwesomeIcons.motorcycle : FontAwesomeIcons.running, color: Colors.black54,),
-            SizedBox(width: 5,),
+            FaIcon(
+              _selections[0]
+                  ? FontAwesomeIcons.motorcycle
+                  : FontAwesomeIcons.running,
+              color: Colors.black54,
+            ),
+            SizedBox(
+              width: 5,
+            ),
             Text(
               _selections[0] ? DELIVERY_LOCATION : PICKUP_LOCATION,
               textAlign: TextAlign.left,
@@ -657,10 +688,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: Text(
-                  address.city == null ?
-                    address.smallTown.city.name
-                      :
-                    address.city.name,
+                  address.city == null
+                      ? address.smallTown.city.name
+                      : address.city.name,
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 20,
@@ -668,23 +698,28 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   ),
                 ),
               ),
-              address.smallTown != null ?
-              Padding(
-                padding: EdgeInsets.only(left: 10, top: 5, right: 10, bottom: 10),
-                child: Text(
-                  address.smallTown.name,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black54,
-                  ),
-                ),
-              ) : Container(),
-              SizedBox(height: 5,),
+              address.smallTown != null
+                  ? Padding(
+                      padding: EdgeInsets.only(
+                          left: 10, top: 5, right: 10, bottom: 10),
+                      child: Text(
+                        address.smallTown.name,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    )
+                  : Container(),
+              SizedBox(
+                height: 5,
+              ),
               Padding(
                 padding: EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: Text(
-                  "${address.street}" + (address.number == null ? "" : ", ${address.number}"),
+                  "${address.street}" +
+                      (address.number == null ? "" : ", ${address.number}"),
                   textAlign: TextAlign.left,
                   style: TextStyle(
                     fontSize: 20,
@@ -692,45 +727,56 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   ),
                 ),
               ),
-              address.neighborhood != null ? Padding(
-                padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-                child: Text(
-                  address.neighborhood,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black54,
-                  ),
-                ),
-              ) : Container(),
-              address.reference != null ? Padding(
-                padding: EdgeInsets.only(left: 10, top: 5, right: 10),
-                child: Text(
-                  address.reference,
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.black38,
-                  ),
-                ),
-              ) : Container(),
-              SizedBox(height: 10,),
+              address.neighborhood != null
+                  ? Padding(
+                      padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+                      child: Text(
+                        address.neighborhood,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black54,
+                        ),
+                      ),
+                    )
+                  : Container(),
+              address.reference != null
+                  ? Padding(
+                      padding: EdgeInsets.only(left: 10, top: 5, right: 10),
+                      child: Text(
+                        address.reference,
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.black38,
+                        ),
+                      ),
+                    )
+                  : Container(),
+              SizedBox(
+                height: 10,
+              ),
             ],
           ),
         ),
-        deliveryAddress != null && _selections[0] ?
-          LightButton(
-            text: CHANGE,
-            onPressed: () async {
-              Address companyAddress = Singletons.order().company.address;
-              Address result = await PageRouter.push(context, DeliveryAddressPage(address: companyAddress,));
-              if (result != null) {
-                setState(() {
-                  deliveryAddress = result;
-                });
-              }
-            },
-          ) : Container(),
+        deliveryAddress != null && _selections[0]
+            ? LightButton(
+                text: CHANGE,
+                onPressed: () async {
+                  Address companyAddress = Singletons.order().company.address;
+                  Address result = await PageRouter.push(
+                      context,
+                      DeliveryAddressPage(
+                        address: companyAddress,
+                      ));
+                  if (result != null) {
+                    setState(() {
+                      deliveryAddress = result;
+                    });
+                  }
+                },
+              )
+            : Container(),
       ],
     );
   }
@@ -752,8 +798,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   padding: EdgeInsets.all(10),
                   child: Row(
                     children: [
-                      FaIcon(FontAwesomeIcons.receipt, color: Colors.black54,),
-                      SizedBox(width: 5,),
+                      FaIcon(
+                        FontAwesomeIcons.receipt,
+                        color: Colors.black54,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
                       Text(
                         "Cupom de desconto",
                         textAlign: TextAlign.left,
@@ -767,26 +818,28 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   ),
                 ),
               ),
-              cupon == null ?
-                Padding(
-                  padding: EdgeInsets.all(20),
-                  child: SecondaryButton(
-                    text: "Adicionar",
-                    onPressed: () async {
-                      var cupon = await PageRouter.push(context, CheckCuponPage());
-                      if (cupon != null) {
-                        setState(() {
-                          this.cupon = cupon;
-                        });
-                      }
-                    },
-                  ),
-                ) : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    cuponWidget(cupon),
-                  ],
-                ),
+              cupon == null
+                  ? Padding(
+                      padding: EdgeInsets.all(20),
+                      child: SecondaryButton(
+                        text: "Adicionar",
+                        onPressed: () async {
+                          var cupon =
+                              await PageRouter.push(context, CheckCuponPage());
+                          if (cupon != null) {
+                            setState(() {
+                              this.cupon = cupon;
+                            });
+                          }
+                        },
+                      ),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        cuponWidget(cupon),
+                      ],
+                    ),
             ],
           ),
         ),
@@ -811,8 +864,13 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   padding: EdgeInsets.all(10),
                   child: Row(
                     children: [
-                      FaIcon(FontAwesomeIcons.handHoldingUsd, color: Colors.black54,),
-                      SizedBox(width: 5,),
+                      FaIcon(
+                        FontAwesomeIcons.handHoldingUsd,
+                        color: Colors.black54,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
                       Text(
                         PAYMENT_TYPE,
                         textAlign: TextAlign.left,
@@ -826,43 +884,54 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   ),
                 ),
               ),
-              typePayment == null ?
-              Padding(
-                padding: EdgeInsets.all(20),
-                child: SecondaryButton(
-                  text: SELECT_PAYMENT,
-                  onPressed: () async {
-                    var companyPayments = Singletons.order().company.typePayments;
-                    TypePayment result = await PageRouter.push(context, PaymentTypePage(paymentsType: companyPayments,));
-                    await Future.delayed(Duration(milliseconds: 300));
-                    if (result != null) {
-                      if (result.paymentType == Type.MONEY) {
-                        Singletons.order().changeMoney = await getTroco();
-                      }
-                    }
-                    setState(() {
-                      if (result != null) {
-                        typePayment = result;
-                      }
-                    });
-                  },
-                ),
-              ) : Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  paymentTypeWidget(typePayment),
-                  typePayment.type == Type.MONEY ? Padding(
-                    padding: EdgeInsets.only(left: 10, right: 10, bottom: 15),
-                    child: Text(
-                      Singletons.order().changeMoney == null ? "Sem troco" : "Troco para ${Singletons.order().changeMoney}",
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: Colors.green,
+              typePayment == null
+                  ? Padding(
+                      padding: EdgeInsets.all(20),
+                      child: SecondaryButton(
+                        text: SELECT_PAYMENT,
+                        onPressed: () async {
+                          var companyPayments =
+                              Singletons.order().company.typePayments;
+                          TypePayment result = await PageRouter.push(
+                              context,
+                              PaymentTypePage(
+                                paymentsType: companyPayments,
+                              ));
+                          await Future.delayed(Duration(milliseconds: 300));
+                          if (result != null) {
+                            if (result.paymentType == Type.MONEY) {
+                              Singletons.order().changeMoney = await getTroco();
+                            }
+                          }
+                          setState(() {
+                            if (result != null) {
+                              typePayment = result;
+                            }
+                          });
+                        },
                       ),
+                    )
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        paymentTypeWidget(typePayment),
+                        typePayment.type == Type.MONEY
+                            ? Padding(
+                                padding: EdgeInsets.only(
+                                    left: 10, right: 10, bottom: 15),
+                                child: Text(
+                                  Singletons.order().changeMoney == null
+                                      ? "Sem troco"
+                                      : "Troco para ${Singletons.order().changeMoney}",
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.green,
+                                  ),
+                                ),
+                              )
+                            : Container(),
+                      ],
                     ),
-                  ) : Container(),
-                ],
-              ),
             ],
           ),
         ),
@@ -886,7 +955,10 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                   Container(
                     width: 50,
                     alignment: Alignment.center,
-                    child: FaIcon(FontAwesomeIcons.fileInvoiceDollar, color: Colors.black45,),
+                    child: FaIcon(
+                      FontAwesomeIcons.fileInvoiceDollar,
+                      color: Colors.black45,
+                    ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -896,8 +968,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                         style: TextStyle(
                             fontSize: 23,
                             color: Colors.black45,
-                            fontWeight: FontWeight.bold
-                        ),
+                            fontWeight: FontWeight.bold),
                       ),
                       Text(
                         "${cupon.limit} unidade restante",
@@ -918,8 +989,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                         style: TextStyle(
                             fontSize: 18,
                             color: Colors.red,
-                            fontWeight: FontWeight.bold
-                        ),
+                            fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -930,9 +1000,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               },
             ),
             LightButton(
-              text: "Remover",
-              onPressed: () => setState(() => this.cupon = null)
-            ),
+                text: "Remover",
+                onPressed: () => setState(() => this.cupon = null)),
           ],
         ),
       ),
@@ -955,7 +1024,10 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
                 Container(
                   width: 50,
                   alignment: Alignment.center,
-                  child: FaIcon(icon, color: Colors.green,),
+                  child: FaIcon(
+                    icon,
+                    color: Colors.green,
+                  ),
                 ),
                 Text(
                   name,
@@ -970,7 +1042,11 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
               text: CHANGE,
               onPressed: () async {
                 var companyPayments = Singletons.order().company.typePayments;
-                TypePayment result = await PageRouter.push(context, PaymentTypePage(paymentsType: companyPayments,));
+                TypePayment result = await PageRouter.push(
+                    context,
+                    PaymentTypePage(
+                      paymentsType: companyPayments,
+                    ));
                 await Future.delayed(Duration(milliseconds: 300));
                 if (result != null) {
                   if (result.paymentType == Type.MONEY) {
@@ -992,7 +1068,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
 
   IconData findIcon(Type type) {
     IconData icon;
-    switch(type) {
+    switch (type) {
       case Type.MONEY:
         icon = FontAwesomeIcons.moneyBill;
         break;
@@ -1072,7 +1148,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   void showCompanyClosed() async {
     String message;
     if (Singletons.order().company.isTodayOpen()) {
-      message = "${Singletons.order().company.name} abre às ${Singletons.order().company.openTime()}";
+      message =
+          "${Singletons.order().company.name} abre às ${Singletons.order().company.openTime()}";
     } else {
       message = "${Singletons.order().company.name} não abre hoje.";
     }
@@ -1093,12 +1170,14 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
   Future<bool> validatedOrder() async {
     var timeNow = await getTrueTime();
 
-    if (timeNow == null) {//Sem conexão com internet
+    if (timeNow == null) {
+      //Sem conexão com internet
       await showOkAlertDialog(
         context: context,
         title: "Internet",
         okLabel: OK,
-        message: "Error, verifique sua conexão com a internet e tente novamente.",
+        message:
+            "Error, verifique sua conexão com a internet e tente novamente.",
       );
       return false;
     }
@@ -1110,7 +1189,7 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       showCompanyClosed();
       return false;
     }
-    
+
     if (checkDelevieryAddress()) {
       if (_selections[1]) {
         var companyAddress = Singletons.order().company.address;
@@ -1119,19 +1198,25 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
         Singletons.order().deliveryAddress = deliveryAddress;
       }
     } else {
-      ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha um local para entrega!");
+      ScaffoldSnackBar.failure(
+          context, _scaffoldKey, "Escolha um local para entrega!");
       return false;
     }
 
     if (checkPaymentType()) {
       Singletons.order().typePayment = typePayment;
     } else {
-      ScaffoldSnackBar.failure(context, _scaffoldKey, "Escolha uma forma de pagamento!");
+      ScaffoldSnackBar.failure(
+          context, _scaffoldKey, "Escolha uma forma de pagamento!");
       return false;
     }
 
     if (Singletons.user().phoneNumber == null) {
-      var phoneNumber = await PageRouter.push(context, PhoneNumberPage(authenticate: false,));
+      var phoneNumber = await PageRouter.push(
+          context,
+          PhoneNumberPage(
+            authenticate: false,
+          ));
       if (phoneNumber != null) {
         return true;
       }
@@ -1147,7 +1232,6 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       child: PrimaryButton(
         text: "Enviar pedido",
         onPressed: () async {
-
           setState(() => _loading = true);
 
           if (!await validatedOrder()) {
@@ -1155,7 +1239,9 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
             return;
           }
 
-          OrderStatus status = _selections[1] ? Singletons.order().company.pickupStatus : Singletons.order().company.deliveryStatus;
+          OrderStatus status = _selections[1]
+              ? Singletons.order().company.pickupStatus
+              : Singletons.order().company.deliveryStatus;
           status.values[0].date = DateTime.now();
           status.current = status.values[0];
 
@@ -1166,7 +1252,8 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
           Singletons.order().note = _observacaoController.text;
           Singletons.order().deliveryCost = _selections[1] ? 0 : deliveryCost;
           Singletons.order().delivery = _selections[0];
-          Singletons.order().companyPhoneNumber = Singletons.order().company.phoneNumber;
+          Singletons.order().companyPhoneNumber =
+              Singletons.order().company.phoneNumber;
           Singletons.order().userPhoneNumber = Singletons.user().phoneNumber;
           Singletons.order().cupon = cupon;
 
@@ -1175,5 +1262,4 @@ class _ConfirmOrderPageState extends State<ConfirmOrderPage> implements OrderCon
       ),
     );
   }
-
 }

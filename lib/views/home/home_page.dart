@@ -1,21 +1,21 @@
-import '../../models/singleton/singletons.dart';
-import '../../models/address/city.dart';
-import '../../models/address/small_town.dart';
-import '../../models/singleton/company_list_singleton.dart';
-import '../../utils/preferences_util.dart';
-import '../../views/location/location_page.dart';
-import '../../widgets/scaffold_snackbar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../../contracts/company/company_contract.dart';
-import '../../models/company/company.dart';
-import '../../presenters/company/company_presenter.dart';
-import '../../views/home/company_widget.dart';
-import '../../widgets/empty_list_widget.dart';
-import '../../widgets/loading_shimmer_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../../contracts/company/company_contract.dart';
+import '../../models/address/city.dart';
+import '../../models/address/small_town.dart';
+import '../../models/company/company.dart';
+import '../../models/singleton/singletons.dart';
+import '../../presenters/company/company_presenter.dart';
 import '../../strings.dart';
+import '../../utils/preferences_util.dart';
+import '../../views/home/company_widget.dart';
+import '../../views/location/location_page.dart';
 import '../../widgets/background_card.dart';
+import '../../widgets/empty_list_widget.dart';
+import '../../widgets/loading_shimmer_list.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import '../page_router.dart';
 import 'company_page.dart';
 
@@ -23,10 +23,7 @@ class HomePage extends StatefulWidget {
   final VoidCallback loginCallback;
   final VoidCallback orderCallback;
 
-  HomePage({
-    @required this.loginCallback,
-    @required this.orderCallback
-  });
+  HomePage({@required this.loginCallback, @required this.orderCallback});
 
   @override
   State<StatefulWidget> createState() => _HomePageState();
@@ -142,7 +139,10 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(TAB1, style: TextStyle(color: Colors.white),),
+        title: Text(
+          TAB1,
+          style: TextStyle(color: Colors.white),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: nestedScrollView(),
@@ -164,7 +164,9 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
                       Stack(
                         alignment: Alignment.topCenter,
                         children: <Widget>[
-                          BackgroundCard(height: 100,),
+                          BackgroundCard(
+                            height: 100,
+                          ),
                           search(),
                         ],
                       ),
@@ -188,7 +190,9 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
         child: RaisedButton(
           elevation: 5,
           padding: EdgeInsets.fromLTRB(20, 10, 20, 10),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0),),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
           color: Colors.white,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -199,8 +203,13 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    FaIcon(FontAwesomeIcons.searchLocation, color: Colors.grey,),
-                    SizedBox(width: 10,),
+                    FaIcon(
+                      FontAwesomeIcons.searchLocation,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
                     Flexible(
                       flex: 1,
                       child: Column(
@@ -214,22 +223,26 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
                               color: Colors.grey,
                             ),
                           ),
-                          smallTown != null ?
-                          Text(
-                            smallTown.name,
-                            style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.black54,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ) : Container(),
+                          smallTown != null
+                              ? Text(
+                                  smallTown.name,
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    color: Colors.black54,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                )
+                              : Container(),
                         ],
                       ),
                     ),
                   ],
                 ),
               ),
-              FaIcon(FontAwesomeIcons.caretDown, color: Colors.grey[400], ),
+              FaIcon(
+                FontAwesomeIcons.caretDown,
+                color: Colors.grey[400],
+              ),
             ],
           ),
           onPressed: () async {
@@ -252,9 +265,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
   }
 
   @override
-  onSuccess(Company result) {
-
-  }
+  onSuccess(Company result) {}
 
   @override
   listSuccess(List<Company> list) {
@@ -276,19 +287,19 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
         return verifiedCityTown();
       },
       child: Center(
-        child: list == null ?
-          LoadingShimmerList()
-            :
-          Stack(
-            children: [
-              listView(),
-              list.isEmpty ?
-                EmptyListWidget(
-                  message: NO_COMPANY_FOUND,
-                  //assetsImage: "assets/notification.png",
-                ) : Container(),
-            ],
-          ),
+        child: list == null
+            ? LoadingShimmerList()
+            : Stack(
+                children: [
+                  listView(),
+                  list.isEmpty
+                      ? EmptyListWidget(
+                          message: NO_COMPANY_FOUND,
+                          //assetsImage: "assets/notification.png",
+                        )
+                      : Container(),
+                ],
+              ),
       ),
     );
   }
@@ -297,11 +308,9 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
     return CustomScrollView(
       slivers: <Widget>[
         SliverList(
-          delegate: SliverChildListDelegate(
-              list.map<Widget>((item) {
-                return listItem(item);
-              }).toList()
-          ),
+          delegate: SliverChildListDelegate(list.map<Widget>((item) {
+            return listItem(item);
+          }).toList()),
         ),
       ],
     );
@@ -317,12 +326,17 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
           item: item,
           dateTime: dateNow,
           onPressed: (value) async {
-            await PageRouter.push(context, CompanyPage(loginCallback: widget.loginCallback, company: item, orderCallback: widget.orderCallback,));
+            await PageRouter.push(
+                context,
+                CompanyPage(
+                  loginCallback: widget.loginCallback,
+                  company: item,
+                  orderCallback: widget.orderCallback,
+                ));
             setState(() => dateNow = DateTime.now());
           },
         ),
       ),
     );
   }
-
 }

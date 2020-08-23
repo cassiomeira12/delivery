@@ -1,36 +1,37 @@
-import '../../models/singleton/singletons.dart';
-import '../../widgets/scaffold_snackbar.dart';
-import '../../widgets/loading_widget.dart';
+import 'package:flutter/material.dart';
+
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
+import '../../models/singleton/singletons.dart';
 import '../../presenters/order/order_presenter.dart';
+import '../../strings.dart';
 import '../../views/historico/historic_order_page.dart';
 import '../../views/historico/historic_widget.dart';
 import '../../widgets/empty_list_widget.dart';
-import '../../strings.dart';
-import 'package:flutter/material.dart';
+import '../../widgets/loading_widget.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import '../page_router.dart';
 
 class HistoricPage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => _HistoricPageState();
 }
 
-class _HistoricPageState extends State<HistoricPage> implements OrderContractView {
+class _HistoricPageState extends State<HistoricPage>
+    implements OrderContractView {
   final _formKey = GlobalKey<FormState>();
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
+  bool _loading = false;
   OrdersPresenter presenter;
 
-  List<Order> ordersList;
+  //List<Order> ordersList;
 
   @override
   void initState() {
     super.initState();
     presenter = OrdersPresenter(this);
     presenter.listUserOrders();
-    ordersList = Singletons.orders();
     verifyNewOrder();
   }
 
@@ -45,7 +46,11 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
       Order newOrder = Order();
       newOrder.updateData(Singletons.order());
       await Future.delayed(Duration(seconds: 1));
-      PageRouter.push(context, HistoricOrderPage(order: newOrder,));
+      PageRouter.push(
+          context,
+          HistoricOrderPage(
+            order: newOrder,
+          ));
       Singletons.order().clear();
     }
   }
@@ -53,18 +58,18 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
   @override
   listSuccess(List<Order> list) {
     list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    if (ordersList != null && ordersList.isNotEmpty) {
+    if (Singletons.orders().isNotEmpty) {
       list.forEach((item) {
         var temp;
         for (var element in Singletons.orders()) {
           if (item.id == element.id) {
             temp = element;
-            return;
+            break;
           }
         }
         if (temp == null) {
           setState(() {
-            ordersList.insert(0, item);
+            Singletons.orders().insert(0, item);
           });
         } else {
           setState(() {
@@ -74,25 +79,26 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
       });
     } else {
       setState(() {
-        ordersList = list;
+        Singletons.orders().addAll(list);
       });
-      Singletons.orders().addAll(list);
     }
+    setState(() => _loading = false);
   }
 
   @override
-  onFailure(String error)  {
+  onFailure(String error) {
     setState(() {
-      ordersList = List();
+      _loading = false;
+      Singletons.orders().clear();
     });
     ScaffoldSnackBar.failure(context, _scaffoldKey, error);
   }
 
   @override
   onSuccess(Order result) {
-    Singletons.orders().add(result);
     setState(() {
-      ordersList.insert(0, result);
+      _loading = false;
+      Singletons.orders().insert(0, result);
     });
   }
 
@@ -101,7 +107,10 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(TAB3, style: TextStyle(color: Colors.white),),
+        title: Text(
+          TAB3,
+          style: TextStyle(color: Colors.white),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
       ),
       body: body(),
@@ -111,55 +120,47 @@ class _HistoricPageState extends State<HistoricPage> implements OrderContractVie
   Widget body() {
     final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
     return RefreshIndicator(
-      key: _refreshIndicatorKey,
-      onRefresh: () {
-        setState(() {
-          ordersList = null;
-        });
-        Singletons.orders().clear();
-        return presenter.findBy("user", Singletons.user().toPointer());
-      },
-      child: Center(
-        child: ordersList == null ?
-          LoadingWidget()
-            :
-          Stack(
-            children: [
-              listOrders(),
-              ordersList.isEmpty ?
-                EmptyListWidget(
-                  message: "Nenhum pedido foi encontrado",
-//                  onPressed: () async {
-//                    setState(() {
-//                      ordersList = null;
-//                    });
-//                    Singletons.orders().clear();
-//                    presenter.findBy("user", Singletons.user().toPointer());
-//                  },
-                ) : Container(),
-            ],
-          ),
-      )
-    );
+        key: _refreshIndicatorKey,
+        onRefresh: () {
+          setState(() {
+            Singletons.orders().clear();
+            _loading = true;
+          });
+          return presenter.findBy("user", Singletons.user().toPointer());
+        },
+        child: Center(
+          child: _loading
+              ? LoadingWidget()
+              : Stack(
+                  children: [
+                    listOrders(),
+                    Singletons.orders().isEmpty
+                        ? EmptyListWidget(
+                            message: "Nenhum pedido foi encontrado",
+                          )
+                        : Container(),
+                  ],
+                ),
+        ));
   }
 
   Widget listOrders() {
     return CustomScrollView(
       slivers: <Widget>[
         SliverList(
-          delegate: SliverChildListDelegate(
-              ordersList.map<Widget>((item) {
-                return GestureDetector(
-                  child: HistoricWidget(item: item),
-                  onTap: () async {
-                    await PageRouter.push(context, HistoricOrderPage(order: item));
-                  },
-                );
-              }).toList()
-          ),
+          delegate:
+              SliverChildListDelegate(Singletons.orders().map<Widget>((item) {
+            return GestureDetector(
+              child: HistoricWidget(item: item),
+              onTap: () async {
+                var result = await PageRouter.push(
+                    context, HistoricOrderPage(order: item));
+                setState(() => item = result);
+              },
+            );
+          }).toList()),
         ),
       ],
     );
   }
-
 }

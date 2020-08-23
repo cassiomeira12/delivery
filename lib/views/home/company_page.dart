@@ -1,24 +1,25 @@
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:auto_size_text/auto_size_text.dart';
-import '../../models/singleton/singletons.dart';
-import '../../widgets/scaffold_snackbar.dart';
-import '../../contracts/menu/menu_contract.dart';
-import '../../models/menu/product.dart';
-import '../../models/menu/menu.dart';
-import '../../presenters/menu/menu_presenter.dart';
-import '../../views/home/order_slidding_widget.dart';
-import '../../views/home/product_widget.dart';
-import '../../widgets/empty_list_widget.dart';
-import '../../widgets/image_network_widget.dart';
-import '../../widgets/loading_shimmer_list.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../../contracts/menu/menu_contract.dart';
 import '../../models/company/company.dart';
-import 'package:flutter/material.dart';
+import '../../models/menu/menu.dart';
+import '../../models/menu/product.dart';
+import '../../models/singleton/singletons.dart';
+import '../../presenters/menu/menu_presenter.dart';
 import '../../strings.dart';
+import '../../views/home/order_slidding_widget.dart';
+import '../../views/home/product_widget.dart';
 import '../../widgets/background_card.dart';
+import '../../widgets/empty_list_widget.dart';
+import '../../widgets/image_network_widget.dart';
+import '../../widgets/loading_shimmer_list.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import '../page_router.dart';
 import 'product_page.dart';
 
@@ -66,7 +67,10 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
     logoURL = widget.company.logoURL;
     bannerURL = widget.company.bannerURL;
     setOpenTime();
-    sliddingPage = OrderSliddingWidget(orderCallback: widget.orderCallback, updateOrders: updateOrders,);
+    sliddingPage = OrderSliddingWidget(
+      orderCallback: widget.orderCallback,
+      updateOrders: updateOrders,
+    );
     menuPresenter = MenuPresenter(this);
     menu = Singletons.menus()[widget.company.id];
     if (menu == null) {
@@ -79,7 +83,9 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
 
   void setOpenTime() {
     setState(() {
-      openTime = widget.company.getOpenTime(DateTime.now()) != null ? CLOSED : widget.company.getOpenTime(DateTime.now());
+      openTime = widget.company.getOpenTime(DateTime.now()) != null
+          ? CLOSED
+          : widget.company.getOpenTime(DateTime.now());
     });
   }
 
@@ -160,8 +166,11 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
                   flex: 1,
                   child: Row(
                     children: [
-                      FaIcon(FontAwesomeIcons.shoppingCart, color: Theme.of(context).backgroundColor),
-                      SizedBox(width: 10,),
+                      FaIcon(FontAwesomeIcons.shoppingCart,
+                          color: Theme.of(context).backgroundColor),
+                      SizedBox(
+                        width: 10,
+                      ),
                       Flexible(
                         flex: 1,
                         child: Wrap(
@@ -206,25 +215,27 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   }
 
   Widget notificationCount(int notifications) {
-    return notifications > 0 ?
-    Align(
-      //alignment: Alignment.topCenter,
-      child: ClipOval(
-        child: Container(
-          height: 40, width: 40,
-          color: Colors.white,
-          alignment: Alignment.center,
-          child: Text(
-            notifications.toString(),
-            style: TextStyle(
-              color: Colors.red,
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+    return notifications > 0
+        ? Align(
+            //alignment: Alignment.topCenter,
+            child: ClipOval(
+              child: Container(
+                height: 40,
+                width: 40,
+                color: Colors.white,
+                alignment: Alignment.center,
+                child: Text(
+                  notifications.toString(),
+                  style: TextStyle(
+                    color: Colors.red,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-    ) : Container();
+          )
+        : Container();
   }
 
   Widget nestedScrollView() {
@@ -244,23 +255,24 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
                         children: <Widget>[
                           Column(
                             children: [
-                              BackgroundCard(height: 100,),
+                              BackgroundCard(
+                                height: 100,
+                              ),
                               infoCompanyWidget(),
                             ],
                           ),
-                          bannerURL == null ?
-                            Container()
-                              :
-                            Container(
-                              height: 100,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fitWidth,
-                                  image: NetworkImage(bannerURL),
+                          bannerURL == null
+                              ? Container()
+                              : Container(
+                                  height: 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.rectangle,
+                                    image: DecorationImage(
+                                      fit: BoxFit.fitWidth,
+                                      image: NetworkImage(bannerURL),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
                           imageUser(logoURL),
                         ],
                       ),
@@ -288,21 +300,19 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         return menuPresenter.findBy("company", widget.company.toPointer());
       },
       child: Center(
-        child: list == null ?
-          LoadingShimmerList()
-            :
-          list.isEmpty ?
-            Stack(
-              children: [
-                EmptyListWidget(
-                  message: NO_ITEM_FOUND,
-                  //assetsImage: "assets/notification.png",
-                ),
-                listView(),
-              ],
-            )
-              :
-            listView(),
+        child: list == null
+            ? LoadingShimmerList()
+            : list.isEmpty
+                ? Stack(
+                    children: [
+                      EmptyListWidget(
+                        message: NO_ITEM_FOUND,
+                        //assetsImage: "assets/notification.png",
+                      ),
+                      listView(),
+                    ],
+                  )
+                : listView(),
       ),
     );
   }
@@ -313,11 +323,9 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
       child: CustomScrollView(
         slivers: <Widget>[
           SliverList(
-            delegate: SliverChildListDelegate(
-                list.map<Widget>((item) {
-                  return item.visible ? listItem(item) : Container();
-                }).toList()
-            ),
+            delegate: SliverChildListDelegate(list.map<Widget>((item) {
+              return item.visible ? listItem(item) : Container();
+            }).toList()),
           ),
         ],
       ),
@@ -333,11 +341,13 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         child: ProductWidget(
           item: item,
           onPressed: (value) async {
-            var result = await PageRouter.push(context, ProductPage(
-              loginCallback: widget.loginCallback,
-              item: item,
-              company: widget.company,
-            ));
+            var result = await PageRouter.push(
+                context,
+                ProductPage(
+                  loginCallback: widget.loginCallback,
+                  item: item,
+                  company: widget.company,
+                ));
             if (result != null) {
               updateOrders();
             }
@@ -362,7 +372,7 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   }
 
   @override
-  onFailure(String error)  {
+  onFailure(String error) {
     setState(() {
       list = [];
     });
@@ -389,7 +399,9 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         children: <Widget>[
           Flexible(
             flex: 3,
-            child: widget.company.openHours != null ? openingCompanyWidget() : Container(),
+            child: widget.company.openHours != null
+                ? openingCompanyWidget()
+                : Container(),
           ),
           Flexible(
             flex: 2,
@@ -428,35 +440,98 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         runSpacing: 5,
         spacing: 5,
         children: <Widget>[
-          widget.company.delivery == null || widget.company.delivery.pickup ?
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: FaIcon(FontAwesomeIcons.running, size: 16, color: Theme.of(context).errorColor,),
-            ) : Container(),
-          widget.company.delivery != null ?
-            Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(color: Colors.grey[300], borderRadius: BorderRadius.circular(20),),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  FaIcon(FontAwesomeIcons.motorcycle, size: 16, color: Theme.of(context).errorColor,),
-                  SizedBox(width: 5,),
-                  Text(
-                    widget.company.delivery.cost == 0 ? FREE : "R\$ ${(widget.company.delivery.cost/100).toStringAsFixed(2)}",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).errorColor,
-                    ),
+          widget.company.delivery?.pickup ?? true
+              ? Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                ],
-              ),
-            ) : Container(),
+                  child: FaIcon(
+                    FontAwesomeIcons.running,
+                    size: 16,
+                    color: Theme.of(context).errorColor,
+                  ),
+                )
+              : Container(),
+          widget.company.delivery?.delivery ?? false
+              ? Container(
+                  padding: EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FaIcon(
+                        FontAwesomeIcons.motorcycle,
+                        size: 16,
+                        color: Theme.of(context).errorColor,
+                      ),
+                      SizedBox(
+                        width: 5,
+                      ),
+                      Text(
+                        widget.company.delivery.cost == 0
+                            ? FREE
+                            : "R\$ ${(widget.company.delivery.cost / 100).toStringAsFixed(2)}",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).errorColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Container(),
+//          widget.company.delivery == null || widget.company.delivery.pickup
+//              ? Container(
+//                  padding: EdgeInsets.all(10),
+//                  decoration: BoxDecoration(
+//                    color: Colors.grey[300],
+//                    borderRadius: BorderRadius.circular(20),
+//                  ),
+//                  child: FaIcon(
+//                    FontAwesomeIcons.running,
+//                    size: 16,
+//                    color: Theme.of(context).errorColor,
+//                  ),
+//                )
+//              : Container(),
+//          widget.company.delivery != null
+//              ? Container(
+//                  padding: EdgeInsets.all(10),
+//                  decoration: BoxDecoration(
+//                    color: Colors.grey[300],
+//                    borderRadius: BorderRadius.circular(20),
+//                  ),
+//                  child: Row(
+//                    mainAxisSize: MainAxisSize.min,
+//                    children: [
+//                      FaIcon(
+//                        FontAwesomeIcons.motorcycle,
+//                        size: 16,
+//                        color: Theme.of(context).errorColor,
+//                      ),
+//                      SizedBox(
+//                        width: 5,
+//                      ),
+//                      Text(
+//                        widget.company.delivery.cost == 0
+//                            ? FREE
+//                            : "R\$ ${(widget.company.delivery.cost / 100).toStringAsFixed(2)}",
+//                        style: TextStyle(
+//                          fontSize: 16,
+//                          fontWeight: FontWeight.bold,
+//                          color: Theme.of(context).errorColor,
+//                        ),
+//                      ),
+//                    ],
+//                  ),
+//                )
+//              : Container(),
         ],
       ),
     );
@@ -478,13 +553,12 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
               color: Theme.of(context).hintColor,
             ),
           ),
-          child: url == null ?
-          Padding(
-            padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-            child: Image.asset("assets/logo_app.png"),
-          )
-              :
-          Container(),
+          child: url == null
+              ? Padding(
+                  padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                  child: Image.asset("assets/logo_app.png"),
+                )
+              : Container(),
         ),
         url == null ? Container() : imageNetworkURL(url),
       ],
@@ -494,7 +568,10 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
   Widget imageNetworkURL(String url) {
     return Container(
       margin: EdgeInsets.only(top: 40),
-      child: ImageNetworkWidget(url: url, size: 98,),
+      child: ImageNetworkWidget(
+        url: url,
+        size: 98,
+      ),
     );
   }
 
@@ -504,9 +581,10 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
       title: YOU_HAVE_ORDERS_SELECTED,
       okLabel: CLEAR,
       cancelLabel: CANCELAR,
-      message: "Deseja realmente limpar os pedidos selecionados de ${widget.company.name} ?",
+      message:
+          "Deseja realmente limpar os pedidos selecionados de ${widget.company.name} ?",
     );
-    switch(result) {
+    switch (result) {
       case OkCancelResult.ok:
         Singletons.order().clear();
         PageRouter.pop(context);
@@ -515,5 +593,4 @@ class _CompanyPageState extends State<CompanyPage> implements MenuContractView {
         break;
     }
   }
-
 }

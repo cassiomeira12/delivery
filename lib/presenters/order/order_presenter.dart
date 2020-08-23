@@ -1,10 +1,14 @@
-import 'package:parse_server_sdk/parse_server_sdk.dart';
 import 'dart:async';
-import '../../models/singleton/singletons.dart';
-import '../../utils/log_util.dart';
-import '../../services/parse/parse_order_service.dart';
+
+import 'package:kideliver/contracts/order/cupon_contract.dart';
+import 'package:kideliver/models/order/cupon.dart';
+import 'package:kideliver/services/parse/parse_cupon_service.dart';
+import 'package:parse_server_sdk/parse_server_sdk.dart';
+
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
+import '../../models/singleton/singletons.dart';
+import '../../services/parse/parse_order_service.dart';
 
 class OrdersPresenter implements OrderContractPresenter {
   final OrderContractView _view;
@@ -12,7 +16,8 @@ class OrdersPresenter implements OrderContractPresenter {
   OrdersPresenter(this._view);
 
   //OrderContractService service = FirebaseOrderService("orders");
-  OrderContractService service = ParseOrderService();
+  OrderContractService orderService = ParseOrderService();
+  CuponContractService cuponService = ParseCuponService();
 
   LiveQuery liveQuery;
   Subscription subscription;
@@ -27,13 +32,13 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   dispose() {
-    service = null;
+    orderService = null;
     if (liveQuery != null) liveQuery.client.unSubscribe(subscription);
   }
 
   @override
   Future<Order> create(Order item) async {
-    return await service.create(item).then((value) {
+    return await orderService.create(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
@@ -44,7 +49,7 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   Future<Order> read(Order item) async {
-    return await service.read(item).then((value) {
+    return await orderService.read(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
@@ -55,7 +60,7 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   Future<Order> update(Order item) async {
-    return await service.update(item).then((value) {
+    return await orderService.update(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
@@ -66,7 +71,7 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   Future<Order> delete(Order item) async {
-    return await service.delete(item).then((value) {
+    return await orderService.delete(item).then((value) {
       if (_view != null) _view.onSuccess(value);
       return value;
     }).catchError((error) {
@@ -77,7 +82,7 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   Future<List<Order>> findBy(String field, value) async {
-    return await service.findBy(field, value).then((value) {
+    return await orderService.findBy(field, value).then((value) {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
@@ -88,7 +93,7 @@ class OrdersPresenter implements OrderContractPresenter {
 
   @override
   Future<List<Order>> list() async {
-    return await service.list().then((value) {
+    return await orderService.list().then((value) {
       if (_view != null) _view.listSuccess(value);
       return value;
     }).catchError((error) {
@@ -101,12 +106,18 @@ class OrdersPresenter implements OrderContractPresenter {
   readSnapshot(Order item) async {
     liveQuery = LiveQuery();
 
-    QueryBuilder query = QueryBuilder(item)
-      ..whereEqualTo("objectId", item.id);
+    QueryBuilder query = QueryBuilder(item)..whereEqualTo("objectId", item.id);
 
     subscription = await liveQuery.client.subscribe(query);
-    subscription.on(LiveQueryEvent.update, (value) {
-      if (_view != null) _view.onSuccess(Order.fromMap(value.toJson()));
+    subscription.on(LiveQueryEvent.update, (value) async {
+      var order = Order.fromMap(value.toJson());
+      var cuponJson = value["cupon"];
+      if (cuponJson != null) {
+        var cupon =
+            await cuponService.read(Cupon()..id = cuponJson["objectId"]);
+        order.cupon = cupon;
+      }
+      _view != null ? _view.onSuccess(order) : null;
     });
   }
 
@@ -119,8 +130,15 @@ class OrdersPresenter implements OrderContractPresenter {
       ..orderByDescending("createdAt");
 
     subscription = await liveQuery.client.subscribe(query);
-    subscription.on(LiveQueryEvent.update, (value) {
-      if (_view != null) _view.listSuccess([Order.fromMap(value.toJson())]);
+    subscription.on(LiveQueryEvent.update, (value) async {
+      var order = Order.fromMap(value.toJson());
+      var cuponJson = value["cupon"];
+      if (cuponJson != null) {
+        var cupon =
+            await cuponService.read(Cupon()..id = cuponJson["objectId"]);
+        order.cupon = cupon;
+      }
+      if (_view != null) _view.listSuccess([order]);
     });
   }
 }

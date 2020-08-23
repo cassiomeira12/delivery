@@ -1,23 +1,22 @@
 import 'dart:io';
-import '../models/singleton/singletons.dart';
-import '../contracts/order/order_contract.dart';
-import '../presenters/order/order_presenter.dart';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../widgets/tabs.dart';
+
+import '../contracts/order/order_contract.dart';
+import '../models/singleton/singletons.dart';
+import '../presenters/order/order_presenter.dart';
 import '../views/historico/historic_page.dart';
 import '../views/home/home_page.dart';
 import '../views/notifications/notifications_page.dart';
 import '../views/settings/settings_page.dart';
+import '../widgets/tabs.dart';
 
 class TabsPage extends StatefulWidget {
   final VoidCallback loginCallback;
   final VoidCallback logoutCallback;
 
-  TabsPage({
-    this.loginCallback,
-    this.logoutCallback
-  });
+  TabsPage({this.loginCallback, this.logoutCallback});
 
   @override
   _TabsPageState createState() => _TabsPageState();
@@ -30,30 +29,39 @@ class _TabsPageState extends State<TabsPage> {
   List<Widget> screens;
 
   int orderCount = 0;
-  OrderContractPresenter presenter;
+  OrderContractPresenter orderPresenter;
 
   @override
   void initState() {
     super.initState();
     screens = [
-      HomePage(loginCallback: widget.loginCallback, orderCallback: orderCallback,),
+      HomePage(
+        loginCallback: widget.loginCallback,
+        orderCallback: orderCallback,
+      ),
       NotificationsPage(),
       HistoricPage(),
-      SettingsPage(logoutCallback: widget.logoutCallback,),
+      SettingsPage(
+        logoutCallback: widget.logoutCallback,
+      ),
     ];
-    tabsView = TabsView(currentTab: currentTab, screens: screens,);
-    presenter = OrdersPresenter(null);
+    tabsView = TabsView(
+      currentTab: currentTab,
+      screens: screens,
+    );
+    orderPresenter = OrdersPresenter(null);
     listOrders();
   }
 
   @override
   void dispose() {
     super.dispose();
-    presenter.dispose();
+    orderPresenter.dispose();
   }
 
   void listOrders() async {
-    var result = await presenter.findBy("user", Singletons.user().toPointer());
+    var result =
+        await orderPresenter.findBy("user", Singletons.user().toPointer());
     if (result != null) {
       Singletons.orders().clear();
       Singletons.orders().addAll(result);
@@ -64,7 +72,8 @@ class _TabsPageState extends State<TabsPage> {
   void calculateOrdersItens() {
     var temp = 0;
     Singletons.orders().forEach((element) {
-      if ((!element.status.isLast() || element.evaluation == null) && !element.canceled) {
+      if ((!element.status.isLast() || element.evaluation == null) &&
+          !element.canceled) {
         temp++;
       }
     });
@@ -84,12 +93,11 @@ class _TabsPageState extends State<TabsPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: _onBackPressed,
-      child: Scaffold(
-        body: tabsView,
-        bottomNavigationBar: customBottomNavigationBar(),
-      )
-    );
+        onWillPop: _onBackPressed,
+        child: Scaffold(
+          body: tabsView,
+          bottomNavigationBar: customBottomNavigationBar(),
+        ));
   }
 
   Future<bool> _onBackPressed() {
@@ -112,13 +120,14 @@ class _TabsPageState extends State<TabsPage> {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: <Widget>[
-
             Expanded(
               flex: 2,
               child: Container(
                 margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                 child: MaterialButton(
-                  color: currentTab == 0 ? Theme.of(context).primaryColorLight : Theme.of(context).backgroundColor,
+                  color: currentTab == 0
+                      ? Theme.of(context).primaryColorLight
+                      : Theme.of(context).backgroundColor,
                   elevation: 0,
                   shape: StadiumBorder(),
                   splashColor: Theme.of(context).backgroundColor,
@@ -132,7 +141,12 @@ class _TabsPageState extends State<TabsPage> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: <Widget>[
-                      FaIcon(FontAwesomeIcons.home, color: currentTab == 0 ? Theme.of(context).backgroundColor : Colors.grey,),
+                      FaIcon(
+                        FontAwesomeIcons.home,
+                        color: currentTab == 0
+                            ? Theme.of(context).backgroundColor
+                            : Colors.grey,
+                      ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
                         child: notificationCount(0),
@@ -150,7 +164,9 @@ class _TabsPageState extends State<TabsPage> {
                 child: Stack(
                   children: <Widget>[
                     MaterialButton(
-                      color: currentTab == 1 ? Theme.of(context).primaryColorLight : Theme.of(context).backgroundColor,
+                      color: currentTab == 1
+                          ? Theme.of(context).primaryColorLight
+                          : Theme.of(context).backgroundColor,
                       elevation: 0,
                       height: double.maxFinite,
                       shape: StadiumBorder(),
@@ -165,7 +181,12 @@ class _TabsPageState extends State<TabsPage> {
                       child: Stack(
                         alignment: Alignment.center,
                         children: <Widget>[
-                          FaIcon(FontAwesomeIcons.solidBell, color: currentTab == 1 ? Theme.of(context).backgroundColor : Colors.grey,),
+                          FaIcon(
+                            FontAwesomeIcons.solidBell,
+                            color: currentTab == 1
+                                ? Theme.of(context).backgroundColor
+                                : Colors.grey,
+                          ),
                           Padding(
                             padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
                             child: notificationCount(0),
@@ -188,7 +209,9 @@ class _TabsPageState extends State<TabsPage> {
               child: Container(
                 margin: EdgeInsets.fromLTRB(10, 5, 0, 5),
                 child: MaterialButton(
-                  color: currentTab == 2 ? Theme.of(context).primaryColorLight : Theme.of(context).backgroundColor,
+                  color: currentTab == 2
+                      ? Theme.of(context).primaryColorLight
+                      : Theme.of(context).backgroundColor,
                   elevation: 0,
                   shape: StadiumBorder(),
                   splashColor: Theme.of(context).backgroundColor,
@@ -202,7 +225,12 @@ class _TabsPageState extends State<TabsPage> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: <Widget>[
-                      FaIcon(FontAwesomeIcons.shoppingCart, color: currentTab == 2 ? Theme.of(context).backgroundColor : Colors.grey,),
+                      FaIcon(
+                        FontAwesomeIcons.shoppingCart,
+                        color: currentTab == 2
+                            ? Theme.of(context).backgroundColor
+                            : Colors.grey,
+                      ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
                         child: notificationCount(orderCount),
@@ -218,7 +246,9 @@ class _TabsPageState extends State<TabsPage> {
               child: Container(
                 margin: EdgeInsets.fromLTRB(5, 5, 5, 5),
                 child: MaterialButton(
-                  color: currentTab == 3 ? Theme.of(context).primaryColorLight : Theme.of(context).backgroundColor,
+                  color: currentTab == 3
+                      ? Theme.of(context).primaryColorLight
+                      : Theme.of(context).backgroundColor,
                   elevation: 0,
                   shape: StadiumBorder(),
                   splashColor: Theme.of(context).backgroundColor,
@@ -232,7 +262,12 @@ class _TabsPageState extends State<TabsPage> {
                   child: Stack(
                     alignment: Alignment.center,
                     children: <Widget>[
-                      FaIcon(FontAwesomeIcons.userCog, color: currentTab == 3 ? Theme.of(context).backgroundColor : Colors.grey,),
+                      FaIcon(
+                        FontAwesomeIcons.userCog,
+                        color: currentTab == 3
+                            ? Theme.of(context).backgroundColor
+                            : Colors.grey,
+                      ),
                       Padding(
                         padding: EdgeInsets.fromLTRB(15, 5, 0, 0),
                         child: notificationCount(0),
@@ -242,7 +277,6 @@ class _TabsPageState extends State<TabsPage> {
                 ),
               ),
             ),
-
           ],
         ),
       ),
@@ -250,18 +284,24 @@ class _TabsPageState extends State<TabsPage> {
   }
 
   Widget notificationCount(int notifications) {
-    return notifications > 0 ?
-      Align(
-        alignment: Alignment.topCenter,
-        child: ClipOval(
-          child: Container(
-            height: 20, width: 20,
-            color: Colors.red,
-            alignment: Alignment.center,
-            child: Text(notifications.toString(), style: TextStyle(color: Colors.white,),),
-          ),
-        ),
-      ) : Container();
+    return notifications > 0
+        ? Align(
+            alignment: Alignment.topCenter,
+            child: ClipOval(
+              child: Container(
+                height: 20,
+                width: 20,
+                color: Colors.red,
+                alignment: Alignment.center,
+                child: Text(
+                  notifications.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          )
+        : Container();
   }
-
 }

@@ -1,7 +1,6 @@
-import '../../services/parse/parse_company_service.dart';
-import '../../services/firebase/firebase_company_service.dart';
 import '../../contracts/company/company_contract.dart';
 import '../../models/company/company.dart';
+import '../../services/parse/parse_company_service.dart';
 
 class CompanyPresenter implements CompanyContractPresenter {
   CompanyContractView _view;
@@ -104,5 +103,4 @@ class CompanyPresenter implements CompanyContractPresenter {
       return null;
     });
   }
-
 }

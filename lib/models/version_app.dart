@@ -20,8 +20,7 @@ class VersionApp extends BaseModel<VersionApp> {
   }
 
   toMap() {
-    var map = new Map<String, dynamic>();
-    map["objectId"] = id;
+    var map = super.toMap();
     map["name"] = name;
     map["currentCode"] = currentCode;
     map["minimumCode"] = minimumCode;
@@ -43,7 +42,7 @@ class VersionApp extends BaseModel<VersionApp> {
   }
 
   bool isAcceptVersion() {
+    currentCode = currentCode ?? installedCode;
     return installedCode <= currentCode;
   }
-
 }

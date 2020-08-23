@@ -1,9 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:kideliver/strings.dart';
 
-import '../../widgets/image_network_widget.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../models/company/company.dart';
-import 'package:flutter/material.dart';
+import '../../widgets/image_network_widget.dart';
 
 class CompanyWidget extends StatefulWidget {
   final dynamic item;
@@ -22,7 +22,7 @@ class CompanyWidget extends StatefulWidget {
 
 class _CompanyWidgetState extends State<CompanyWidget> {
   Color _colorButton, _colorTextButton;
-  
+
   DateTime timeNow;
   Company company;
 
@@ -42,23 +42,33 @@ class _CompanyWidgetState extends State<CompanyWidget> {
       child: RaisedButton(
         padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
         elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0),),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(0),
+        ),
         color: Theme.of(context).backgroundColor,
         disabledColor: Theme.of(context).backgroundColor,
         child: Row(
           children: [
-            ImageNetworkWidget(url: company.logoURL, size: 68,),
+            ImageNetworkWidget(
+              url: company.logoURL,
+              size: 68,
+            ),
             Expanded(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   titleTextWidget(company.name),
-                  company.initiated ? openingHourMessageTextWidget() : textNotInitialized(),
+                  company.initiated
+                      ? openingHourMessageTextWidget()
+                      : textNotInitialized(),
                 ],
               ),
             ),
-            FaIcon(FontAwesomeIcons.angleRight, color: Theme.of(context).iconTheme.color,),
+            FaIcon(
+              FontAwesomeIcons.angleRight,
+              color: Theme.of(context).iconTheme.color,
+            ),
           ],
         ),
         onPressed: company.initiated ? () => widget.onPressed(company) : null,
@@ -83,23 +93,29 @@ class _CompanyWidgetState extends State<CompanyWidget> {
 
   Widget openingHourMessageTextWidget() {
     bool openToday = company.isTodayOpen();
-    String openText, closeText;
+    String openText, closeText, tomorowText;
     if (openToday) {
-      print(timeNow);
       closeText = company.getOpenTime(timeNow);
-      print(closeText);
       if (closeText == null) {
         openText = "Aberto até ${company.closeTime()}";
+      }
+    } else {
+      if (company.isTomorowOpen()) {
+        tomorowText = "Abre amanhã";
       }
     }
     return Padding(
       padding: EdgeInsets.fromLTRB(5, 5, 0, 0),
       child: Text(
-        openToday ? closeText == null ? openText : closeText : CLOSED,
+        openToday
+            ? closeText == null ? openText : closeText
+            : tomorowText == null ? CLOSED : tomorowText,
         textAlign: TextAlign.left,
         style: TextStyle(
           fontSize: 18,
-          color: openToday ? closeText == null ? Colors.green : Colors.red : Colors.red,
+          color: openToday
+              ? closeText == null ? Colors.green : Colors.red
+              : tomorowText == null ? Colors.red : Colors.black45,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -131,7 +147,9 @@ class _CompanyWidgetState extends State<CompanyWidget> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
-          color: _colorButton == null ? Theme.of(context).buttonColor : _colorButton,
+          color: _colorButton == null
+              ? Theme.of(context).buttonColor
+              : _colorButton,
           child: Text(
             "Action",
             style: TextStyle(
@@ -149,6 +167,4 @@ class _CompanyWidgetState extends State<CompanyWidget> {
       ),
     );
   }
-
 }
-
