@@ -228,12 +228,11 @@ class _HistoricOrderPageState extends State<HistoricOrderPage>
                   child: titleTextWidget(widget.order.companyName),
                 ),
                 dateTextWidget(
-                    DateUtil.formatDateMouthHour(widget.order.createdAt)),
+                  DateUtil.formatDateMouthHour(widget.order.createdAt),
+                ),
               ],
             ),
-            SizedBox(
-              height: 5,
-            ),
+            SizedBox(height: 5),
             Card(
               color: Colors.grey[200],
               margin: EdgeInsets.all(0),
@@ -258,9 +257,7 @@ class _HistoricOrderPageState extends State<HistoricOrderPage>
             widget.order.cupon != null ? cardCupon() : Container(),
             paymentTypeWidget(widget.order.typePayment),
             addressDataWidget(widget.order.deliveryAddress),
-            SizedBox(
-              height: 10,
-            ),
+            SizedBox(height: 10),
             widget.order.status.isLast() && widget.order.evaluation != null
                 ? Column(
                     children: [

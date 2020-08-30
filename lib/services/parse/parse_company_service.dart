@@ -1,12 +1,12 @@
 import 'package:kideliver/utils/log_util.dart';
 import 'package:parse_server_sdk/parse_server_sdk.dart';
+
 import '../../contracts/company/company_contract.dart';
 import '../../models/company/company.dart';
 import '../../services/parse/base_parse_service.dart';
 import '../../strings.dart';
 
 class ParseCompanyService extends CompanyContractService {
-
   BaseParseService service = BaseParseService("Company");
 
   @override
@@ -76,7 +76,9 @@ class ParseCompanyService extends CompanyContractService {
   @override
   Future<List<Company>> findBy(String field, value) async {
     return service.findBy(field, value).then((response) {
-      return response.isEmpty ? List<Company>() : response.map<Company>((item) => Company.fromMap(item)).toList();
+      return response.isEmpty
+          ? List<Company>()
+          : response.map<Company>((item) => Company.fromMap(item)).toList();
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -91,7 +93,9 @@ class ParseCompanyService extends CompanyContractService {
   @override
   Future<List<Company>> list() {
     return service.list().then((response) {
-      return response.isEmpty ? List<Company>() : response.map<Company>((item) => Company.fromMap(item)).toList();
+      return response.isEmpty
+          ? List<Company>()
+          : response.map<Company>((item) => Company.fromMap(item)).toList();
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -114,7 +118,12 @@ class ParseCompanyService extends CompanyContractService {
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
       ..whereEqualTo("show", true)
-      ..includeObject(["address", "address.city", "deliveryStatus", "pickupStatus"])
+      ..includeObject([
+        "address",
+        "address.city",
+        "deliveryStatus",
+        "pickupStatus",
+      ])
       ..orderByDescending("createdAt");
 
     return await company.query().then((value) async {
@@ -125,22 +134,34 @@ class ParseCompanyService extends CompanyContractService {
           List<ParseObject> listObj = value.result;
 
           return listObj.map<Company>((obj) {
-            var companyJson, addressJson, cityJson, deliveryStatus, pickupStatus;
+            var companyJson,
+                addressJson,
+                cityJson,
+                deliveryStatus,
+                pickupStatus;
 
             companyJson = obj.toJson();
 
             try {
               addressJson = obj.get("address").toJson();
-            } catch (error) {Log.e(error);}
+            } catch (error) {
+              Log.e(error);
+            }
             try {
               cityJson = obj.get("address").get("city").toJson();
-            } catch (error) {Log.e(error);}
+            } catch (error) {
+              Log.e(error);
+            }
             try {
               deliveryStatus = obj.get("deliveryStatus").toJson();
-            } catch (error) {Log.e(error);}
+            } catch (error) {
+              Log.e(error);
+            }
             try {
               pickupStatus = obj.get("pickupStatus").toJson();
-            } catch (error) {Log.e(error);}
+            } catch (error) {
+              Log.e(error);
+            }
 
             addressJson["city"] = cityJson;
             companyJson["address"] = addressJson;
@@ -174,8 +195,14 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
-      ..whereEqualTo("show", true)
-      ..includeObject(["address", "address.smallTown", "address.smallTown.city", "deliveryStatus", "pickupStatus"])
+      //..whereEqualTo("show", true)
+      ..includeObject([
+        "address",
+        "address.smallTown",
+        "address.smallTown.city",
+        "deliveryStatus",
+        "pickupStatus"
+      ])
       ..orderByDescending("createdAt");
 
     return await company.query().then((value) async {
@@ -186,25 +213,41 @@ class ParseCompanyService extends CompanyContractService {
           List<ParseObject> listObj = value.result;
 
           return listObj.map<Company>((obj) {
-            var companyJson, addressJson, smallTownJson, cityJson, deliveryStatus, pickupStatus;
+            var companyJson,
+                addressJson,
+                smallTownJson,
+                cityJson,
+                deliveryStatus,
+                pickupStatus;
 
             companyJson = obj.toJson();
 
             try {
               addressJson = obj.get("address").toJson();
-            } catch (error) {Log.e(error);}
+            } catch (error) {
+              Log.e(error);
+            }
             try {
               smallTownJson = obj.get("address").get("smallTown").toJson();
-            } catch (error) {Log.e(error);}
+            } catch (error) {
+              Log.e(error);
+            }
             try {
-              cityJson = obj.get("address").get("smallTown").get("city").toJson();
-            } catch (error) {Log.e(error);}
+              cityJson =
+                  obj.get("address").get("smallTown").get("city").toJson();
+            } catch (error) {
+              Log.e(error);
+            }
             try {
               deliveryStatus = obj.get("deliveryStatus").toJson();
-            } catch (error) {Log.e(error);}
+            } catch (error) {
+              Log.e(error);
+            }
             try {
               pickupStatus = obj.get("pickupStatus").toJson();
-            } catch (error) {Log.e(error);}
+            } catch (error) {
+              Log.e(error);
+            }
 
             smallTownJson["city"] = cityJson;
             addressJson["smallTown"] = smallTownJson;
@@ -228,5 +271,4 @@ class ParseCompanyService extends CompanyContractService {
       }
     });
   }
-
 }

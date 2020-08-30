@@ -1,13 +1,11 @@
 import 'package:parse_server_sdk/parse_server_sdk.dart';
 
-import '../../utils/log_util.dart';
 import '../../contracts/order/order_contract.dart';
 import '../../models/order/order.dart';
 import '../../services/parse/base_parse_service.dart';
 import '../../strings.dart';
 
 class ParseOrderService extends OrderContractService {
-
   BaseParseService service = BaseParseService("Order");
 
   @override
@@ -48,8 +46,12 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<Order> update(Order item) {
     return service.update(item).then((response) {
+      var temp = Order();
+      temp.updateData(item);
+      temp.id = response["objectId"];
+      temp.objectId = response["objectId"];
       item.updatedAt = DateTime.parse(response["updatedAt"]).toLocal();
-      return response == null ? null : Order.fromMap(response);
+      return response == null ? null : temp;
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -124,7 +126,9 @@ class ParseOrderService extends OrderContractService {
   @override
   Future<List<Order>> list() {
     return service.list().then((response) {
-      return response.isEmpty ? List<Order>() : response.map<Order>((item) => Order.fromMap(item)).toList();
+      return response.isEmpty
+          ? List<Order>()
+          : response.map<Order>((item) => Order.fromMap(item)).toList();
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -135,5 +139,4 @@ class ParseOrderService extends OrderContractService {
       }
     });
   }
-
 }
