@@ -195,7 +195,7 @@ class ParseCompanyService extends CompanyContractService {
 
     var company = QueryBuilder<ParseObject>(service.getObject())
       ..whereMatchesQuery("address", address)
-      //..whereEqualTo("show", true)
+      ..whereEqualTo("show", true)
       ..includeObject([
         "address",
         "address.smallTown",
