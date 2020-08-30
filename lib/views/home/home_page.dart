@@ -269,6 +269,18 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
 
   @override
   listSuccess(List<Company> list) {
+    list.sort((a, b) {
+      if (!a.initiated | !b.initiated) {
+        if (!a.initiated & b.initiated) {
+          return -1;
+        } else if (a.initiated & !b.initiated) {
+          return 1;
+        } else {
+          return 0;
+        }
+      }
+      return a.openTime().compareTo(b.openTime());
+    });
     if (Singletons.versionApp().isAcceptVersion()) {
       Singletons.companies().addAll(list);
       setState(() => this.list = list);
