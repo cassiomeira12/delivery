@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class ScaffoldSnackBar {
-
-  static success(BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey, String text) {
+  static success(BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey,
+      String text) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text(
         text,
@@ -11,11 +11,12 @@ class ScaffoldSnackBar {
           color: Colors.white,
         ),
       ),
-      backgroundColor: Colors.green,//Theme.of(context).primaryColorDark,
+      backgroundColor: Colors.green, //Theme.of(context).primaryColorDark,
     ));
   }
 
-  static failure(BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey, String error) {
+  static failure(BuildContext context, GlobalKey<ScaffoldState> _scaffoldKey,
+      String error) {
     _scaffoldKey.currentState.showSnackBar(SnackBar(
       content: Text(
         error,
@@ -27,7 +28,4 @@ class ScaffoldSnackBar {
       backgroundColor: Theme.of(context).errorColor,
     ));
   }
-
 }
-
-
