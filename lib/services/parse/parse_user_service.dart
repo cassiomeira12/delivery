@@ -1,13 +1,14 @@
-import 'package:parse_server_sdk/parse_server_sdk.dart';
-import 'base_parse_service.dart';
-import 'package:path/path.dart' as Path;
 import 'dart:io';
-import '../../models/singleton/singletons.dart';
+
+import 'package:parse_server_sdk/parse_server_sdk.dart';
+
 import '../../contracts/user/user_contract.dart';
 import '../../models/base_user.dart';
+import '../../models/singleton/singletons.dart';
 import '../../strings.dart';
 import '../../utils/log_util.dart';
 import '../../utils/preferences_util.dart';
+import 'base_parse_service.dart';
 
 class ParseUserService implements UserContractService {
   BaseParseService _service;
@@ -61,9 +62,11 @@ class ParseUserService implements UserContractService {
     temp.email = null;
     temp.password = null;
     return _service.update(temp).then((response) {
+      print(response);
       item.updatedAt = DateTime.parse(response["updatedAt"]).toLocal();
       return response == null ? null : item;
     }).catchError((error) {
+      print(error);
       switch (error.code) {
         case -1:
           throw Exception(ERROR_NETWORK);
@@ -92,7 +95,9 @@ class ParseUserService implements UserContractService {
   @override
   Future<List<BaseUser>> findBy(String field, value) async {
     return _service.findBy(field, value).then((response) {
-      return response.isEmpty ? List<BaseUser>() : response.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
+      return response.isEmpty
+          ? List<BaseUser>()
+          : response.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -107,7 +112,9 @@ class ParseUserService implements UserContractService {
   @override
   Future<List<BaseUser>> list() {
     return _service.list().then((response) {
-      return response.isEmpty ? List<BaseUser>() : response.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
+      return response.isEmpty
+          ? List<BaseUser>()
+          : response.map<BaseUser>((item) => BaseUser.fromMap(item)).toList();
     }).catchError((error) {
       switch (error.code) {
         case -1:
@@ -148,8 +155,11 @@ class ParseUserService implements UserContractService {
   }
 
   @override
-  Future<void> changePassword(String email, String password, String newPassword) async {
-    return await ParseUser(email, password, email).login().then((response) async {
+  Future<void> changePassword(
+      String email, String password, String newPassword) async {
+    return await ParseUser(email, password, email)
+        .login()
+        .then((response) async {
       if (response.success) {
         Singletons.user().password = newPassword;
         var object = _service.getObject();
@@ -232,7 +242,10 @@ class ParseUserService implements UserContractService {
     } else {
       var userData = await PreferencesUtil.getUserData();
       var user = BaseUser.fromMap(userData);
-      if (!user.isAnonymous() && (!user.emailVerified || user.notificationToken == null || user.phoneNumber == null)) {
+      if (!user.isAnonymous() &&
+          (!user.emailVerified ||
+              user.notificationToken == null ||
+              user.phoneNumber == null)) {
         return read(BaseUser(id: currentUser.objectId)).then((value) {
           return value;
         }).catchError((error) async {
@@ -272,5 +285,4 @@ class ParseUserService implements UserContractService {
       }
     });
   }
-
 }

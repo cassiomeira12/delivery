@@ -19,29 +19,40 @@ class BaseUser extends BaseModel<BaseUser> {
     objectId = id;
   }
 
-  BaseUser.fromMap(Map<dynamic, dynamic>  map) : super('_User') {
+  BaseUser.fromMap(Map<dynamic, dynamic> map) : super('_User') {
     baseFromMap(map);
-    notificationToken = map["notificationToken"] == null ? null : NotificationToken.fromMap(map["notificationToken"]);
+    notificationToken = map["notificationToken"] == null
+        ? null
+        : NotificationToken.fromMap(map["notificationToken"]);
     avatarURL = map["avatarURL"];
     username = map["username"];
     name = map["name"];
     email = map["email"];
-    emailVerified = map["emailVerified"] == null ? false : map["emailVerified"] as bool;
+    emailVerified =
+        map["emailVerified"] == null ? false : map["emailVerified"] as bool;
     password = map["password"];
-    createdAt = map["createdAt"] == null ? null : DateTime.parse(map["createdAt"]).toLocal();
-    updatedAt = map["updatedAt"] == null ? null : DateTime.parse(map["updatedAt"]).toLocal();
-    phoneNumber = map["phoneNumber"] == null ? null : PhoneNumber.fromMap(map["phoneNumber"]);
-    socialProvider = map["socialProvider"] == null ? false : map["socialProvider"] as bool;
+    createdAt = map["createdAt"] == null
+        ? null
+        : DateTime.parse(map["createdAt"]).toLocal();
+    updatedAt = map["updatedAt"] == null
+        ? null
+        : DateTime.parse(map["updatedAt"]).toLocal();
+    phoneNumber = map["phoneNumber"] == null
+        ? null
+        : PhoneNumber.fromMap(map["phoneNumber"]);
+    socialProvider =
+        map["socialProvider"] == null ? false : map["socialProvider"] as bool;
   }
 
   toMap() {
     var map = super.toMap();
-    map["notificationToken"] = notificationToken == null ? null : notificationToken.toMap();
+    map["notificationToken"] =
+        notificationToken == null ? null : notificationToken.toMap();
     map["avatarURL"] = avatarURL;
     map["username"] = username;
     map["name"] = name;
     map["email"] = email;
-    map["emailVerified"] = emailVerified;
+    //map["emailVerified"] = emailVerified;
     map["password"] = password;
     map["createdAt"] = createdAt == null ? null : createdAt.toString();
     map["updatedAt"] = updatedAt == null ? null : updatedAt.toString();
@@ -71,9 +82,11 @@ class BaseUser extends BaseModel<BaseUser> {
   }
 
   bool isAnonymous() {
-    return name.isEmpty && username.isEmpty && email.isEmpty && password.isEmpty;
+    return name.isEmpty &&
+        username.isEmpty &&
+        email.isEmpty &&
+        password.isEmpty;
   }
-
 }
 
 class NotificationToken extends BaseModel<NotificationToken> {
@@ -85,7 +98,8 @@ class NotificationToken extends BaseModel<NotificationToken> {
     active = true;
   }
 
-  NotificationToken.fromMap(Map<dynamic, dynamic> map) : super('NotificationToken') {
+  NotificationToken.fromMap(Map<dynamic, dynamic> map)
+      : super('NotificationToken') {
     baseFromMap(map);
     token = map["token"];
     active = map["active"] as bool;
@@ -108,5 +122,4 @@ class NotificationToken extends BaseModel<NotificationToken> {
     active = item.active;
     topics = item.topics;
   }
-
 }

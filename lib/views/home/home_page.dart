@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -157,7 +158,6 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
           SliverList(
             delegate: SliverChildListDelegate([
               Stack(
-                //alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   Column(
                     children: <Widget>[
@@ -281,7 +281,7 @@ class _HomePageState extends State<HomePage> implements CompanyContractView {
       }
       return a.openTime().compareTo(b.openTime());
     });
-    if (Singletons.versionApp().isAcceptVersion()) {
+    if (kDebugMode || Singletons.versionApp().isAcceptVersion()) {
       Singletons.companies().addAll(list);
       setState(() => this.list = list);
     } else {

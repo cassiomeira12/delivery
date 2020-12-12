@@ -1,24 +1,24 @@
-import '../../models/menu/choice_selected.dart';
-import '../../views/login/login_page.dart';
-import '../../models/singleton/singletons.dart';
-import '../../models/company/company.dart';
-import '../../models/order/order_item.dart';
-import '../../widgets/scaffold_snackbar.dart';
-import 'package:flutter/material.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import '../../models/menu/item.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:modal_progress_hud/modal_progress_hud.dart';
+
+import '../../models/company/company.dart';
+import '../../models/menu/choice_selected.dart';
 import '../../models/menu/product.dart';
+import '../../models/order/order_item.dart';
+import '../../models/singleton/singletons.dart';
 import '../../strings.dart';
 import '../../views/home/additional_widget.dart';
 import '../../views/image_view_page.dart';
+import '../../views/login/login_page.dart';
 import '../../widgets/area_input_field.dart';
+import '../../widgets/background_card.dart';
 import '../../widgets/count_widget.dart';
 import '../../widgets/primary_button.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:modal_progress_hud/modal_progress_hud.dart';
-import '../../widgets/background_card.dart';
+import '../../widgets/scaffold_snackbar.dart';
 import '../page_router.dart';
 import 'choice_widget.dart';
 
@@ -58,7 +58,7 @@ class _ProductPageState extends State<ProductPage> {
   int radioGroup;
 
   List<ChoiceWidget> selectedChoices = List();
-  
+
   double value = 0;
 
   @override
@@ -78,15 +78,18 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text(product.name),
-      ),
+      appBar: AppBar(title: Text(product.name)),
       body: ModalProgressHUD(
         inAsyncCall: _loading,
         progressIndicator: Card(
           elevation: 5,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30),),
-          child: Padding(padding: EdgeInsets.all(10), child: CircularProgressIndicator(),),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(10),
+            child: CircularProgressIndicator(),
+          ),
         ),
         child: nestedScrollView(),
       ),
@@ -108,7 +111,7 @@ class _ProductPageState extends State<ProductPage> {
                       Stack(
                         alignment: Alignment.topCenter,
                         children: <Widget>[
-                          BackgroundCard(height: 200,),
+                          BackgroundCard(height: 200),
 //                          bannerURL == null ?
 //                            Container()
 //                                :
@@ -145,7 +148,7 @@ class _ProductPageState extends State<ProductPage> {
       child: CarouselSlider(
         options: CarouselOptions(
           height: 250,
-          aspectRatio: 16/9,
+          aspectRatio: 16 / 9,
           viewportFraction: 0.8,
           initialPage: 0,
           enableInfiniteScroll: true,
@@ -174,7 +177,10 @@ class _ProductPageState extends State<ProductPage> {
                   ),
                 ),
                 onTap: () {
-                  PageRouter.push(context, ImageViewPage(networkImage: e,));
+                  PageRouter.push(
+                    context,
+                    ImageViewPage(networkImage: e),
+                  );
                 },
               );
             },
@@ -192,9 +198,7 @@ class _ProductPageState extends State<ProductPage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           titleTextWidget(product.name),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -211,19 +215,20 @@ class _ProductPageState extends State<ProductPage> {
               costWidget(),
             ],
           ),
-
-          product.description == null ? Container() : descriptionTextWidget(product.description),
-
-          product.preparationTime == null ? Container() : tempoPreparo(product.preparationTime),
-
-          SizedBox(height: 20,),
-
+          product.description == null
+              ? Container()
+              : descriptionTextWidget(product.description),
+          product.preparationTime == null
+              ? Container()
+              : tempoPreparo(product.preparationTime),
+          SizedBox(
+            height: 20,
+          ),
           choicesWidget(),
-
           additionalWidget(),
-
-          SizedBox(height: 30,),
-
+          SizedBox(
+            height: 30,
+          ),
           GestureDetector(
             child: AbsorbPointer(
               absorbing: true,
@@ -257,12 +262,13 @@ class _ProductPageState extends State<ProductPage> {
               });
             },
           ),
-
-          SizedBox(height: 20,),
-
+          SizedBox(
+            height: 20,
+          ),
           adicionarButton(),
-
-          SizedBox(height: 30,),
+          SizedBox(
+            height: 30,
+          ),
         ],
       ),
     );
@@ -287,7 +293,9 @@ class _ProductPageState extends State<ProductPage> {
     return Padding(
       padding: EdgeInsets.fromLTRB(10, 5, 10, 0),
       child: Text(
-        value > 0 ? "R\$ ${((count * (value + choicesCost)) + additionalCost).toStringAsFixed(2)}" : "",
+        value > 0
+            ? "R\$ ${((count * (value + choicesCost)) + additionalCost).toStringAsFixed(2)}"
+            : "",
         textAlign: TextAlign.left,
         style: TextStyle(
           fontSize: 30,
@@ -377,7 +385,10 @@ class _ProductPageState extends State<ProductPage> {
           children: <Widget>[
             Expanded(
               flex: 1,
-              child: FaIcon(FontAwesomeIcons.shoppingCart, color: Colors.white,),
+              child: FaIcon(
+                FontAwesomeIcons.shoppingCart,
+                color: Colors.white,
+              ),
             ),
             Expanded(
               flex: 3,
@@ -407,9 +418,14 @@ class _ProductPageState extends State<ProductPage> {
               okLabel: CRIAR_CONTA,
               cancelLabel: CANCELAR,
             );
-            switch(result) {
+            switch (result) {
               case OkCancelResult.ok:
-                PageRouter.push(context, LoginPage(loginCallback: widget.loginCallback, anonymousLogin: true,));
+                PageRouter.push(
+                    context,
+                    LoginPage(
+                      loginCallback: widget.loginCallback,
+                      anonymousLogin: true,
+                    ));
                 break;
               case OkCancelResult.cancel:
                 break;
@@ -487,9 +503,11 @@ class _ProductPageState extends State<ProductPage> {
             ..minQuantity = element.choice.minQuantity
             ..choiceSelected = element.getItemsSelected();
 
-          if (element.choice.required && element.getItemsSelected().length < choiceSelected.minQuantity) {
+          if (element.choice.required &&
+              element.getItemsSelected().length < choiceSelected.minQuantity) {
             foundError = true;
-            errorMessage = "Escolha a quantidade mínima de ${choiceSelected.name}";
+            errorMessage =
+                "Escolha a quantidade mínima de ${choiceSelected.name}";
             return;
           }
 
@@ -509,7 +527,6 @@ class _ProductPageState extends State<ProductPage> {
         Singletons.order().items.add(order);
         PageRouter.pop(context, Singletons.order());
       }
-
     } else {
       var order = OrderItem();
       order.id = product.id;
@@ -544,9 +561,11 @@ class _ProductPageState extends State<ProductPage> {
             ..minQuantity = element.choice.minQuantity
             ..choiceSelected = element.getItemsSelected();
 
-          if (element.choice.required && element.getItemsSelected().length < choiceSelected.minQuantity) {
+          if (element.choice.required &&
+              element.getItemsSelected().length < choiceSelected.minQuantity) {
             foundError = true;
-            errorMessage = "Escolha a quantidade mínima de ${choiceSelected.name}";
+            errorMessage =
+                "Escolha a quantidade mínima de ${choiceSelected.name}";
             return;
           }
 
@@ -566,5 +585,4 @@ class _ProductPageState extends State<ProductPage> {
       }
     }
   }
-
 }

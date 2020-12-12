@@ -1,7 +1,9 @@
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:package_info/package_info.dart';
 import 'dart:io';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:package_info/package_info.dart';
+
 import '../../models/singleton/singletons.dart';
 import '../../services/notifications/local_notifications.dart';
 import '../../utils/preferences_util.dart';
@@ -14,11 +16,11 @@ class FirebasePushNotifications {
   FirebasePushNotifications() {
     var settingsAndroid = AndroidInitializationSettings("ic_stat_notification");
     var settingsIOS = IOSInitializationSettings(
-      onDidReceiveLocalNotification: (id, title, body, payload) => onSelectNotification(payload)
-    );
+        onDidReceiveLocalNotification: (id, title, body, payload) =>
+            onSelectNotification(payload));
     notifications.initialize(
-      InitializationSettings(settingsAndroid, settingsIOS), onSelectNotification: onSelectNotification
-    );
+        InitializationSettings(settingsAndroid, settingsIOS),
+        onSelectNotification: onSelectNotification);
   }
 
   void subscribeDefaultTopics() async {
@@ -26,7 +28,8 @@ class FirebasePushNotifications {
       return t.toString().split('.').last;
     }).toList();
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    String packageName = packageInfo.packageName + "-" + Platform.operatingSystem;
+    String packageName =
+        packageInfo.packageName + "-" + Platform.operatingSystem;
     topics.add(packageName);
     if (Singletons.user().notificationToken != null) {
       topics.addAll(Singletons.user().notificationToken.topics);
@@ -34,7 +37,7 @@ class FirebasePushNotifications {
     subscribeTopicsList(topics);
   }
 
-  static void subscribeTopicsList(List<String> topics) async  {
+  static void subscribeTopicsList(List<String> topics) async {
     var preferences = await PreferencesUtil.getInstance();
     topics.forEach((topic) async {
       if (preferences.getString(topic) == null) {
@@ -47,12 +50,12 @@ class FirebasePushNotifications {
     });
   }
 
-  Future<void> setUpFirebase() {
+  setUpFirebase() {
     _firebaseMessaging = FirebaseMessaging();
-    return firebaseCloudMessagingListeners();
+    firebaseCloudMessagingListeners();
   }
 
-  Future<void> firebaseCloudMessagingListeners() async {
+  firebaseCloudMessagingListeners() async {
     if (Platform.isIOS) iOSPermission();
 
     var token = await _firebaseMessaging.getToken();
@@ -65,11 +68,11 @@ class FirebasePushNotifications {
         pushNotification(message);
       },
       onResume: (Map<String, dynamic> message) async {
-        print("onResume $message");//Ação ao abrir app minimizado
+        print("onResume $message"); //Ação ao abrir app minimizado
         _navigateToItemDetail(message);
       },
       onLaunch: (Map<String, dynamic> message) async {
-        print("onLaunch $message");//Ação ao abrir app Fechado
+        print("onLaunch $message"); //Ação ao abrir app Fechado
         _navigateToItemDetail(message);
       },
     );
@@ -108,10 +111,14 @@ class FirebasePushNotifications {
 
       var user = Singletons.user();
       if (user.isAnonymous()) {
-        showSilentNotification(notifications, title: title, body: body, payload: payload);
+        showSilentNotification(notifications,
+            title: title, body: body, payload: payload);
       } else {
-        if (user != null && user.notificationToken != null && user.notificationToken.active) {
-          showSilentNotification(notifications, title: title, body: body, payload: payload);
+        if (user != null &&
+            user.notificationToken != null &&
+            user.notificationToken.active) {
+          showSilentNotification(notifications,
+              title: title, body: body, payload: payload);
           //showOngoingNotification(notifications, title: title, body: body, payload: payload);
         }
       }
@@ -120,9 +127,9 @@ class FirebasePushNotifications {
 
   void iOSPermission() {
     _firebaseMessaging.requestNotificationPermissions(
-      IosNotificationSettings(sound: true, badge: true, alert: true)
-    );
-    _firebaseMessaging.onIosSettingsRegistered.listen((IosNotificationSettings settings) {
+        IosNotificationSettings(sound: true, badge: true, alert: true));
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings) {
       print("Settings registered: $settings");
     });
   }
@@ -146,7 +153,6 @@ class FirebasePushNotifications {
       return false;
     });
   }
-
 }
 
 enum Topics {
