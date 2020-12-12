@@ -1,23 +1,23 @@
-import '../../models/singleton/singletons.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
+
 import '../../contracts/user/notification_contract.dart';
+import '../../models/singleton/singletons.dart';
 import '../../models/user_notification.dart';
 import '../../presenters/user/notification_presenter.dart';
 import '../../strings.dart';
 import '../../views/notifications/notification_widget.dart';
 import '../../views/notifications/notifications_settings_page.dart';
 import '../../views/page_router.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
-
 import 'notification_page.dart';
 
 class NotificationsPage extends StatefulWidget {
-
   @override
   State<StatefulWidget> createState() => _NotificationsPageState();
 }
 
-class _NotificationsPageState extends State<NotificationsPage> implements NotificationContractView {
+class _NotificationsPageState extends State<NotificationsPage>
+    implements NotificationContractView {
   final _formKey = GlobalKey<FormState>();
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
@@ -31,7 +31,8 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
     presenter = NotificationPresenter(this);
     var temp = Singletons.notifications();
     if (temp.isEmpty) {
-      presenter.list();
+      notificationsList = List();
+      //presenter.list();
     } else {
       setState(() => notificationsList = temp);
     }
@@ -66,7 +67,10 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
     return Scaffold(
       //key: _scaffoldKey,
       appBar: AppBar(
-        title: Text(TAB2, style: TextStyle(color: Colors.white),),
+        title: Text(
+          TAB2,
+          style: TextStyle(color: Colors.white),
+        ),
         iconTheme: IconThemeData(color: Colors.white),
         actions: <Widget>[
           MaterialButton(
@@ -78,7 +82,8 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
                 fontWeight: FontWeight.bold,
               ),
             ),
-            onPressed: () => PageRouter.push(context, NotificationsSettingsPage()),
+            onPressed: () =>
+                PageRouter.push(context, NotificationsSettingsPage()),
           ),
         ],
       ),
@@ -89,23 +94,20 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
           return presenter.list();
         },
         child: Center(
-          child: notificationsList == null ?
-          showCircularProgress()
-              :
-          notificationsList.isEmpty ?
-          semNotificacoes()
-              :
-          CustomScrollView(
-            slivers: <Widget>[
-              SliverList(
-                delegate: SliverChildListDelegate(
-                  notificationsList.map<Widget>((item) {
-                    return listItem(item);
-                  }).toList()
-                ),
-              ),
-            ],
-          ),
+          child: notificationsList == null
+              ? showCircularProgress()
+              : notificationsList.isEmpty
+                  ? semNotificacoes()
+                  : CustomScrollView(
+                      slivers: <Widget>[
+                        SliverList(
+                          delegate: SliverChildListDelegate(
+                              notificationsList.map<Widget>((item) {
+                            return listItem(item);
+                          }).toList()),
+                        ),
+                      ],
+                    ),
         ),
       ),
     );
@@ -118,7 +120,8 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
       child: NotificationWidget(
         notification: item,
         onPressed: () {
-          PageRouter.push(context,
+          PageRouter.push(
+            context,
             NotificationPage(
               presenter: presenter,
               notification: item,
@@ -191,5 +194,4 @@ class _NotificationsPageState extends State<NotificationsPage> implements Notifi
       ],
     );
   }
-
 }
